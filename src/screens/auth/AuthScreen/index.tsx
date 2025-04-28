@@ -12,6 +12,7 @@ interface LoginValues {
   password: string;
 }
 
+
 interface SignUpValues extends LoginValues {
   confirmPassword: string;
 }
