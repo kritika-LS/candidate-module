@@ -105,6 +105,15 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    
+    project.ext.react = [
+    enableHermes: true,  // or false depending on your project
+    vectorIcons: [
+        fontsDir: "node_modules/react-native-vector-icons/Fonts"
+    ]
+]
+
+apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
 }
 
 dependencies {
