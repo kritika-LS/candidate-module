@@ -5,6 +5,7 @@ import { PasswordInput } from '../../components/common/PasswordInput';
 import { ConfirmPasswordInput } from '../../components/common/ConfirmPasswordInput';
 import { signupSchema } from '../../validations/signupValidation';
 import styles from './styles';
+import { signUp } from 'aws-amplify/auth';
 
 export const SignUpScreen = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +15,18 @@ export const SignUpScreen = () => {
 
   const handleSignUp = async () => {
     try {
-			console.log({email, password, confirmPassword})
+			console.log({email, password, confirmPassword});
+      const result = await signUp({
+        username: email,
+        password: password, 
+        options: {
+          userAttributes: {
+            email: email,
+          },
+        },
+      });
+  
+      console.log('Sign up successful!', result);
       // await signupSchema.validate({ email, password, confirmPassword }, { abortEarly: false });
       // Alert.alert(email, password);
       // Proceed further...
