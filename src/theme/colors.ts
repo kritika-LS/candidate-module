@@ -38,7 +38,9 @@ export const colors = {
     heading:'#000000',
     dark:'#005CCB',
     disabled: '#424242',
-    light: '#FFFFFF',
+    white: '#FFFFFF',
+    light: '#797979',
+    lightBold: '#4c4c4c'
   },
   background: {
     default: '#FFFFFF',

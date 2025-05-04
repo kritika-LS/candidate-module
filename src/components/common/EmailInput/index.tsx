@@ -10,7 +10,9 @@ interface EmailInputProps {
 export const EmailInput = ({ value, onChange, error }: EmailInputProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Email Address *</Text>
+      <Text style={styles.label}>Email Address
+        <Text style={styles.mandatory}>{` *`}</Text>
+      </Text>
       <TextInput
         style={[styles.input, error ? styles.inputError : null]}
         placeholder="Enter email address"
@@ -24,9 +26,28 @@ export const EmailInput = ({ value, onChange, error }: EmailInputProps) => {
 };
 
 const styles = StyleSheet.create({
-  container: { marginBottom: 16 },
-  label: { fontWeight: 'bold', marginBottom: 4 },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 8, padding: 12 },
-  inputError: { borderColor: 'red' },
-  errorText: { color: 'red', fontSize: 12, marginTop: 4 },
+  container: { 
+    marginBottom: 16 
+  },
+  label: { 
+    fontWeight: 'bold', 
+    marginBottom: 4 
+  },
+  mandatory: {
+		color: 'red',
+	},
+  input: { 
+    borderWidth: 1, 
+    borderColor: '#ccc', 
+    borderRadius: 8, 
+    padding: 12 
+  },
+  inputError: { 
+    borderColor: 'red' 
+  },
+  errorText: { 
+    color: 'red', 
+    fontSize: 12, 
+    marginTop: 4 
+  },
 });
