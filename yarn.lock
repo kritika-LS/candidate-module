@@ -2245,6 +2245,11 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
+"@react-native-documents/picker@^10.1.2":
+  version "10.1.2"
+  resolved "https://registry.yarnpkg.com/@react-native-documents/picker/-/picker-10.1.2.tgz#2ebbf1eccc7e9efa3690e35ab5f0a811411a57b8"
+  integrity sha512-JzbFmFp0SmG0FEKt4Q62trewHMFpas2zAX0n5EANwrU9kondnzAEF7/xxz2EA2tfZNwnkHelqG8A7iedGleMRw==
+
 "@react-native/assets-registry@0.79.1":
   version "0.79.1"
   resolved "https://registry.yarnpkg.com/@react-native/assets-registry/-/assets-registry-0.79.1.tgz#39ce0a710a03d98c276cfa2877a925f1677614bd"
@@ -7007,13 +7012,6 @@ react-is@^19.0.0:
   version "19.1.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.1.0.tgz#805bce321546b7e14c084989c77022351bbdd11b"
   integrity sha512-Oe56aUPnkHyyDxxkvqtd7KkdQP5uIUfHxd5XTb3wE9d/kRnZLmKbDB0GWk919tdQ+mxxPtG6EAs6RMT6i1qtHg==
-
-react-native-document-picker@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-document-picker/-/react-native-document-picker-6.1.0.tgz#b82d437961358ef61e796a5718a920572e57fdb5"
-  integrity sha512-fbSUMXbJNBhcb9ZCffsNfGvZ2eG2H3sKRzU9fRa82o2doZACN3tFmhxhdz/Xr0z2b/Ux1JDMetTPhllCtjEZ8w==
-  dependencies:
-    invariant "^2.2.4"
 
 react-native-drawer-layout@^4.1.7:
   version "4.1.7"

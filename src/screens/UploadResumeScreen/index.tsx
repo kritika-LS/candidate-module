@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ActivityIndicator, Image, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Image, SafeAreaView, ScrollView, TouchableOpacity, View } from "react-native";
 import { Header } from "../../components/common/Header";
 import { TextStyle } from "../../components/common/Text";
 import { Button } from "../../components/common/Button";
@@ -7,7 +7,7 @@ import { styles } from "./styles";
 import { theme } from "../../theme";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "../../components/common/Icon/Icon";
-import DocumentPicker, { types } from 'react-native-document-picker';
+import { pick, keepLocalCopy, types } from '@react-native-documents/picker'
 
 export const UploadResumeScreen = () => {
     const [fileName, setFileName] = useState<string | null>(null);
@@ -15,37 +15,76 @@ export const UploadResumeScreen = () => {
     const navigation = useNavigation();
   
     const handleFilePick = async () => {
-      try {
-        const res = await DocumentPicker.pick({
-          type: [
-            types.pdf,
-            types.doc,
-            types.docx,
-            types.images,
-          ],
-          copyTo: 'cachesDirectory',
-        });
+        try {
+            const [result] = await pick({
+              mode: 'open',
+              requestLongTermAccess: true,
+              type: [types.pdf,types.doc,types.docx,types.images],
+            })
+            console.log("tag here result",result);
+            
+            if (result?.size > 10 * 1024 * 1024) {
+                Alert.alert('File size exceeds 10MB limit');
+            return;
+            }
+            if (result.bookmarkStatus === 'success') {
+                setFileName(result.name);
+                setIsUploading(true);
+                const [localCopy] = await keepLocalCopy({
+                    files: [
+                      {
+                        uri: result.uri,
+                        fileName: result.name ?? 'fallbackName',
+                      },
+                    ],
+                    destination: 'cachesDirectory',
+                  });
+            // Simulate upload
+                setTimeout(() => {
+                setIsUploading(false);
+            // You can proceed to the next screen or step here
+                }, 2000);
+            console.log("tag here localcopy",localCopy)
+
+            } else {
+              console.error(result);
+            }
+          } catch (err) {
+            setFileName(null);
+            setIsUploading(false);
+          }
+
+    //   try {
+    //     console.log("tag i m here")
+    //     // const res = await DocumentPicker.pick({
+    //     //   type: [
+    //     //     types.pdf,
+    //     //     types.doc,
+    //     //     types.docx,
+    //     //     types.images,
+    //     //   ],
+    //     //   copyTo: 'cachesDirectory',
+    //     // });
+    //     // if (res.size > 10 * 1024 * 1024) {
+    //     //   alert('File size exceeds 10MB limit');
+    //     //   return;
+    //     // }
   
-        if (res.size > 10 * 1024 * 1024) {
-          alert('File size exceeds 10MB limit');
-          return;
-        }
+    //     // setFileName(res.name);
+    //     setIsUploading(true);
   
-        setFileName(res.name);
-        setIsUploading(true);
-  
-        // Simulate upload
-        setTimeout(() => {
-          setIsUploading(false);
-          // You can proceed to the next screen or step here
-        }, 2000);
-      } catch (err) {
-        if (DocumentPicker.isCancel(err)) {
-          console.log('File pick cancelled');
-        } else {
-          console.error('Unknown error: ', err);
-        }
-      }
+    //     // Simulate upload
+    //     setTimeout(() => {
+    //       setIsUploading(false);
+    //       // You can proceed to the next screen or step here
+    //     }, 2000);
+    //   } catch (err) {
+    //     if (DocumentPicker.isCancel(err)) {
+    //       console.log('File pick cancelled');
+    //     } else {
+    //       console.error('Unknown error: ', err);
+    //     }
+    //   }
     };
   
     const handleBack = () => {
@@ -69,7 +108,7 @@ export const UploadResumeScreen = () => {
                     <TouchableOpacity style={styles.skipButton}>
                         <TextStyle size="xs" color={theme.colors.primary.main}>Skip</TextStyle>
                     </TouchableOpacity>
-                    {!(isUploading && fileName) ? (
+                    {(isUploading && fileName) ? (
                         <View style={styles.uploadBox}>
                         <View style={styles.loader}>
                             <ActivityIndicator size="large" color="#2F80ED" />
