@@ -2,10 +2,10 @@ import React from 'react';
 import AnimatedSplash from '../../components/features/Splash/AnimatedSplash';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../../navigation/RootNavigator';
 import { ScreenNames } from '../../utils/ScreenConstants';
+import { AuthStackParamList } from '../../types/navigation';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Splash'>;
+type NavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Splash'>;
 
 const SplashScreen = () => {
   const navigation = useNavigation<NavigationProp>();

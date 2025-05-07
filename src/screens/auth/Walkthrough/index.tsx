@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import {
   View,
   FlatList,
-  StyleSheet,
   TouchableOpacity,
   Text,
   Dimensions,
@@ -12,12 +11,7 @@ import WalkthroughItem from '../../../components/features/WalkthroughItem';
 import { WalkthroughItemType } from '../../../models/types/WalkthroughItemType';
 import styles from './styles';
 import Icon from '../../../components/common/Icon/Icon';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../navigation/RootNavigator';
-import { ScreenNames } from '../../../utils/ScreenConstants';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Splash'>;
 
 const walkthroughData: WalkthroughItemType[] = [
   {
@@ -43,8 +37,11 @@ const walkthroughData: WalkthroughItemType[] = [
   },
 ];
 
-const WalkthroughScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+type WalkthroughScreenProps = {
+  onDone: () => void;
+};
+
+const WalkthroughScreen: React.FC<WalkthroughScreenProps> = ({onDone}) => {
 
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -68,8 +65,8 @@ const WalkthroughScreen: React.FC = () => {
   };
 
   const onPressExploreOpportunities = () => {
-      navigation.replace(ScreenNames.SignUpScreen);
-  }
+      onDone();
+  };
 
   return (
     <View style={styles.container}>

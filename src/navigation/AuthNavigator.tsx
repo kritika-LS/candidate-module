@@ -1,8 +1,5 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import SplashScreen from '../screens/SplashScreen';
-import HomeScreen from '../screens/HomScreen';
-import WalkthroughScreen from '../screens/auth/Walkthrough';
 import { SignUpScreen } from '../screens/auth/SignUpScreen';
 import { theme } from '../theme';
 import { EmailVerificationScreen } from '../screens/auth/EmailVerificationScreen';
@@ -11,10 +8,11 @@ import { LoginScreen } from '../screens/auth/LoginScreen';
 import { ForgetPasswordScreen } from '../screens/auth/ForgetPasswordScreen';
 import MultiStepRegistrationScreen from '../screens/MultiStepRegistrationScreen';
 import { AuthStackParamList } from '../types/navigation';
+import HomeScreen from '../screens/HomScreen';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-const AppNavigator = ({ isAfterLogout = false }: { isAfterLogout?: boolean }) => (
+const AppNavigator = () => (
   <Stack.Navigator
     // initialRouteName={"Splash"}
     screenOptions={{
@@ -33,8 +31,6 @@ const AppNavigator = ({ isAfterLogout = false }: { isAfterLogout?: boolean }) =>
         color: theme.colors.text.light,
         },
   }}>
-    <Stack.Screen name="Splash" component={SplashScreen} />
-    <Stack.Screen name="WalkthroughScreen" component={WalkthroughScreen} />
     <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
     <Stack.Screen name="LoginScreen" component={LoginScreen} />
     <Stack.Screen name="EmailVerificationScreen" component={EmailVerificationScreen} />
