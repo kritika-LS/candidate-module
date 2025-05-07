@@ -1,31 +1,31 @@
-// navigation/DrawerNavigator.tsx
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import HomeScreen from '../screens/HomScreen'; // double-check spelling
-import CustomDrawerContent from '../components/CustomDrawerContent';
+// import ProfileScreen from '../screens/ProfileScreen';
+// import SettingsScreen from '../screens/SettingsScreen';
+import HomeScreen from '../screens/HomScreen';
+import { DrawerParamList } from '../types/navigation';
+import CustomDrawer from '../components/CustomDrawer/CustomDrawer';
+import { ScreeningsScreen } from '../screens/ScreeningsScreen';
+import { SkillsChecklistScreen } from '../screens/SkillsChecklistScreen';
+import { ReferencesScreen } from '../screens/ReferencesScreen';
+import { DocumentsScreen } from '../screens/DocumentsScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
 
-const Drawer = createDrawerNavigator();
 
-const DrawerNavigator = () => {
-  return (
-    <Drawer.Navigator
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={{
-        headerShown: true,
-        drawerStyle: {
-          backgroundColor: '#0F162A',
-          width: 260,
-        },
-        headerTintColor: '#fff',
-        headerStyle: {
-          backgroundColor: '#0F162A',
-        },
-      }}
-    >
-      <Drawer.Screen name="Home" component={HomeScreen} />
-      {/* Add other screens like Documents, Settings here */}
-    </Drawer.Navigator>
-  );
-};
+const Drawer = createDrawerNavigator<DrawerParamList>();
+
+const DrawerNavigator = () => (
+  <Drawer.Navigator
+    screenOptions={{ headerShown: true }}
+    drawerContent={(props) => <CustomDrawer {...props} />}
+  >
+    <Drawer.Screen name="Home" component={HomeScreen} />
+    <Drawer.Screen name="ScreeningsScreen" component={ScreeningsScreen} />
+    <Drawer.Screen name="SkillsChecklistScreen" component={SkillsChecklistScreen} />
+    <Drawer.Screen name="ReferencesScreen" component={ReferencesScreen} />
+    <Drawer.Screen name="DocumentsScreen" component={DocumentsScreen} />
+    <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
+  </Drawer.Navigator>
+);
 
 export default DrawerNavigator;

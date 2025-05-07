@@ -4,7 +4,8 @@ const styles = StyleSheet.create({
     container: { 
         flex: 1, 
         padding: 24, 
-        backgroundColor: '#fff' 
+        backgroundColor: '#fff',
+        justifyContent: 'center',
     },
     button: { 
         borderRadius: 24, 
@@ -60,6 +61,12 @@ const styles = StyleSheet.create({
     
     linkText: {
         color: '#347CD5',
+    },
+
+    footer: {
+        position: 'absolute',
+        bottom: 0,
+        alignSelf: 'center',
     },
       
 });

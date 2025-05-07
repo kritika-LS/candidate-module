@@ -8,11 +8,14 @@ import { theme } from "../../theme";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "../../components/common/Icon/Icon";
 import { pick, keepLocalCopy, types } from '@react-native-documents/picker'
+import { ScreenNames } from "../../utils/ScreenConstants";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AuthStackParamList } from "../../types/navigation";
 
 export const UploadResumeScreen = () => {
     const [fileName, setFileName] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
   
     const handleFilePick = async () => {
         try {
@@ -23,7 +26,7 @@ export const UploadResumeScreen = () => {
             })
             console.log("tag here result",result);
             
-            if (result?.size > 10 * 1024 * 1024) {
+            if (result?.size != null && result?.size > 10 * 1024 * 1024) {
                 Alert.alert('File size exceeds 10MB limit');
             return;
             }
@@ -42,10 +45,11 @@ export const UploadResumeScreen = () => {
             // Simulate upload
                 setTimeout(() => {
                 setIsUploading(false);
+                navigation.navigate(ScreenNames.MultiStepRegistrationScreen);
             // You can proceed to the next screen or step here
                 }, 2000);
             console.log("tag here localcopy",localCopy)
-
+            // navigation.navigate(ScreenNames.MultiStepRegistrationScreen);
             } else {
               console.error(result);
             }
@@ -53,38 +57,6 @@ export const UploadResumeScreen = () => {
             setFileName(null);
             setIsUploading(false);
           }
-
-    //   try {
-    //     console.log("tag i m here")
-    //     // const res = await DocumentPicker.pick({
-    //     //   type: [
-    //     //     types.pdf,
-    //     //     types.doc,
-    //     //     types.docx,
-    //     //     types.images,
-    //     //   ],
-    //     //   copyTo: 'cachesDirectory',
-    //     // });
-    //     // if (res.size > 10 * 1024 * 1024) {
-    //     //   alert('File size exceeds 10MB limit');
-    //     //   return;
-    //     // }
-  
-    //     // setFileName(res.name);
-    //     setIsUploading(true);
-  
-    //     // Simulate upload
-    //     setTimeout(() => {
-    //       setIsUploading(false);
-    //       // You can proceed to the next screen or step here
-    //     }, 2000);
-    //   } catch (err) {
-    //     if (DocumentPicker.isCancel(err)) {
-    //       console.log('File pick cancelled');
-    //     } else {
-    //       console.error('Unknown error: ', err);
-    //     }
-    //   }
     };
   
     const handleBack = () => {
@@ -93,6 +65,7 @@ export const UploadResumeScreen = () => {
   
     const handleSkip = () => {
       // Navigate to manual entry screen
+      navigation.navigate(ScreenNames.MultiStepRegistrationScreen);
     };
   
     const handleCancelUpload = () => {
@@ -105,7 +78,7 @@ export const UploadResumeScreen = () => {
             <ScrollView style={{flex: 1}}>
                 <Header title="Upload Resume" showBackButton />
                 <View style={styles.body}>
-                    <TouchableOpacity style={styles.skipButton}>
+                    <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
                         <TextStyle size="xs" color={theme.colors.primary.main}>Skip</TextStyle>
                     </TouchableOpacity>
                     {(isUploading && fileName) ? (

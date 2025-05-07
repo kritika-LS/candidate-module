@@ -5,7 +5,7 @@ import { PasswordInput } from '../../../components/common/PasswordInput';
 import { ConfirmPasswordInput } from '../../../components/common/ConfirmPasswordInput';
 import { signupSchema } from '../../../validations/signupValidation';
 import styles from './styles';
-import { signUp } from 'aws-amplify/auth';
+import { signIn, signUp } from 'aws-amplify/auth';
 import { useNavigation } from '@react-navigation/native';
 import { TextStyle } from '../../../components/common/Text';
 import { CopyrightFooter } from '../../../components/common/CopyrightFooter';
@@ -16,10 +16,16 @@ import { SocialButtons } from '../../../components/features/SocialButtons';
 import { Checkbox } from '../../../components/common/Checkbox';
 import { theme } from '../../../theme';
 import { LoginExtras } from '../../../components/features/LoginExtras';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../../types/navigation';
+import { loginSchema } from '../../../validations/loginValidation';
+import { useAuth } from '../../../context/AuthContext';
 
 export const LoginScreen = () => {
 
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+
+    const { login } = useAuth(); // ✅ Destructured correctly
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -27,26 +33,15 @@ export const LoginScreen = () => {
     const [errors, setErrors] = useState({ email: '', password: '', confirmPassword: '' });
     const [rememberAccount, setRememberAccount] = useState(false);
 
-    const handleSignUp = async () => {
+    const handleLogin = async () => {
         try {
-                return navigation.navigate(ScreenNames.EmailVerificationScreen);
-                console.log({email, password, confirmPassword});
-        const result = await signUp({
-            username: email,
-            password: password, 
-            options: {
-            userAttributes: {
-                email: email,
-            },
-            },
-        });
-    
-        console.log('Sign up successful!', result);
+            await login(email, password);
+            // navigation.navigate(ScreenNames.HomeScreen);
         } catch (validationError: any) {
         if (validationError.inner) {
             const formErrors: any = {};
             validationError.inner.forEach((error: any) => {
-            formErrors[error.path] = error.message;
+                formErrors[error.path] = error.message;
             });
             setErrors(formErrors);
         }
@@ -55,10 +50,10 @@ export const LoginScreen = () => {
 
     const checkFormValidity = () => {
         try {
-        signupSchema.validateSync({ email, password, confirmPassword }, { abortEarly: false });
-        return true;
+            loginSchema.validateSync({ email, password, confirmPassword }, { abortEarly: false });
+            return true;
         } catch {
-        return false;
+            return false;
         }
     };
 
@@ -101,8 +96,8 @@ export const LoginScreen = () => {
 
 				<TouchableOpacity
 					style={[styles.button, { backgroundColor: isFormValid ? '#347CD5' : '#ccc' }]}
-					onPress={handleSignUp}
-					// disabled={!isFormValid}
+					onPress={handleLogin}
+					disabled={!isFormValid}
 				>
 					<TextStyle variant='bold' size='md' style={styles.buttonText}>Log In</TextStyle>
 				</TouchableOpacity>

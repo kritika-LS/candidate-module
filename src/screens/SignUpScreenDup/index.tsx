@@ -6,8 +6,15 @@ import { ConfirmPasswordInput } from '../../components/common/ConfirmPasswordInp
 import { signupSchema } from '../../validations/signupValidation';
 import styles from './styles';
 import { signUp } from 'aws-amplify/auth';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../types/navigation';
+import { ScreenNames } from '../../utils/ScreenConstants';
 
-export const SignUpScreen = () => {
+export const SignUpScreenDup = () => {
+
+  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -25,6 +32,12 @@ export const SignUpScreen = () => {
           },
         },
       });
+
+      navigation.navigate(ScreenNames.EmailVerificationScreen, {
+        email: email,
+        password: password
+      });
+      
   
       console.log('Sign up successful!', result);
       // await signupSchema.validate({ email, password, confirmPassword }, { abortEarly: false });
@@ -66,7 +79,7 @@ export const SignUpScreen = () => {
       <TouchableOpacity
         style={[styles.button, { backgroundColor: isFormValid ? '#347CD5' : '#ccc' }]}
         onPress={handleSignUp}
-        disabled={!isFormValid}
+        disabled={isFormValid}
       >
         <Text style={styles.buttonText}>Get Started</Text>
       </TouchableOpacity>

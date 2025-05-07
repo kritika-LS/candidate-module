@@ -17,7 +17,7 @@ export const EmailVerificationScreen = () => {
 				
 				<OtpVerification />
 
-				{/* <EmailVerified /> */}
+				<EmailVerified />
 
 			</View>
 			<View style={styles.footer}>

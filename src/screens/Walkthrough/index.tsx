@@ -14,9 +14,8 @@ import styles from './styles';
 import Icon from '../../components/common/Icon/Icon';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigation/AppNavigator';
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Splash'>;
+import { RootStackParamList } from '../../navigation/RootNavigator';
+import { ScreenNames } from '../../utils/ScreenConstants';
 
 const walkthroughData: WalkthroughItemType[] = [
   {
@@ -43,7 +42,7 @@ const walkthroughData: WalkthroughItemType[] = [
 ];
 
 const WalkthroughScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -67,7 +66,7 @@ const WalkthroughScreen: React.FC = () => {
   };
 
   const onPressExploreOpportunities = () => {
-      navigation.replace('SignUpScreen');
+      navigation.replace(ScreenNames.SignUpScreen);
   }
 
   return (
