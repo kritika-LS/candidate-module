@@ -3,8 +3,9 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 
 type AuthContextType = {
   isAuthenticated: boolean;
-  login: () => void;
-  logout: () => void;
+  isLoading: boolean;
+  login: (email: string, password: string, rememberAccount?: boolean) => Promise<void>;
+  logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

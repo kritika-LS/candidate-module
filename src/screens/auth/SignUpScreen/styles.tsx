@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
     },
     loginText: { 
         marginTop: 16, 
-        textAlign: 'center' 
+        textAlign: 'center',
+        lineHeight: 24
     },
     loginLink: { 
         color: '#347CD5', 
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
     orSection: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     semiDivider: {
         flex: 1,
@@ -39,7 +40,6 @@ const styles = StyleSheet.create({
         marginVertical: 12,
         textAlign: 'center',
         color: '#999',
-        margin: 12
     },
 
     socialButtonSection: {

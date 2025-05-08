@@ -4,73 +4,84 @@ import { TextStyle } from "../../common/Text";
 import { theme } from "../../../theme";
 import { OtpInput } from "../../common/OtpInput";
 import { OtpHeader } from "../OtpHeader";
-import { useRoute } from "@react-navigation/native";
 
 const RESEND_INTERVAL = 180; // seconds
 
-export const OtpVerification = () => {
+interface OtpVerificationProps {
+    email?: string;
+    onCodeChange?: (code: string) => void;
+    onResend?: () => void;
+}
 
-	const route = useRoute();
-
-	console.log({route})
-
+export const OtpVerification = ({ email, onCodeChange, onResend }: OtpVerificationProps) => {
     const [timer, setTimer] = useState(RESEND_INTERVAL);
     const [isResendActive, setIsResendActive] = useState(false);
+    const [otpCode, setOtpCode] = useState('');
 
     const handleResend = () => {
         if (!isResendActive) return;
-    
-        // ✅ trigger your resend API call here
-        console.log("Resend triggered");
-    
+        onResend();
         setTimer(RESEND_INTERVAL);
     };
 
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
 
-	const formatTime = (seconds: number) => {
-		const mins = Math.floor(seconds / 60);
-		const secs = seconds % 60;
-		return `${mins}:${secs.toString().padStart(2, '0')}`;
-	};
+    useEffect(() => {
+        let interval: NodeJS.Timer;
 
-	useEffect(() => {
-		let interval: NodeJS.Timer;
+        if (timer > 0) {
+            setIsResendActive(false);
+            interval = setInterval(() => {
+                setTimer((prev) => prev - 1);
+            }, 1000);
+        } else {
+            setIsResendActive(true);
+        }
 
-		if (timer > 0) {
-			setIsResendActive(false);
-			interval = setInterval(() => {
-			setTimer((prev) => prev - 1);
-			}, 1000);
-		} else {
-			setIsResendActive(true);
-		}
+        return () => clearInterval(interval);
+    }, [timer]);
 
-		return () => clearInterval(interval);
-	}, [timer]);
+    const handleCodeChange = (code: string) => {
+        setOtpCode(code);
+        onCodeChange(code);
+    };
 
-    return(
+    return (
         <View>
-
             <OtpHeader
-                subText={'To complete your registration, please verify your email by entering the code sent to'}
-                email="email@domain.com"
+                subText={'To complete your verification, please enter the code sent to'}
+                email={email}
             />
 
-            <OtpInput value={['','','','','','']} onChange={() => {}} />
+            <OtpInput 
+                value={otpCode} 
+                onChange={handleCodeChange} 
+                length={6} 
+            />
 
             <TextStyle size="sm" style={styles.resendStatement}>
                 Didn't receive code? 
-                <TextStyle size="sm" style={[styles.resendText, { opacity: isResendActive ? 1 : 0.5 },]} onPress={handleResend}>{` Resend`}</TextStyle>
+                <TextStyle 
+                    size="sm" 
+                    style={[styles.resendText, { opacity: isResendActive ? 1 : 0.5 }]} 
+                    onPress={handleResend}
+                >
+                    {` Resend`}
+                </TextStyle>
             </TextStyle>
 
             {!isResendActive && (
-				<TextStyle size="sm" color="#797979" style={styles.resendStatement}>
-					Resend Code in{" "}
-					<TextStyle size="sm" variant="bold">
-						{formatTime(timer)}
-					</TextStyle>
-				</TextStyle>
-			)}
+                <TextStyle size="sm" color="#797979" style={styles.resendStatement}>
+                    Resend Code in{" "}
+                    <TextStyle size="sm" variant="bold">
+                        {formatTime(timer)}
+                    </TextStyle>
+                </TextStyle>
+            )}
         </View>
     )
 }

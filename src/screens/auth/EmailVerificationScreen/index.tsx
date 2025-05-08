@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Header } from "../../../components/common/Header";
 import { Image, SafeAreaView, View } from "react-native";
 import { CopyrightFooter } from "../../../components/common/CopyrightFooter";
@@ -10,15 +10,18 @@ import { OtpVerification } from "../../../components/features/OtpVerification";
 import { EmailVerified } from "../../../components/features/EmailVerified";
 
 export const EmailVerificationScreen = () => {
+
+	const [otpSent, setOtpSent] = useState(false);
+
 	return(
 		<SafeAreaView style={styles.mainContainer}>
 			<Header title="Email Address Verification" showBackButton />
 			<View style={styles.body}>
-				
-				<OtpVerification />
-
-				<EmailVerified />
-
+				{ otpSent ?
+					<OtpVerification />
+					:
+					<EmailVerified />
+				}
 			</View>
 			<View style={styles.footer}>
 				<TermsPolicies />

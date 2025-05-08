@@ -31,8 +31,8 @@ const AppNavigator = () => (
         color: theme.colors.text.light,
         },
   }}>
-    <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
     <Stack.Screen name="LoginScreen" component={LoginScreen} />
+    <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
     <Stack.Screen name="EmailVerificationScreen" component={EmailVerificationScreen} />
     <Stack.Screen name="UploadResumeScreen" component={UploadResumeScreen} />
     <Stack.Screen name="ForgetPasswordScreen" component={ForgetPasswordScreen} />

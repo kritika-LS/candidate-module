@@ -31,6 +31,7 @@ export const colors = {
     700: '#616161',
     800: '#424242',
     900: '#212121',
+    cc: '#ccc',
   },
   text: {
     primary: '#1F1F1F',

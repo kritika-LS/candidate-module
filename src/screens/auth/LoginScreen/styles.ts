@@ -29,7 +29,8 @@ const styles = StyleSheet.create({
     },
     loginText: { 
         marginTop: 16, 
-        textAlign: 'center' 
+        textAlign: 'center' ,
+        lineHeight: 20,
     },
     loginLink: { 
         color: '#347CD5', 
@@ -66,6 +67,11 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         alignSelf: 'center',
+    },
+    errorText: {
+        color: theme.colors.status.error,
+        fontSize: 12,
+        marginTop: 4,
     },
       
 });

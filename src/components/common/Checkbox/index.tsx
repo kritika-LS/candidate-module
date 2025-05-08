@@ -15,7 +15,7 @@ interface CheckboxProps {
   size?: any
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({ label, checked, mandatory, onChange, size='sm', disabled=false }) => {
+export const Checkbox: React.FC<CheckboxProps> = ({ label, checked, mandatory, onChange, size=14, disabled=false }) => {
   return (
       <View style={styles.checkBoxContainer}>
           {mandatory ? <TextStyle variant="regular" color="red">*</TextStyle> : null}

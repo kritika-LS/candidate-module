@@ -35,6 +35,7 @@ export const LoginScreen = () => {
 
     const handleLogin = async () => {
         try {
+            return navigation.navigate(ScreenNames.MultiStepRegistrationScreen);
             await login(email, password);
             // navigation.navigate(ScreenNames.HomeScreen);
         } catch (validationError: any) {
@@ -97,9 +98,9 @@ export const LoginScreen = () => {
 				<TouchableOpacity
 					style={[styles.button, { backgroundColor: isFormValid ? '#347CD5' : '#ccc' }]}
 					onPress={handleLogin}
-					disabled={!isFormValid}
+					// disabled={!isFormValid}
 				>
-					<TextStyle variant='bold' size='md' style={styles.buttonText}>Log In</TextStyle>
+					<TextStyle variant='bold' size={'md'} style={styles.buttonText}>Log In</TextStyle>
 				</TouchableOpacity>
 
                 <Text style={styles.loginText}>
