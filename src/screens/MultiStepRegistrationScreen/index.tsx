@@ -2,21 +2,27 @@ import React, { useState } from 'react';
 import {
   View,
   TextInput,
-  StyleSheet,
   Button,
   Dimensions,
   Alert,
   Text,
   SafeAreaView,
-  ScrollView
+  Pressable
 } from 'react-native';
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import { TabView } from 'react-native-tab-view';
 import { styles } from './styles';
 import { Header } from '../../components/common/Header';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const screenWidth = Dimensions.get('window').width;
 
 // ----- Type Definitions -----
+type Route = {
+  key: string;
+  title: string;
+  icon: string;
+};
+
 type FormData = {
   personal: { name?: string; phone?: string };
   address: { street?: string; city?: string };
@@ -131,7 +137,7 @@ const MultiStepRegistrationScreen = () => {
 
   const [index, setIndex] = useState(0);
 
-	const [routes] = useState([
+	const [routes] = useState<Route[]>([
     { key: 'personal', title: 'Personal Details', icon: 'account-outline' },
     { key: 'address', title: 'Address', icon: 'home-outline' },
     { key: 'professional', title: 'Professional Details', icon: 'briefcase-outline' },
@@ -199,102 +205,53 @@ const MultiStepRegistrationScreen = () => {
 		jobPref: formData.jobPref.jobTitle && formData.jobPref.location
 	};
 
+const renderScrollableTabBar = (props) => {
+  const { navigationState, jumpTo } = props;
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <Header title='Registration' showBackButton />
-      <ScrollView style={{ }}>
-        <TabView
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            initialLayout={{ width: screenWidth }}
-            renderTabBar={props => (
-                <TabBar
-                {...props}
-                indicatorStyle={{ backgroundColor: 'blue' }}
-                style={{ backgroundColor: '#f5f5f5' }}
-                activeColor="black"
-                inactiveColor="gray"
-                scrollEnabled // This makes the tab bar scrollable
-                />
-            )}
-        />
-        <View style={{ padding: 16 }}>
-          {index < routes.length - 1 ? (
-            <Button title="Next" onPress={() => setIndex(prev => prev + 1)} />
-          ) : (
-            <Button title="Submit" onPress={handleSubmit} />
-          )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <View style={styles.tabBarContainer}>
+      {navigationState.routes.map((route, index) => {
+        const focused = navigationState.index === index;
+        const color = focused ? '#2589f5' : 'gray';
+
+        return (
+          <Pressable
+            key={route.key}
+            onPress={() => jumpTo(route.key)}
+            style={styles.tabItem}
+          >
+            <Icon name={route.icon} size={18} color={color} style={styles.icon} />
+            <Text style={[styles.tabText, { color }]}>{route.title}</Text>
+            {focused && <View style={styles.activeIndicator} />}
+          </Pressable>
+        );
+      })}
+    </View>
   );
 };
 
+return (
+  <SafeAreaView style={{ flex: 1 }}>
+  <Header title="Registration" showBackButton />
+  <View style={{ flex: 1 }}>
+    <TabView
+      navigationState={{ index, routes }}
+      renderScene={renderScene}
+      onIndexChange={setIndex}
+      initialLayout={{ width: screenWidth }}
+      renderTabBar={renderScrollableTabBar}
+    />
+
+    <View style={{ padding: 16 }}>
+      {index < routes.length - 1 ? (
+        <Button title="Next" onPress={() => setIndex(prev => prev + 1)} />
+      ) : (
+        <Button title="Submit" onPress={handleSubmit} />
+      )}
+    </View>
+  </View>
+</SafeAreaView>
+)
+};
+
 export default MultiStepRegistrationScreen;
-
-// // 1. Define tab components OUTSIDE the main component (avoid recreation on render)
-// const FirstTab = () => (
-//   <View style={customstyles.tabContainer}>
-//     <Text>Tab 1 Content</Text>
-//   </View>
-// );
-
-// const SecondTab = () => (
-//   <View style={customstyles.tabContainer}>
-//     <Text>Tab 2 Content</Text>
-//   </View>
-// );
-
-// // 2. Memoize SceneMap to prevent unnecessary recalculations
-
-
-// function MultiStepRegistrationScreen() {
-//   // 3. Use `useState` initializer function for routes (optimization)
-//   const [index, setIndex] = useState(0);
-//   const [routes] = useState(() => [
-//     { key: 'first', title: 'First' },
-//     { key: 'second', title: 'Second' },
-//   ]);
-//   const renderScene = SceneMap({
-//     first: FirstTab,
-//     second: SecondTab,
-//   });
-//   return (
-//     <TabView
-//       navigationState={{ index, routes }}
-//       renderScene={renderScene}
-//       onIndexChange={setIndex}
-//       // 4. Add key prop to TabBar if customizing (prevents "UIFrameGuarded" errors)
-//       renderTabBar={(props) => (
-//         <TabBar
-//           {...props}
-//           key="tab-bar"
-//           indicatorStyle={{ backgroundColor: 'blue' }}
-//           style={customstyles.tabBar}
-//           labelStyle={customstyles.label}
-//           scrollEnabled
-//         />
-//       )}
-//       // 5. Add lazy loading for better performance
-//       lazy
-//     />
-//   );
-// }
-
-// // 6. Styles to prevent layout issues
-// const customstyles = StyleSheet.create({
-//   tabContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-//   tabBar: {
-//     backgroundColor: 'white',
-//   },
-//   label: {
-//     color: 'black',
-//   },
-// });
-
-// export default MultiStepRegistrationScreen;
