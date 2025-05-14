@@ -20,6 +20,9 @@ export const TextStyle: React.FC<TextStyleProps> = ({
     fontFamily: theme.typography.fontFamily[variant],
     fontSize: theme.typography.fontSize[size],
     color: color,
+    fontWeight: variant === 'bold' ? 'bold' : 
+             variant === 'medium' ? '500' : 
+             variant === 'light' ? '300' : 'normal',
   };
 
   return (

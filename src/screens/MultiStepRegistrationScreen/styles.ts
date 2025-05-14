@@ -38,4 +38,8 @@ export const styles = StyleSheet.create({
       width: '100%',
       backgroundColor: '#2589f5',
     },
+    registerBtn: {
+      borderRadius: 24,
+      height: 52,
+    }
 });

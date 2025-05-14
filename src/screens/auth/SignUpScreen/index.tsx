@@ -14,6 +14,7 @@ import { SocialButtons } from '../../../components/features/SocialButtons';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../../types/navigation';
 import { signUp } from 'aws-amplify/auth';
+import * as yup from 'yup';
 
 export const SignUpScreen = () => {
 
@@ -25,10 +26,8 @@ export const SignUpScreen = () => {
   const [errors, setErrors] = useState({ email: '', password: '', confirmPassword: '' });
 
   const handleSignUp = async () => {
-	console.log("Sign up button pressed:", { email, password, confirmPassword });
-  
 	try {
-		const { nextStep: signUpNextStep } = await signUp({
+		const response = await signUp({
 			username: email,
 			password: password, 
 			options: {
@@ -38,7 +37,7 @@ export const SignUpScreen = () => {
 			},
 		});
   
-	  console.log("Sign up successful!", signUpNextStep);
+	  console.log("Sign up successful!", response);
   
 	  navigation.navigate(ScreenNames.EmailVerificationScreen, {
 		email: email,
@@ -60,6 +59,52 @@ export const SignUpScreen = () => {
     }
   };
 
+  const emailValidity = (email: string) => {
+		(signupSchema.fields.email as yup.StringSchema)
+		.validate(email)
+		.then(() => {
+			setErrors(prev => ({ ...prev, email: '' }));
+		})
+		.catch((err: yup.ValidationError) => {
+			setErrors(prev => ({ ...prev, email: err.message }));
+		});
+	
+		setEmail(email);
+	};
+  
+   const passwordValidity = (password: string) => {
+		(signupSchema.fields.password as yup.StringSchema)
+		.validate(password)
+		.then(() => {
+			setErrors(prev => ({ ...prev, password: '' }));
+		})
+		.catch((err: yup.ValidationError) => {
+			setErrors(prev => ({ ...prev, password: err.message }));
+		});
+	
+		setPassword(password);
+	};
+
+	const confirmPasswordValidity = ( confirmPassword: string) => {
+		const partialSchema = yup.object().shape({
+		  password: signupSchema.fields.password,
+		  confirmPassword: signupSchema.fields.confirmPassword,
+		});
+	  
+		partialSchema
+		  .validate({ password, confirmPassword })
+		  .then(() => {
+			setErrors(prev => ({ ...prev, confirmPassword: '' }));
+		  })
+		  .catch((err: yup.ValidationError) => {
+			const confirmPasswordError = err.inner.find(e => e.path === 'confirmPassword');
+			if (confirmPasswordError) {
+			  setErrors(prev => ({ ...prev, confirmPassword: confirmPasswordError.message }));
+			}
+		  });
+		  setConfirmPassword(confirmPassword);
+	  };
+
 	const handleLoginPressed = () => {
 		navigation.navigate(ScreenNames.LoginScreen);
 	}
@@ -75,17 +120,17 @@ export const SignUpScreen = () => {
 				subText='Connect with top healthcare employers, verify credentials, and advance your career.'
 			/>
 
-			<EmailInput value={email} onChange={setEmail} error={errors.email} />
+			<EmailInput value={email} onChange={emailValidity} error={errors.email} />
 			<PasswordInput
 				value={password}
-				onChange={setPassword}
+				onChange={passwordValidity}
 				error={errors.password}
 				label="Password"
 				placeholder="Enter password"
 			/>
 			<ConfirmPasswordInput
 				value={confirmPassword}
-				onChange={setConfirmPassword}
+				onChange={confirmPasswordValidity}
 				error={errors.confirmPassword}
 				placeholder="Enter password"
 			/>

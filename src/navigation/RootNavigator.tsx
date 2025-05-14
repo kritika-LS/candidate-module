@@ -7,10 +7,9 @@ import WalkthroughScreen from '../screens/auth/Walkthrough';
 import SplashScreen from '../screens/SplashScreen';
 
 const RootNavigator = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const [hasSeenWalkthrough, setHasSeenWalkthrough] = useState<boolean | null>(null);
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -18,7 +17,6 @@ const RootNavigator = () => {
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
-
 
   useEffect(() => {
     const checkWalkthrough = async () => {
@@ -33,7 +31,8 @@ const RootNavigator = () => {
     setHasSeenWalkthrough(true);
   };
 
-  if (isSplashVisible || hasSeenWalkthrough === null) {
+  // Show splash screen while loading initial states
+  if (isSplashVisible || isLoading || hasSeenWalkthrough === null) {
     return <SplashScreen />;
   }
 

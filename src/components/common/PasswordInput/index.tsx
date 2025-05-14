@@ -28,7 +28,7 @@ export const PasswordInput = ({ value, onChange, error, label, placeholder }: Pa
           onChangeText={onChange}
         />
         <TouchableOpacity onPress={() => setSecureText(!secureText)}>
-					<Icon name={secureText ? 'visibility-off' : 'visibility'} size={18} color='#ccc' />
+					<Icon name={secureText ? 'eye-off' : 'eye'} size={18} color='#ccc' />
         </TouchableOpacity>
       </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}

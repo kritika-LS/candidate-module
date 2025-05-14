@@ -20,6 +20,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../../types/navigation';
 import { loginSchema } from '../../../validations/loginValidation';
 import { useAuth } from '../../../context/AuthContext';
+import * as yup from 'yup';
 
 export const LoginScreen = () => {
 
@@ -35,17 +36,15 @@ export const LoginScreen = () => {
 
     const handleLogin = async () => {
         try {
-            return navigation.navigate(ScreenNames.MultiStepRegistrationScreen);
-            await login(email, password);
-            // navigation.navigate(ScreenNames.HomeScreen);
-        } catch (validationError: any) {
-        if (validationError.inner) {
-            const formErrors: any = {};
-            validationError.inner.forEach((error: any) => {
-                formErrors[error.path] = error.message;
-            });
-            setErrors(formErrors);
-        }
+            await login(email, password, rememberAccount);
+        } catch (error: any) {
+            if (error.name === 'UserNotFoundException') {
+                setErrors({...errors, email: 'User not found. Please sign up.'});
+            } else if (error.name === 'NotAuthorizedException') {
+                setErrors({...errors, password: 'Incorrect username or password.'});
+            } else {
+                setErrors({...errors, password: error.message || 'Login failed'});
+            }
         }
     };
 
@@ -57,6 +56,32 @@ export const LoginScreen = () => {
             return false;
         }
     };
+
+    const emailValidity = (email: string) => {
+        (loginSchema.fields.email as yup.StringSchema)
+          .validate(email)
+          .then(() => {
+            setErrors(prev => ({ ...prev, email: '' }));
+          })
+          .catch((err: yup.ValidationError) => {
+            setErrors(prev => ({ ...prev, email: err.message }));
+          });
+      
+        setEmail(email);
+      };
+
+    const passwordValidity = (password: string) => {
+        (loginSchema.fields.password as yup.StringSchema)
+          .validate(password)
+          .then(() => {
+            setErrors(prev => ({ ...prev, password: '' }));
+          })
+          .catch((err: yup.ValidationError) => {
+            setErrors(prev => ({ ...prev, password: err.message }));
+          });
+      
+        setPassword(password);
+      };
 
     const isFormValid = checkFormValidity();
 
@@ -81,10 +106,10 @@ export const LoginScreen = () => {
 					subText='Connect with top healthcare employers, verify credentials, and advance your career.'
 				/>
 
-				<EmailInput value={email} onChange={setEmail} error={errors.email} />
+				<EmailInput value={email} onChange={emailValidity} error={errors.email} />
 				<PasswordInput
 					value={password}
-					onChange={setPassword}
+					onChange={passwordValidity}
 					error={errors.password}
 					label="Password"
 					placeholder="Enter password"

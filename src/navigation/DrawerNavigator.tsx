@@ -10,6 +10,7 @@ import { SkillsChecklistScreen } from '../screens/SkillsChecklistScreen';
 import { ReferencesScreen } from '../screens/ReferencesScreen';
 import { DocumentsScreen } from '../screens/DocumentsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
+import BottomTabs from './BottomTabs/BottomTabs';
 
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -19,6 +20,7 @@ const DrawerNavigator = () => (
     screenOptions={{ headerShown: true }}
     drawerContent={(props) => <CustomDrawer {...props} />}
   >
+    <Drawer.Screen name="BottomTabs" component={BottomTabs} options={{ title: false }} />
     <Drawer.Screen name="Home" component={HomeScreen} />
     <Drawer.Screen name="ScreeningsScreen" component={ScreeningsScreen} />
     <Drawer.Screen name="SkillsChecklistScreen" component={SkillsChecklistScreen} />

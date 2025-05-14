@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   View,
   TextInput,
-  Button,
   Dimensions,
   Alert,
   Text,
@@ -13,6 +12,14 @@ import { TabView } from 'react-native-tab-view';
 import { styles } from './styles';
 import { Header } from '../../components/common/Header';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { theme } from '../../theme';
+import PersonalDetailsSection from './PersonalDetailsSection';
+import { TermsPolicies } from '../../components/common/TermsPolicies';
+import { CopyrightFooter } from '../../components/common/CopyrightFooter';
+import { Button } from '../../components/common/Button';
+import AddressInfoScreen from './Address';
+import ProfessionalDetailsForm from './ProfessionalDetails';
+import { JobPreferenceForm } from './JobPreference';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -30,29 +37,23 @@ type FormData = {
   jobPref: { jobTitle?: string; location?: string };
 };
 
+const professionsList = ['Software Engineer', 'Designer'];
+const specialtiesMap = {
+  'Software Engineer': ['Frontend', 'Backend'],
+  'Designer': ['UI', 'UX']
+};
+
 // ----- Step Components -----
 const PersonalDetails = ({
   data,
-  onChange
+  onChange,
+  handleSubmit,
   }: {
     data: FormData['personal'];
     onChange: (data: FormData['personal']) => void;
+    handleSubmit: () => void;
   }) => (
-    <View style={styles.scene}>
-      <TextInput
-        style={styles.input}
-        placeholder="Full Name"
-        value={data.name || ''}
-        onChangeText={text => onChange({ ...data, name: text })}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Phone"
-        keyboardType="phone-pad"
-        value={data.phone || ''}
-        onChangeText={text => onChange({ ...data, phone: text })}
-      />
-    </View>
+    <PersonalDetailsSection onSubmit={handleSubmit} />
 );
 
 const AddressDetails = ({
@@ -62,44 +63,23 @@ const AddressDetails = ({
     data: FormData['address'];
     onChange: (data: FormData['address']) => void;
   }) => (
-    <View style={styles.scene}>
-      <TextInput
-        style={styles.input}
-        placeholder="Street"
-        value={data.street || ''}
-        onChangeText={text => onChange({ ...data, street: text })}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="City"
-        value={data.city || ''}
-        onChangeText={text => onChange({ ...data, city: text })}
-      />
-    </View>
+    <AddressInfoScreen />
 );
 
 const ProfessionalDetails = ({
     data,
-    onChange
+    onChange,
+    handleSubmit
   }: {
     data: FormData['professional'];
     onChange: (data: FormData['professional']) => void;
+    handleSubmit: () => void;
   }) => (
-    <View style={styles.scene}>
-      <TextInput
-        style={styles.input}
-        placeholder="Occupation"
-        value={data.occupation || ''}
-        onChangeText={text => onChange({ ...data, occupation: text })}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Experience (years)"
-        keyboardType="numeric"
-        value={data.experience || ''}
-        onChangeText={text => onChange({ ...data, experience: text })}
-      />
-    </View>
+    <ProfessionalDetailsForm 
+      onSubmit={handleSubmit} 
+      professionsList={professionsList}
+      specialtiesMap={specialtiesMap}
+    />
 );
 
 const JobPreferences = ({
@@ -109,20 +89,7 @@ const JobPreferences = ({
     data: FormData['jobPref'];
     onChange: (data: FormData['jobPref']) => void;
   }) => (
-    <View style={styles.scene}>
-      <TextInput
-        style={styles.input}
-        placeholder="Preferred Job Title"
-        value={data.jobTitle || ''}
-        onChangeText={text => onChange({ ...data, jobTitle: text })}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Preferred Location"
-        value={data.location || ''}
-        onChangeText={text => onChange({ ...data, location: text })}
-      />
-    </View>
+    <JobPreferenceForm />
 );
 
 // ----- Main Component -----
@@ -138,10 +105,10 @@ const MultiStepRegistrationScreen = () => {
   const [index, setIndex] = useState(0);
 
 	const [routes] = useState<Route[]>([
-    { key: 'personal', title: 'Personal Details', icon: 'account-outline' },
+    { key: 'personal', title: 'Personal Details', icon: 'account-circle-outline' },
     { key: 'address', title: 'Address', icon: 'home-outline' },
     { key: 'professional', title: 'Professional Details', icon: 'briefcase-outline' },
-    { key: 'jobPref', title: 'Job Preferences', icon: 'tune-variant' }
+    { key: 'jobPref', title: 'Job Preferences', icon: 'tune' }
   ]);
 
   const validateForm = () => {
@@ -169,6 +136,7 @@ const MultiStepRegistrationScreen = () => {
           <PersonalDetails
             data={formData.personal}
             onChange={data => setFormData(prev => ({ ...prev, personal: data }))}
+            handleSubmit={handleSubmit}
           />
         );
       case 'address':
@@ -183,6 +151,7 @@ const MultiStepRegistrationScreen = () => {
           <ProfessionalDetails
             data={formData.professional}
             onChange={data => setFormData(prev => ({ ...prev, professional: data }))}
+            handleSubmit={handleSubmit}
           />
         );
       case 'jobPref':
@@ -205,14 +174,14 @@ const MultiStepRegistrationScreen = () => {
 		jobPref: formData.jobPref.jobTitle && formData.jobPref.location
 	};
 
-const renderScrollableTabBar = (props) => {
+const renderScrollableTabBar = (props:any) => {
   const { navigationState, jumpTo } = props;
 
   return (
     <View style={styles.tabBarContainer}>
-      {navigationState.routes.map((route, index) => {
+      {navigationState.routes.map((route:any, index: number) => {
         const focused = navigationState.index === index;
-        const color = focused ? '#2589f5' : 'gray';
+        const color = focused ? theme.colors.primary.main : theme.colors.text.light;
 
         return (
           <Pressable
@@ -220,7 +189,7 @@ const renderScrollableTabBar = (props) => {
             onPress={() => jumpTo(route.key)}
             style={styles.tabItem}
           >
-            <Icon name={route.icon} size={18} color={color} style={styles.icon} />
+            <Icon name={route.icon} size={20} color={color} style={styles.icon} />
             <Text style={[styles.tabText, { color }]}>{route.title}</Text>
             {focused && <View style={styles.activeIndicator} />}
           </Pressable>
@@ -243,12 +212,10 @@ return (
     />
 
     <View style={{ padding: 16 }}>
-      {index < routes.length - 1 ? (
-        <Button title="Next" onPress={() => setIndex(prev => prev + 1)} />
-      ) : (
-        <Button title="Submit" onPress={handleSubmit} />
-      )}
+        <Button title="Register" style={styles.registerBtn} onPress={handleSubmit} />
     </View>
+      <TermsPolicies />
+      <CopyrightFooter />
   </View>
 </SafeAreaView>
 )

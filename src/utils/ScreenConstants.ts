@@ -10,6 +10,8 @@ export const ScreenNames = {
     UploadResumeScreen: 'UploadResumeScreen',
     ForgetPasswordScreen: 'ForgetPasswordScreen',
     MultiStepRegistrationScreen: "MultiStepRegistrationScreen",
+    RegistrationASuccessScreen: "RegistrationASuccessScreen",
+    ProfileScreen: "ProfileScreen",
 } as const;
 
 export type ScreenNameTypes = typeof ScreenNames[keyof typeof ScreenNames];

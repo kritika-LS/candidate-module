@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { theme } from "../../../theme";
 
 const styles = StyleSheet.create({
     container: { 
@@ -6,6 +7,7 @@ const styles = StyleSheet.create({
         padding: 24, 
         backgroundColor: '#fff',
         justifyContent: 'center',
+        marginTop: theme.spacing.lg,
     },
     button: { 
         borderRadius: 24, 

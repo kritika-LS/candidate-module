@@ -19,6 +19,10 @@ export const colors = {
     light: '#FFCDA1',
     dark: '#FF9F52',
   },
+  green: {
+    main: '#00AE52',
+    success_100: '#00AE52',
+  },
   grey: {
     40: '#DBCDDF',
     50: '#FAFAFA',

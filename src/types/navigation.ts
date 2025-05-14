@@ -13,6 +13,7 @@ export type AuthStackParamList = {
     UploadResumeScreen: undefined;
     ForgetPasswordScreen: undefined;
     MultiStepRegistrationScreen: undefined;
+    RegistrationASuccessScreen: undefined;
 };
   
 export type DrawerParamList = {
@@ -22,7 +23,13 @@ export type DrawerParamList = {
     ReferencesScreen: undefined;
     DocumentsScreen: undefined;
     SettingsScreen: undefined;
+    BottomTabs: undefined
 };
+
+export type BottomTabsParamsList = {
+    Home: undefined;
+    Profile: undefined;
+}
 
 declare global {
     namespace ReactNavigation {

@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     },
     scrollContent: {
         flexGrow: 1,
-        padding: 24,
+        paddingTop: 24,
     },
     button: { 
         borderRadius: 24, 

@@ -16,11 +16,11 @@ import Icon from '../common/Icon/Icon';
 import { useAuth } from '../../context/AuthContext';
 
 const drawerItems = [
-  { label: 'My Screenings', icon: 'person-search', route: 'My Screenings' },
-  { label: 'Skills Checklist', icon: 'checklist', route: 'SkillsChecklistScreen' },
-  { label: 'References', icon: 'person-add', route: 'References' },
-  { label: 'Documents', icon: 'assignment', route: 'Documents' },
-  { label: 'Settings', icon: 'settings', route: 'Settings' },
+  { label: 'My Screenings', icon: 'account-search-outline', route: 'My Screenings' },
+  { label: 'Skills Checklist', icon: 'format-list-checks', route: 'SkillsChecklistScreen' },
+  // { label: 'References', icon: 'person-add', route: 'References' },
+  // { label: 'Documents', icon: 'assignment', route: 'Documents' },
+  { label: 'Settings', icon: 'cog-outline', route: 'Settings' },
 ];
 
 const CustomDrawer = ({ navigation }: any) => {

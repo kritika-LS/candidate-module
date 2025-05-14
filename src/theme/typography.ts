@@ -1,9 +1,9 @@
 export const typography = {
   fontFamily: {
-    regular: 'Roboto-Regular',
-    medium: 'Roboto-Medium',
-    bold: 'Roboto-Bold',
-    light: 'Roboto-Light',
+    regular: 'System',
+    medium: 'System',
+    bold: 'System',
+    light: 'System',
   },
   fontSize: {
     xs: 12,
