@@ -85,24 +85,20 @@ export const SignUpScreen = () => {
 		setPassword(password);
 	};
 
-	const confirmPasswordValidity = ( confirmPassword: string) => {
-		const partialSchema = yup.object().shape({
-		  password: signupSchema.fields.password,
-		  confirmPassword: signupSchema.fields.confirmPassword,
-		});
-	  
-		partialSchema
-		  .validate({ password, confirmPassword })
+	const confirmPasswordValidity = (confirmPassword: string) => {
+		yup
+		  .string()
+		  .oneOf([password], 'Passwords do not match. Please enter the same password')
+		  .required('Please confirm your password')
+		  .validate(confirmPassword)
 		  .then(() => {
 			setErrors(prev => ({ ...prev, confirmPassword: '' }));
 		  })
 		  .catch((err: yup.ValidationError) => {
-			const confirmPasswordError = err.inner.find(e => e.path === 'confirmPassword');
-			if (confirmPasswordError) {
-			  setErrors(prev => ({ ...prev, confirmPassword: confirmPasswordError.message }));
-			}
+			setErrors(prev => ({ ...prev, confirmPassword: err.message }));
 		  });
-		  setConfirmPassword(confirmPassword);
+	  
+		setConfirmPassword(confirmPassword);
 	  };
 
 	const handleLoginPressed = () => {
