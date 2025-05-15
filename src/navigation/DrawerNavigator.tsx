@@ -20,7 +20,7 @@ const DrawerNavigator = () => (
     screenOptions={{ headerShown: true }}
     drawerContent={(props) => <CustomDrawer {...props} />}
   >
-    <Drawer.Screen name="BottomTabs" component={BottomTabs} options={{ title: false }} />
+    <Drawer.Screen name="BottomTabs" component={BottomTabs} />
     <Drawer.Screen name="Home" component={HomeScreen} />
     <Drawer.Screen name="ScreeningsScreen" component={ScreeningsScreen} />
     <Drawer.Screen name="SkillsChecklistScreen" component={SkillsChecklistScreen} />

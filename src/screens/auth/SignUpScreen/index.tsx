@@ -45,7 +45,7 @@ export const SignUpScreen = () => {
 	  });
 	} catch (error) {
 	  console.log("Sign up error caught:", error);
-	  Alert.alert("Sign Up Failed", error?.message || "Unknown error");
+	//   Alert.alert("Sign Up Failed", error?.message || "Unknown error");
 	}
   };
   
@@ -106,6 +106,7 @@ export const SignUpScreen = () => {
 	  };
 
 	const handleLoginPressed = () => {
+		//@ts-ignore
 		navigation.navigate(ScreenNames.LoginScreen);
 	}
 
