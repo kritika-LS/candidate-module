@@ -23,6 +23,7 @@ import PersonalDetailsSection from './PersonalDetailsSection';
 import { personalDetailsSchema } from '../../validations/personalDetailValidation';
 import { professionalDetailsSchema } from '../../validations/professionalDetailValidation';
 import { jobPreferenceSchema } from '../../validations/jobPreferenceValidation';
+import { addressValidationSchema } from '../../validations/addressValidation';
 
 export interface ParentScreenRef {
   submitPersonalDetails: () => void;
@@ -40,7 +41,23 @@ type Route = {
 
 type FormData = {
   personal: { firstName?: string; lastName?: string, alternateEmail?:string };
-  address: { street?: string; city?: string };
+  address: {
+    physicalAddress: {
+      address1?: string;
+      city?: string;
+      stateCode?: string;
+      zipCode?: string;
+      countryCode?: string;
+    };
+    mailingAddress: {
+      address1?: string;
+      city?: string;
+      stateCode?: string;
+      zipCode?: string;
+      countryCode?: string;
+    };
+    isSamePhysical?: boolean;
+  };
   professional: { experience?:string, profession?: string, specialty?:string };
   jobPref: { employmentType?: string; availabilityDate?: string, shift?: string, selectedStates?:string };
 };
@@ -65,6 +82,7 @@ const PersonalDetails : React.FC<PersonalDetailsProps> = ({
   }: {
     data: FormData['personal'];
     onChange: (data: FormData['personal']) => void;
+    errors: Record<string, string>;
   }) => { 
     return(
     <PersonalDetailsSection data={data} onChange={onChange} errors={errors} />
@@ -72,12 +90,14 @@ const PersonalDetails : React.FC<PersonalDetailsProps> = ({
 
 const AddressDetails = ({
   data,
-  onChange
+  onChange,
+  errors
   }: {
     data: FormData['address'];
     onChange: (data: FormData['address']) => void;
+    errors: any;
   }) => (
-    <AddressInfoScreen />
+    <AddressInfoScreen data={data} onChange={onChange} errors={errors} />
 );
 
 const ProfessionalDetails = ({
@@ -221,6 +241,37 @@ const MultiStepRegistrationScreen = () => {
       return false;
     }
   };
+
+  const validateAddressInfo = async () => {
+    try {
+      await addressValidationSchema.validate(formData.address, { abortEarly: false });
+      setFormErrors((prev: any) => ({ ...prev, address: {} }));
+      return true;
+    } catch (err: any) {
+      const errorObj: Record<string, any> = {};
+  
+      err.inner.forEach((e: any) => {
+        if (!e.path) return;
+  
+        const pathParts = e.path.split('.'); // e.g., ['physicalAddress', 'city']
+        let current = errorObj;
+  
+        pathParts.forEach((part: string, index: number) => {
+          if (index === pathParts.length - 1) {
+            current[part] = e.message;
+          } else {
+            if (!current[part]) current[part] = {};
+            current = current[part];
+          }
+        });
+      });
+      console.log('Address validation errors:', errorObj);
+      setFormErrors((prev: any) => ({ ...prev, address: errorObj }));
+      return false;
+    }
+  };
+  
+  console.log("tag errore",formErrors)
   // const handleSubmit = async() => {
   //   // if (validateForm()) {
   //   //   console.log('Submitted Data:', formData);
@@ -247,9 +298,10 @@ const MultiStepRegistrationScreen = () => {
 
     const isPersonalValid = await validatePersonalDetails();  
     const isProfessionalValid = await validateProfessionalDetails();
+    const isAddressValid = await validateAddressInfo();
     const isJobPrefValid = await validateJobPreference();
 
-    if (isPersonalValid && isProfessionalValid && isJobPrefValid) {
+    if (isPersonalValid && isProfessionalValid && isJobPrefValid && isAddressValid) {
       Alert.alert('Success', 'Registration complete!');
     } else {
       console.log('Validation failed');
@@ -271,6 +323,7 @@ const MultiStepRegistrationScreen = () => {
           <AddressDetails
             data={formData.address}
             onChange={data => setFormData(prev => ({ ...prev, address: data }))}
+            errors={formErrors.address}
           />
         );
       case 'professional':
@@ -320,7 +373,7 @@ const renderScrollableTabBar = (props:any) => {
             <Icon name={route.icon} size={20} color={color} style={styles.icon} />
             <Text style={[styles.tabText, { color }]}>
               {route.title}
-              {route.hasError && <Icon name={'alert-circle'} size={18} color={'red'} style={styles.icon} />}
+              {route.hasError && <Icon name={'alert-circle'} size={10} color={'red'} />}
               </Text>
             {focused && <View style={styles.activeIndicator} />}
           </Pressable>
