@@ -30,8 +30,7 @@ export const LoginScreen = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [errors, setErrors] = useState({ email: '', password: '', confirmPassword: '' });
+    const [errors, setErrors] = useState({ email: '', password: ''});
     const [rememberAccount, setRememberAccount] = useState(false);
 
     const handleLogin = async () => {
@@ -50,7 +49,7 @@ export const LoginScreen = () => {
 
     const checkFormValidity = () => {
         try {
-            loginSchema.validateSync({ email, password, confirmPassword }, { abortEarly: false });
+            loginSchema.validateSync({ email, password }, { abortEarly: false });
             return true;
         } catch {
             return false;
