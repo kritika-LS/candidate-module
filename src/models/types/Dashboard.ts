@@ -7,6 +7,7 @@ export interface Job {
 	id: string;
 	title: string;
 	type: string;
+	companyName: string;
 	location: string;
 	reference: string;
 	rate: string;

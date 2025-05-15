@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     padding: theme.spacing.md,
   },
   section: {
-    marginTop: theme.spacing.md,
+    // marginTop: theme.spacing.md,
   },
   sectionTitle: {
     fontSize: 16,

@@ -21,8 +21,10 @@ export const colors = {
   },
   green: {
     main: '#00AE52',
+    light: '#CCEFDC',
     success_100: '#00AE52',
   },
+  blue_light: '#E8F4FF',
   grey: {
     40: '#DBCDDF',
     50: '#FAFAFA',
@@ -36,6 +38,8 @@ export const colors = {
     800: '#424242',
     900: '#212121',
     cc: '#ccc',
+    light: '#F8F9FA',
+    g100: '#F8F9FA'
   },
   text: {
     primary: '#1F1F1F',

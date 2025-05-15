@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   text: {
-    flex: 1,
+    flex: 0.9,
   },
   button: {
     paddingHorizontal: 20,
@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 24,
     borderColor: theme.colors.primary.main,
-    marginLeft: 10,
     height: 24
   },
   buttonText: {

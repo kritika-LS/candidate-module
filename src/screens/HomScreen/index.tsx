@@ -5,12 +5,13 @@ import { DrawerParamList } from '../../types/navigation';
 import DashboardGreetingsCard from '../../components/features/Dashboard/DashboardGreetingsCard/DashboardGreetingsCard';
 import CandidateInfoCard from '../../components/features/Dashboard/CandidateInfoCard/CandidateInfoCard';
 import PendingActionItem from '../../components/features/Dashboard/PendingActionItem/PendingActionItem';
-import JobCard from '../../components/common/JobCard';
+import JobCard from '../../components/features/JobCard';
 import { Job } from '../../models/types/Dashboard';
 import { styles } from './styles';
 import { TextStyle } from '../../components/common/Text';
 import Icon from '../../components/common/Icon/Icon';
 import { theme } from '../../theme';
+import { DashboardStats } from '../../components/features/Dashboard/DashboardStats';
 
 const pendingActions = [
   { id: '1', text: 'You have a pending Skills Checklist' },
@@ -23,6 +24,7 @@ const jobData: Job[] = [
     id: 'j1',
     title: 'Registered Nurse',
     type: 'Travel',
+    companyName: 'Starlight Medical Center',
     location: 'Syracuse, NY, US',
     reference: 'RE-1032YPL',
     rate: '$2484 - $2681',
@@ -38,6 +40,7 @@ const jobData: Job[] = [
     id: 'j2',
     title: 'Registered Nurse',
     type: 'Travel',
+    companyName: 'Starlight Medical Center',
     location: 'Syracuse, NY, US',
     reference: 'RE-1032YPL',
     rate: '$2484 - $2681',
@@ -57,6 +60,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <ScrollView style={styles.container}>
       <DashboardGreetingsCard firstName='Jane' lastName='Cooper' />
+
+      {/* <View> */}
+        <DashboardStats />
+      {/* </View> */}
+
       <View style={styles.body}>
 
         <View style={styles.section}>

@@ -3,7 +3,7 @@ import { View, ScrollView, Text, StyleSheet } from 'react-native';
 import DashboardGreetingsCard from '../../components/features/Dashboard/DashboardGreetingsCard/DashboardGreetingsCard';
 import CandidateInfoCard from '../../components/features/Dashboard/CandidateInfoCard/CandidateInfoCard';
 import PendingActionItem from '../../components/features/Dashboard/PendingActionItem/PendingActionItem';
-import JobCard from '../../components/common/JobCard';
+import JobCard from '../../components/features/JobCard';
 import { Job } from '../../models/types/Dashboard';
 
 const pendingActions = [
