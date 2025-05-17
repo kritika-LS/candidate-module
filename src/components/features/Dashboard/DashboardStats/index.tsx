@@ -52,13 +52,13 @@ const data: StatCardProps[] = [
 
 const StatCard = ({ icon, label, count, bgColor, iconBgColor }: StatCardProps) => {
   return (
-    <View style={[styles.card, { backgroundColor: bgColor }]}>
+    <TouchableOpacity style={[styles.card, { backgroundColor: bgColor }]} activeOpacity={0.8}>
       <View style={styles.countsection}>
         <View style={[styles.iconCircle, { backgroundColor: iconBgColor }]}>{icon}</View>
         <Text style={styles.count}>{count}</Text>
       </View>
       <Text style={styles.label}>{label}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

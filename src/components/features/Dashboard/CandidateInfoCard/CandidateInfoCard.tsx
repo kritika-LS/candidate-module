@@ -5,20 +5,29 @@ import { styles } from './styles';
 import Icon from '../../../common/Icon/Icon';
 import HorizontalProgressBar from '../../../common/ProgressBar/HorizontalProgressBar';
 import { theme } from '../../../../theme';
+import { useNavigation } from '@react-navigation/native';
 
 interface CandidateInfoCardProps {
   firstName: string;
   lastName: string;
   profileImage?: string;
+  showCompleteButton?: boolean;
 }
 
 const CandidateInfoCard: React.FC<CandidateInfoCardProps> = ({
   firstName = 'Jane',
   lastName = 'Cooper',
   profileImage,
+  showCompleteButton = true,
 }) => {
 
+	const navigation = useNavigation();
+
 	const initials = `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase();
+
+	const handleComplete = () => {
+		navigation.navigate('Profile');
+	}
 
 	return (
 		<View style={styles.card}>
@@ -54,9 +63,11 @@ const CandidateInfoCard: React.FC<CandidateInfoCardProps> = ({
 				</View>
 				<HorizontalProgressBar progress={60} style={{ height: 10 }} />
 			</View>
-			<TouchableOpacity style={styles.button}>
-				<TextStyle style={styles.buttonText} size='xs'>Complete</TextStyle>
-			</TouchableOpacity>
+			{ showCompleteButton &&
+				<TouchableOpacity style={styles.button} onPress={handleComplete}>
+					<TextStyle style={styles.buttonText} size='xs'>Complete</TextStyle>
+				</TouchableOpacity>
+			}
 		</View>
 	)
 };

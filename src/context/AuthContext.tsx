@@ -1,9 +1,10 @@
-import { 
-  getCurrentUser, 
-  signIn, 
-  signOut, 
+import {
+  getCurrentUser,
+  signIn,
+  signOut,
   fetchAuthSession,
-  type AuthSession
+  type AuthSession,
+  fetchUserAttributes
 } from 'aws-amplify/auth';
 import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -34,6 +35,14 @@ type AuthContextType = {
   login: (email: string, password: string, rememberAccount?: boolean) => Promise<void>;
   logout: () => Promise<void>;
   getSession: () => Promise<AuthSession | null>;
+  getAuthDetails: () => Promise<{
+    idToken: string | null;
+    accessToken: string | null;
+    userAttributes: Record<string, any>;
+    userId: string | null;
+    username: string | null;
+    groups: string[];
+  } | null>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -65,23 +74,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (rememberAccount === 'true') {
         const encryptedEmail = await AsyncStorage.getItem('@auth:email');
         const encryptedPassword = await AsyncStorage.getItem('@auth:password');
-        
+
         if (encryptedEmail && encryptedPassword) {
           const email = CryptoJS.AES.decrypt(
             encryptedEmail,
             'your-secret-key'
           ).toString(CryptoJS.enc.Utf8);
-          
+
           const password = CryptoJS.AES.decrypt(
             encryptedPassword,
             'your-secret-key'
           ).toString(CryptoJS.enc.Utf8);
-          
+
           await login(email, password, true);
           return;
         }
       }
-      
+
       // Fall back to regular session check
       const session = await getSession();
       setIsAuthenticated(!!session);
@@ -92,27 +101,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const login = async (email: string, password: string, rememberAccount: boolean = false) => { 
+  const login = async (email: string, password: string, rememberAccount: boolean = false) => {
     try {
       await signIn({ username: email, password });
       setIsAuthenticated(true);
-      
+
       if (rememberAccount) {
         const encryptedEmail = CryptoJS.AES.encrypt(
           email,
           'your-secret-key'
         ).toString();
-        
+
         const encryptedPassword = CryptoJS.AES.encrypt(
           password,
           'your-secret-key'
         ).toString();
-        
+
         await AsyncStorage.setItem('@auth:rememberAccount', 'true');
         await AsyncStorage.setItem('@auth:email', encryptedEmail);
         await AsyncStorage.setItem('@auth:password', encryptedPassword);
       }
-      
+
       // Schedule token refresh
       refreshManager.current.scheduleRefresh(async () => {
         try {
@@ -142,21 +151,73 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const getAuthDetails = async() => {
+    try {
+      const sessionResult = await fetchAuthSession();
+      const idToken = sessionResult.tokens?.idToken?.toString();
+      const accessToken = sessionResult.tokens?.accessToken?.toString();
+      //   const refreshToken = sessionResult.tokens?.refreshToken?.toString();
+
+      const currentUser = await getCurrentUser();
+      const userAttributes = await fetchUserAttributes();
+
+      let groups: string[] = [];
+      if (currentUser) {
+        try {
+          // In v6, groups are often part of the ID token or user attributes.
+          // You might need to inspect these to find the groups.
+          // The exact location depends on your Cognito setup.
+
+          // Option 1: Check ID Token claims (if groups are there)
+          const parsedIdToken = idToken ? JSON.parse(atob(idToken.split('.')[1])) : null;
+          if (parsedIdToken && parsedIdToken['cognito:groups']) {
+            groups = parsedIdToken['cognito:groups'];
+          }
+
+          // Option 2: Check user attributes (if groups are stored as an attribute)
+          if (userAttributes && userAttributes['cognito:groups']) {
+            groups = JSON.parse(userAttributes['cognito:groups'] as string);
+          }
+          // You might have a custom attribute for groups instead of the default 'cognito:groups'
+          else if (userAttributes && userAttributes['custom:groups']) {
+            groups = JSON.parse(userAttributes['custom:groups'] as string);
+          }
+        } catch (error) {
+          console.log('Error extracting user groups:', error);
+        }
+      }
+
+      return {
+        idToken,
+        accessToken,
+        // refreshToken,
+        userAttributes,
+        userId: currentUser?.userId || null,
+        username: currentUser?.username || null,
+        groups,
+      };
+    } catch (error) {
+      console.log('Error getting authentication details:', error);
+      return null;
+    }
+  }
+
   useEffect(() => {
     checkAuthState();
-    
+
     return () => {
       refreshManager.current.clearRefresh();
     };
   }, []);
 
   return (
-    <AuthContext.Provider value={{ 
-      isAuthenticated, 
-      isLoading, 
-      login, 
+    <AuthContext.Provider value={{
+      isAuthenticated,
+      isLoading,
+      login,
       logout,
-      getSession
+      getSession,
+      getAuthDetails,
     }}>
       {children}
     </AuthContext.Provider>

@@ -149,7 +149,7 @@ export const ProfileScreen = () => {
 
             { !expandedItem ?
                 <View style={styles.candidateInfoCard}>
-                    <CandidateInfoCard firstName='Jane' lastName='Cooper' />
+                    <CandidateInfoCard firstName='Jane' lastName='Cooper' showCompleteButton={false} />
                 </View> : null
             }
             {/* <Button title="Open Modal" onPress={() => setModalVisible(true)} /> */}

@@ -10,6 +10,7 @@ import PersonalDetailsForm from "./PersonalDetailsForm";
 import PortfolioScreen from "./Portfolio";
 import ProfessionalDetailsScreen from "./ProfessionalDetails";
 import SubmittalInformationScreen from "./SubmittalInformation";
+import AddressDetailsScreen from "./Address";
 
 interface PersonalDetailsProps {
 	expandedItem: string | null;
@@ -118,7 +119,11 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 			title: 'Address Details',
 			icon: 'home-edit-outline',
 			completed: false,
-			content: (<View style={styles.accordionContent}><TextStyle>Address Details Form</TextStyle></View>)
+			content: (
+				<View style={styles.accordionContent}>
+					<AddressDetailsScreen />
+				</View>
+			)
 		},
 		{
 			title: 'Professional Details',
