@@ -1,438 +1,254 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect, useState, useCallback} from 'react';
+import React from 'react';
 import {
   View,
   StyleSheet,
   ScrollView,
-  Switch,
   SafeAreaView,
+  Text,
+  TextInput,
+  Switch,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {theme} from '../../../../theme';
 import {TextStyle} from '../../../../components/common/Text';
 import {Input} from '../../../../components/common/Input';
 import {Button} from '../../../../components/common/Button';
-import {Header} from '../../../../components/common/Header';
-import {addressValidationSchema} from '../../../../models/validations/profileValidations';
-import {Address} from '../../../../types/profile';
+import {Formik} from 'formik';
 import Toast from 'react-native-toast-message';
-
-interface RouteParams {
-  onboardId: number;
-}
+import { addressValidationSchema2 } from '../../../../validations/addressValidation';
 
 const AddressDetailsScreen: React.FC = () => {
   const navigation = useNavigation();
-  const route = useRoute();
-  const {onboardId} = 'route.params as RouteParams;'
 
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
-  const [touched, setTouched] = useState<{[key: string]: boolean}>({});
-  const [initialFormData, setInitialFormData] = useState<any>(null);
-
-  const defaultAddress: Address = {
+  const defaultAddress = {
     address1: '',
     address2: '',
     city: '',
-    // stateID: '',
     zipCode: '',
-    // countryID: '',
     stateCode: '',
     countryCode: '',
-    stateList: [],
-    countryList: [],
   };
 
-  const defaultAddressInfo = {
+  const initialValues = {
     permanentAddress: {...defaultAddress},
     currentAddress: {...defaultAddress},
-    homePhone: '',
-    mobilePhone: '',
-    otherPhone: '',
-    notes: '',
     isSamePermanent: false,
+    notes: '',
+    permanentNotes: '', // Add a separate field for permanent address notes
   };
-
-  const [formData, setFormData] = useState(defaultAddressInfo);
-  const [saveLoading, setSaveLoading] = useState(false); // Added saveLoading state
-  const [saveError, setSaveError] = useState<string | null>(null); // Added saveError state
-
-  const checkFormModified = useCallback(() => {
-    if (!initialFormData) {
-      return false;
-    }
-    return JSON.stringify(formData) !== JSON.stringify(initialFormData);
-  }, [formData, initialFormData]);
-
-  const isFormModified = checkFormModified();
-
-  useEffect(() => {
-    // Simulate loading initial data (replace with your actual data loading)
-    const initialData = {
-      ...defaultAddressInfo,
-      // ... (replace with actual initial data if available)
-    };
-    setFormData(initialData);
-    setInitialFormData(initialData);
-  }, [onboardId]);
-
-  useEffect(() => {
-    const validateForm = async () => {
-      try {
-        await addressValidationSchema.validate(formData, {abortEarly: false});
-        setErrors({});
-      } catch (yupError: any) {
-        const newErrors: {[key: string]: string} = {};
-        if (yupError.inner) {
-          yupError.inner.forEach((err: any) => {
-            const errorPath = err.path
-              .replace('permanentAddress.', 'permanent_')
-              .replace('currentAddress.', 'current_');
-            newErrors[errorPath] = err.message;
-          });
-        }
-        setErrors(newErrors);
-      }
-    };
-
-    if (Object.keys(formData).length > 0) {
-      validateForm();
-    }
-  }, [formData]);
-
-  const handlePermanentAddressChange = (
-    field: keyof Address,
-    value: string,
-  ) => {
-    setFormData(prev => ({
-      ...prev,
-      permanentAddress: {...prev.permanentAddress, [field]: value},
-    }));
-    if (formData.isSamePermanent) {
-      setFormData(prev => ({
-        ...prev,
-        currentAddress: {...prev.permanentAddress, [field]: value},
-      }));
-    }
-    validateField(`permanent_${field}`, value);
-  };
-
-  const handleCurrentAddressChange = (field: keyof Address, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      currentAddress: {...prev.currentAddress, [field]: value},
-    }));
-    validateField(`current_${field}`, value);
-  };
-
-  const handleAddressInfoChange = (
-    field: keyof typeof formData,
-    value: boolean | string,
-  ) => {
-    if (field === 'isSamePermanent' && value === true) {
-      setFormData(prev => ({
-        ...prev,
-        currentAddress: {...prev.permanentAddress},
-        [field]: value,
-      }));
-    } else {
-      setFormData(prev => ({...prev, [field]: value}));
-    }
-    validateField(field.toString(), value);
-  };
-
-  const handleBlur = (field: string) => {
-    setTouched(prev => ({...prev, [field]: true}));
-
-    let value: string | boolean;
-    if (field.startsWith('permanent_') && formData.permanentAddress) {
-      const addressField = field.replace(
-        'permanent_',
-        '',
-      ) as keyof Address;
-      value = formData.permanentAddress[addressField]!;
-    } else if (field.startsWith('current_') && formData.currentAddress) {
-      const addressField = field.replace(
-        'current_',
-        '',
-      ) as keyof Address;
-      value = formData.currentAddress[addressField]!;
-    } else {
-      value = formData[field as keyof typeof formData]!;
-    }
-    validateField(field, value);
-  };
-
-  const validateField = async (field: string, value: string | boolean) => {
+console.log('Initial values:', initialValues);
+  const handleSave = async (values: typeof initialValues) => {
+    console.log('Saving address details:', values);
     try {
-      let validationObj: any = {...formData};
-
-      if (field.startsWith('permanent_')) {
-        const addressField = field.replace(
-          'permanent_',
-          '',
-        ) as keyof Address;
-        validationObj = {
-          ...validationObj,
-          permanentAddress: {
-            ...validationObj.permanentAddress,
-            [addressField]: value,
-          },
-        };
-      } else if (field.startsWith('current_')) {
-        const addressField = field.replace('current_', '') as keyof Address;
-        validationObj = {
-          ...validationObj,
-          currentAddress: {
-            ...validationObj.currentAddress,
-            [addressField]: value,
-          },
-        };
-      } else {
-        validationObj[field] = value;
-      }
-
-      const validationField = field
-        .replace('permanent_', 'permanentAddress.')
-        .replace('current_', 'currentAddress.');
-
-      await addressValidationSchema.validateAt(validationField, validationObj);
-
-      setErrors(prev => {
-        const newErrors = {...prev};
-        delete newErrors[field];
-        return newErrors;
-      });
-    } catch (error: any) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: error.message,
-      }));
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      setSaveLoading(true);
-      setSaveError(null);
-
       // Simulate API call (replace with your actual save logic)
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
-
-      // Validation before "saving"
-      await addressValidationSchema.validate(formData, {abortEarly: false});
-
-      // Simulate successful save
-      setSaveLoading(false);
+      console.log('Saved values:', values);
       Toast.show({
         type: 'success',
         text1: 'Addresses saved successfully',
       });
-      setInitialFormData(formData);
       navigation.goBack();
-    } catch (error: any) {
-      setSaveLoading(false);
-      if (error.inner) {
-        const newErrors: {[key: string]: string} = {};
-        error.inner.forEach((err: any) => {
-          const errorPath = err.path
-            .replace('permanentAddress.', 'permanent_')
-            .replace('currentAddress.', 'current_');
-          newErrors[errorPath] = err.message;
-        });
-        setErrors(newErrors);
-      } else {
-        setSaveError(error.message || 'Failed to save address information');
-        Toast.show({
-          type: 'error',
-          text1: 'Failed to save address information',
-        });
-      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to save address information',
+      });
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-        {/* Permanent Address Section */}
-        <View style={styles.formSection}>
-          <TextStyle variant="medium" size="lg" style={styles.sectionTitle}>
-            Permanent Address
-          </TextStyle>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={addressValidationSchema2}
+          onSubmit={handleSave}>
+          {({values, errors, touched, handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting}) => (
+            <>
+              {/* Current Address Section */}
+              <View style={styles.formSection}>
+                <TextStyle variant="medium" size="lg" style={styles.sectionTitle}>
+                  Current Address
+                </TextStyle>
 
-          <Input
-            label="Address"
-            required
-            value={formData.permanentAddress.address1}
-            onChangeText={value =>
-              handlePermanentAddressChange('address1', value)
-            }
-            onBlur={() => handleBlur('permanent_address1')}
-            error={errors.permanent_address1}
-            touched={touched.permanent_address1}
-            disabled={saveLoading}
-          />
+                <Input
+                  label="Address"
+                  required
+                  value={values.currentAddress.address1}
+                  onChangeText={handleChange('currentAddress.address1')}
+                  onBlur={handleBlur('currentAddress.address1')}
+                  error={errors.currentAddress?.address1}
+                  touched={touched.currentAddress?.address1}
+                  placeholder="Enter address"
+                />
 
-          <Input
-            label="Zip Code"
-            required
-            value={formData.permanentAddress.zipCode}
-            onChangeText={value =>
-              handlePermanentAddressChange('zipCode', value)
-            }
-            onBlur={() => handleBlur('permanent_zipCode')}
-            error={errors.permanent_zipCode}
-            touched={touched.permanent_zipCode}
-            disabled={saveLoading}
-            keyboardType="numeric"
-          />
+                <Input
+                  label="Zip Code"
+                  required
+                  value={values.currentAddress.zipCode}
+                  onChangeText={handleChange('currentAddress.zipCode')}
+                  onBlur={handleBlur('currentAddress.zipCode')}
+                  error={errors.currentAddress?.zipCode}
+                  touched={touched.currentAddress?.zipCode}
+                  keyboardType="numeric"
+                  placeholder="Enter zip code"
+                />
 
-          <Input
-            label="City"
-            required
-            value={formData.permanentAddress.city}
-            onChangeText={value => handlePermanentAddressChange('city', value)}
-            onBlur={() => handleBlur('permanent_city')}
-            error={errors.permanent_city}
-            touched={touched.permanent_city}
-            disabled={saveLoading}
-          />
+                <Input
+                  label="City"
+                  required
+                  value={values.currentAddress.city}
+                  onChangeText={handleChange('currentAddress.city')}
+                  onBlur={handleBlur('currentAddress.city')}
+                  error={errors.currentAddress?.city}
+                  touched={touched.currentAddress?.city}
+                  placeholder="Enter city"
+                />
 
-          <Input
-            label="State"
-            required
-            value={formData.permanentAddress.stateCode}
-            onChangeText={value =>
-              handlePermanentAddressChange('stateCode', value)
-            }
-            onBlur={() => handleBlur('permanent_stateCode')}
-            error={errors.permanent_stateCode}
-            touched={touched.permanent_stateCode}
-            disabled={saveLoading}
-          />
+                <Input
+                  label="State"
+                  required
+                  value={values.currentAddress.stateCode}
+                  onChangeText={handleChange('currentAddress.stateCode')}
+                  onBlur={handleBlur('currentAddress.stateCode')}
+                  error={errors.currentAddress?.stateCode}
+                  touched={touched.currentAddress?.stateCode}
+                  placeholder="Enter state"
+                />
 
-          <Input
-            label="Country"
-            required
-            value={formData.permanentAddress.countryCode}
-            onChangeText={value =>
-              handlePermanentAddressChange('countryCode', value)
-            }
-            onBlur={() => handleBlur('permanent_countryCode')}
-            error={errors.permanent_countryCode}
-            touched={touched.permanent_countryCode}
-            disabled={saveLoading}
-          />
-        </View>
+                <Input
+                  label="Country"
+                  required
+                  value={values.currentAddress.countryCode}
+                  onChangeText={handleChange('currentAddress.countryCode')}
+                  onBlur={handleBlur('currentAddress.countryCode')}
+                  error={errors.currentAddress?.countryCode}
+                  touched={touched.currentAddress?.countryCode}
+                  placeholder="Enter country"
+                />
 
-        {/* Same As Permanent Toggle */}
-        <View style={styles.toggleSection}>
-          <View style={styles.sameAddressToggle}>
-            <TextStyle variant="regular" size="md">
-              Same as permanent address
-            </TextStyle>
-            <Switch
-              value={formData.isSamePermanent}
-              onValueChange={value =>
-                handleAddressInfoChange('isSamePermanent', value)
-              }
-              trackColor={{
-                false: theme.colors.grey[300],
-                true: theme.colors.primary.main,
-              }}
-              thumbColor={theme.colors.background.paper}
-              disabled={saveLoading}
-            />
-          </View>
-        </View>
+                <Text style={styles.label}>Address Notes</Text>
+                <TextInput
+                  style={[styles.inputArea, {height: 100, textAlignVertical: 'top'}]}
+                  placeholder="Enter address notes"
+                  multiline
+                  maxLength={1024}
+                  value={values.notes}
+                  onChangeText={handleChange('notes')}
+                />
+              </View>
 
-        {/* Current Address Section */}
-        {!formData.isSamePermanent && (
-          <View style={styles.formSection}>
-            <TextStyle variant="medium" size="lg" style={styles.sectionTitle}>
-              Current Address
-            </TextStyle>
+              {/* Same As Permanent Toggle */}
+              <View style={styles.toggleSection}>
+                <View style={styles.sameAddressToggle}>
+                  <TextStyle variant="regular" size="md">
+                    Permanent Address
+                  </TextStyle>
+                  <Switch
+                    value={values.isSamePermanent}
+                    onValueChange={value => {
+                      setFieldValue('isSamePermanent', value);
+                      if (value) {
+                        setFieldValue('permanentAddress', values.currentAddress);
+                      }
+                    }}
+                    trackColor={{
+                      false: theme.colors.grey[300],
+                      true: theme.colors.primary.main,
+                    }}
+                    thumbColor={theme.colors.background.paper}
+                  />
+                  <TextStyle variant="regular" size="xs">
+                    Same as current address
+                  </TextStyle>
+                </View>
+              </View>
 
-            <Input
-              label="Address"
-              required
-              value={formData.currentAddress.address1}
-              onChangeText={value => handleCurrentAddressChange('address1', value)}
-              onBlur={() => handleBlur('current_address1')}
-              error={errors.current_address1}
-              touched={touched.current_address1}
-              disabled={saveLoading}
-            />
+              {/* Permanent Address Section */}
+              {!values.isSamePermanent && (
+                <View style={styles.formSection}>
+                  <TextStyle variant="medium" size="lg" style={styles.sectionTitle}>
+                    Permanent Address
+                  </TextStyle>
 
-            <Input
-              label="Zip Code"
-              required
-              value={formData.currentAddress.zipCode}
-              onChangeText={value => handleCurrentAddressChange('zipCode', value)}
-              onBlur={() => handleBlur('current_zipCode')}
-              error={errors.current_zipCode}
-              touched={touched.current_zipCode}
-              disabled={saveLoading}
-              keyboardType="numeric"
-            />
+                  <Input
+                    label="Address"
+                    required
+                    value={values.permanentAddress.address1}
+                    onChangeText={handleChange('permanentAddress.address1')}
+                    onBlur={handleBlur('permanentAddress.address1')}
+                    error={errors.permanentAddress?.address1}
+                    touched={touched.permanentAddress?.address1}
+                    placeholder="Enter address"
+                  />
 
-            <Input
-              label="City"
-              required
-              value={formData.currentAddress.city}
-              onChangeText={value => handleCurrentAddressChange('city', value)}
-              onBlur={() => handleBlur('current_city')}
-              error={errors.current_city}
-              touched={touched.current_city}
-              disabled={saveLoading}
-            />
+                  <Input
+                    label="Zip Code"
+                    required
+                    value={values.permanentAddress.zipCode}
+                    onChangeText={handleChange('permanentAddress.zipCode')}
+                    onBlur={handleBlur('permanentAddress.zipCode')}
+                    error={errors.permanentAddress?.zipCode}
+                    touched={touched.permanentAddress?.zipCode}
+                    keyboardType="numeric"
+                    placeholder="Enter zip code"
+                  />
 
-            <Input
-              label="State"
-              required
-              value={formData.currentAddress.stateCode}
-              onChangeText={value => handleCurrentAddressChange('stateCode', value)}
-              onBlur={() => handleBlur('current_stateCode')}
-              error={errors.current_stateCode}
-              touched={touched.current_stateCode}
-              disabled={saveLoading}
-            />
+                  <Input
+                    label="City"
+                    required
+                    value={values.permanentAddress.city}
+                    onChangeText={handleChange('permanentAddress.city')}
+                    onBlur={handleBlur('permanentAddress.city')}
+                    error={errors.permanentAddress?.city}
+                    touched={touched.permanentAddress?.city}
+                    placeholder="Enter city"
+                  />
 
-            <Input
-              label="Country"
-              required
-              value={formData.currentAddress.countryCode}
-              onChangeText={value =>
-                handleCurrentAddressChange('countryCode', value)
-              }
-              onBlur={() => handleBlur('current_countryCode')}
-              error={errors.current_countryCode}
-              touched={touched.current_countryCode}
-              disabled={saveLoading}
-            />
-          </View>
-        )}
+                  <Input
+                    label="State"
+                    required
+                    value={values.permanentAddress.stateCode}
+                    onChangeText={handleChange('permanentAddress.stateCode')}
+                    onBlur={handleBlur('permanentAddress.stateCode')}
+                    error={errors.permanentAddress?.stateCode}
+                    touched={touched.permanentAddress?.stateCode}
+                    placeholder="Enter state"
+                  />
 
-        {saveError && (
-          <View style={styles.errorContainer}>
-            <TextStyle
-              variant="regular"
-              size="sm"
-              color="error"
-              style={styles.errorMessage}>
-              {saveError}
-            </TextStyle>
-          </View>
-        )}
+                  <Input
+                    label="Country"
+                    required
+                    value={values.permanentAddress.countryCode}
+                    onChangeText={handleChange('permanentAddress.countryCode')}
+                    onBlur={handleBlur('permanentAddress.countryCode')}
+                    error={errors.permanentAddress?.countryCode}
+                    touched={touched.permanentAddress?.countryCode}
+                    placeholder="Enter country"
+                  />
+                  <Text style={styles.label}>Address Notes</Text>
+                  <TextInput
+                    style={[styles.inputArea, {height: 100, textAlignVertical: 'top'}]}
+                    placeholder="Enter address notes"
+                    multiline
+                    maxLength={1024}
+                    value={values.permanentNotes} // Use a separate field for permanent address notes
+                    onChangeText={handleChange('permanentNotes')} // Handle change for permanent address notes
+                  />
+                </View>
+              )}
 
-        <View style={styles.buttonContainer}>
-          <Button
-            title={saveLoading ? 'Saving...' : 'Save'}
-            onPress={handleSave}
-            style={styles.saveButton}
-            disabled={saveLoading || Object.keys(errors).length > 0}
-          />
-        </View>
+              <View style={styles.buttonContainer}>
+                <Button
+                  title={isSubmitting ? 'Saving...' : 'Save'}
+                  onPress={handleSubmit as any}
+                  style={styles.saveButton}
+                  // disabled={isSubmitting || Object.keys(errors).length > 0}
+                />
+              </View>
+            </>
+          )}
+        </Formik>
       </ScrollView>
     </SafeAreaView>
   );
@@ -452,20 +268,21 @@ const styles = StyleSheet.create({
   formSection: {
     marginBottom: theme.spacing.lg,
     paddingBottom: theme.spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.grey[300],
   },
   sectionTitle: {
     marginBottom: theme.spacing.md,
   },
-  input: {
-    marginBottom: theme.spacing.md,
+  inputArea: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   toggleSection: {
     marginBottom: theme.spacing.lg,
     paddingBottom: theme.spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.grey[300],
   },
   sameAddressToggle: {
     flexDirection: 'row',
@@ -481,15 +298,10 @@ const styles = StyleSheet.create({
   saveButton: {
     marginLeft: theme.spacing.md,
   },
-  cancelButton: {
-    marginRight: theme.spacing.md,
-  },
-  errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
-  },
-  errorMessage: {
-    marginLeft: theme.spacing.xs,
+  label: {
+    marginTop: 16,
+    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
