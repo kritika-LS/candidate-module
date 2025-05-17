@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Alert, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Input } from '../../../components/common/Input';
@@ -70,6 +70,10 @@ const PersonalDetailsForm: React.FC = () => {
       };
 
     return (
+        <KeyboardAvoidingView
+              style={styles.container}
+              behavior={Platform.select({ ios: 'padding', android: undefined })}
+            >
         <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -272,17 +276,13 @@ const PersonalDetailsForm: React.FC = () => {
                         onBlur={handleBlur('brief')}
                     />
                 </View>
-                <View style={styles.buttonContainer}>
-                <Button
-                    title={isSubmitting ? 'Saving...' : 'Save'}
-                    onPress={handleSubmit as any}
-                    style={styles.saveButton}
-                    // disabled={isSubmitting || Object.keys(errors).length > 0}
-                />
-                </View>
+                <TouchableOpacity style={styles.saveBtn} onPress={handleSubmit as any}>
+                    <Text style={styles.saveBtnText}>{isSubmitting ? 'Saving...' : 'Save'}</Text>
+                </TouchableOpacity>
                 </>
             )}}
         </Formik>
+        </KeyboardAvoidingView>
     );
 };
 
@@ -312,13 +312,20 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ddd',
     },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'flex-end',
-        marginTop: theme.spacing.lg,
-      },
       saveButton: {
         marginLeft: theme.spacing.md,
+      },
+      saveBtn: {
+        marginTop: 24,
+        backgroundColor: '#0A47E9',
+        borderRadius: 8,
+        paddingVertical: 14,
+        alignItems: 'center',
+      },
+      saveBtnText: {
+        color: '#fff',
+        fontWeight: '600',
+        fontSize: 16,
       },
 });
 

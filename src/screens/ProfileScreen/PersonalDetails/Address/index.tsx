@@ -7,6 +7,7 @@ import {
   Text,
   TextInput,
   Switch,
+  TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {theme} from '../../../../theme';
@@ -238,14 +239,9 @@ console.log('Initial values:', initialValues);
                 </View>
               )}
 
-              <View style={styles.buttonContainer}>
-                <Button
-                  title={isSubmitting ? 'Saving...' : 'Save'}
-                  onPress={handleSubmit as any}
-                  style={styles.saveButton}
-                  // disabled={isSubmitting || Object.keys(errors).length > 0}
-                />
-              </View>
+                <TouchableOpacity style={styles.saveBtn} onPress={handleSubmit as any}>
+                  <Text style={styles.saveBtnText}>{isSubmitting ? 'Saving...' : 'Save'}</Text>
+                </TouchableOpacity>
             </>
           )}
         </Formik>
@@ -290,11 +286,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: theme.spacing.md,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: theme.spacing.lg,
-  },
   saveButton: {
     marginLeft: theme.spacing.md,
   },
@@ -303,5 +294,17 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontSize: 14,
     fontWeight: '500',
+  },
+  saveBtn: {
+    marginTop: 24,
+    backgroundColor: '#0A47E9',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  saveBtnText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });

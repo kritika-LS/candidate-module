@@ -1,87 +1,91 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   Alert,
   Platform,
+  TextInput,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { styles } from './styles';
 import Icon from '../../../../components/common/Icon/Icon';
 import { theme } from '../../../../theme';
 import { TextStyle } from '../../../../components/common/Text';
 
-const MAX_CHAR_LENGTH = 256;
-
 const SubmittalInformationScreen: React.FC = () => {
-  const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>(undefined);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [socialSecurityNumber, setSocialSecurityNumber] = useState('');
-  const navigation = useNavigation();
+  const MAX_CHAR_LENGTH = 256;
 
-  const onChangeDate = (event: any, selectedDate: Date | undefined) => {
-    const currentDate = selectedDate || dateOfBirth;
-    setShowDatePicker(Platform.OS === 'ios');
-    setDateOfBirth(currentDate);
-  };
+  const validationSchema = Yup.object({
+    dateOfBirth: Yup.date().required('Date of Birth is required'),
+    socialSecurityNumber: Yup.string()
+      .max(MAX_CHAR_LENGTH, `Cannot exceed ${MAX_CHAR_LENGTH} characters`)
+      .required('Social Security Number is required'),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      dateOfBirth: '',
+      socialSecurityNumber: '',
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      console.log('Submittal Information saved:', values);
+      Alert.alert('Success', 'Submittal information saved!');
+    },
+  });
 
   const showDatepicker = () => {
+    formik.setFieldTouched('dateOfBirth', true);
     setShowDatePicker(true);
   };
 
-  const formatDate = (date: Date | undefined): string => {
+  const [showDatePicker, setShowDatePicker] = React.useState(false);
+
+  const onChangeDate = (event: any, selectedDate: Date | undefined) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      formik.setFieldValue('dateOfBirth', selectedDate.toISOString());
+    }
+  };
+
+  const formatDate = (date: string): string => {
     if (date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
+      const parsedDate = new Date(date);
+      const year = parsedDate.getFullYear();
+      const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(parsedDate.getDate()).padStart(2, '0');
       return `${month}/${day}/${year}`;
     }
     return '';
   };
 
-  const handleSave = () => {
-    if (socialSecurityNumber.length > MAX_CHAR_LENGTH) {
-      Alert.alert(
-        'Validation Error',
-        `Social Security Number cannot exceed ${MAX_CHAR_LENGTH} characters.`,
-      );
-      return;
-    }
-
-    // In a real application, you would save the submittal information here.
-    console.log('Submittal Information saved:', {
-      dateOfBirth: dateOfBirth ? formatDate(dateOfBirth) : null,
-      socialSecurityNumber,
-    });
-    Alert.alert('Success', 'Submittal information saved!');
-    // Optionally navigate to another screen: navigation.goBack();
-  };
-
   return (
     <View style={styles.container}>
-
       <View style={styles.inputGroup}>
         <TextStyle size='sm' style={styles.label}>Date of Birth</TextStyle>
         <TouchableOpacity
           style={styles.datePickerButton}
           onPress={showDatepicker}>
           <TextStyle size='sm' color={theme.colors.text.light}>
-            {formatDate(dateOfBirth) || 'Select date of birth'}
+            {formik.values.dateOfBirth ? formatDate(formik.values.dateOfBirth) : 'Select date of birth'}
           </TextStyle>
           <Icon name='calendar-outline' size={20} color={theme.colors.grey[400]} />
         </TouchableOpacity>
         {showDatePicker && (
           <DateTimePicker
             testID="dateTimePicker"
-            value={dateOfBirth || new Date()}
+            value={formik.values.dateOfBirth ? new Date(formik.values.dateOfBirth) : new Date()}
             mode="date"
             display="default"
             onChange={onChangeDate}
           />
+        )}
+        {formik.touched.dateOfBirth && formik.errors.dateOfBirth && (
+          <Text style={styles.errorText}>{formik.errors.dateOfBirth}</Text>
         )}
       </View>
 
@@ -90,20 +94,20 @@ const SubmittalInformationScreen: React.FC = () => {
         <TextInput
           style={styles.input}
           placeholder="Enter social security number"
-          value={socialSecurityNumber}
-          onChangeText={(text) => {
-            if (text.length <= MAX_CHAR_LENGTH) {
-              setSocialSecurityNumber(text);
-            }
-          }}
+          value={formik.values.socialSecurityNumber}
+          onChangeText={formik.handleChange('socialSecurityNumber')}
+          onBlur={formik.handleBlur('socialSecurityNumber')}
           maxLength={MAX_CHAR_LENGTH}
-          keyboardType="number-pad" // Consider masking for better UX
+          keyboardType="number-pad"
         />
+        {formik.touched.socialSecurityNumber && formik.errors.socialSecurityNumber && (
+          <Text style={styles.errorText}>{formik.errors.socialSecurityNumber}</Text>
+        )}
       </View>
 
-      {/* <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+      <TouchableOpacity style={styles.saveButton} onPress={formik.handleSubmit}>
         <TextStyle style={styles.saveButtonText}>Save</TextStyle>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
     </View>
   );
 };

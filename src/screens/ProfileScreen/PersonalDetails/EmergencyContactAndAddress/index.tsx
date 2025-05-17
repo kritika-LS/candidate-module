@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Text,
   TextInput,
+  TouchableOpacity,
 } from 'react-native';
 import {theme} from '../../../../theme';
 import {TextStyle} from '../../../../components/common/Text';
@@ -205,13 +206,9 @@ const EmergencyContactAddressScreen: React.FC = () => {
                   onChangeText={handleChange('notes')}                />
               </View>
 
-              <View style={styles.buttonContainer}>
-                <Button
-                  title={isSubmitting ? 'Saving...' : 'Save'}
-                  onPress={handleSubmit as any}
-                  style={styles.saveButton}
-                />
-              </View>
+             <TouchableOpacity style={styles.saveBtn} onPress={handleSubmit as any}>
+                <Text style={styles.saveBtnText}>{isSubmitting ? 'Saving...' : 'Save'}</Text>
+             </TouchableOpacity>
             </>
           )}}
         </Formik>
@@ -269,5 +266,17 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontSize: 14,
     fontWeight: '500',
+  },
+  saveBtn: {
+    marginTop: 24,
+    backgroundColor: '#0A47E9',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  saveBtnText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });

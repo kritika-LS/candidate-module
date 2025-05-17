@@ -12,6 +12,7 @@ import ProfessionalDetailsScreen from "./ProfessionalDetails";
 import SubmittalInformationScreen from "./SubmittalInformation";
 import AddressDetailsScreen from "./Address";
 import EmergencyContactAddressScreen from "./EmergencyContactAndAddress";
+import JobPreferencesForm from "./JobPreferences";
 
 interface PersonalDetailsProps {
 	expandedItem: string | null;
@@ -70,7 +71,7 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 			title: 'Job Preferences',
 			icon: 'cog-outline',
 			completed: false,
-			content: <View style={styles.accordionContent}><TextStyle>Job Preferences Form</TextStyle></View>
+			content: <View style={styles.accordionContent}><JobPreferencesForm /></View>
 		},
 		{
 			title: 'Submittal Information',
