@@ -11,6 +11,7 @@ import PortfolioScreen from "./Portfolio";
 import ProfessionalDetailsScreen from "./ProfessionalDetails";
 import SubmittalInformationScreen from "./SubmittalInformation";
 import AddressDetailsScreen from "./Address";
+import EmergencyContactAddressScreen from "./EmergencyContactAndAddress";
 
 interface PersonalDetailsProps {
 	expandedItem: string | null;
@@ -85,7 +86,9 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 			title: 'Emergency Contact and Address',
 			icon: 'shield-alert-outline',
 			completed: true,
-			content: <View style={styles.accordionContent}><TextStyle>Emergency Contact Form</TextStyle></View>
+			content: <View style={styles.accordionContent}>
+				<EmergencyContactAddressScreen />
+			</View>
 		}
 	];
 
