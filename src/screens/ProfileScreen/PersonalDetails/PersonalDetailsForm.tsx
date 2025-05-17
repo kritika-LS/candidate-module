@@ -8,6 +8,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { theme } from '../../../theme';
 import { Button } from '../../../components/common/Button';
 import { DEFAULT_VALUES } from '../../../config/constants';
+import Toast from 'react-native-toast-message';
 
 const PersonalDetailsForm: React.FC = () => {
     const validationSchema = Yup.object().shape({
@@ -21,42 +22,62 @@ const PersonalDetailsForm: React.FC = () => {
             .required('Mobile Number is required'),
     });
 
+    const initialValues={
+        firstName: '',
+        middleName: '',
+        profileTitle: '',
+        overallExperience: '',
+        emailAddress: '',
+        alternateEmailAddress: '',
+        knownAs: '',
+        otherName: '',
+        brief: '',
+        mobileNumber: '',
+        alternateMobileNumber: '',
+        genderOpen: false,
+        genderItems: DEFAULT_VALUES.genderItems,
+        gender: null,
+        nationalityOpen: false,
+        nationalityItems: DEFAULT_VALUES.nationalityItems,
+        nationality: null,
+        ethnicityOpen: false,
+        ethnicityItems: DEFAULT_VALUES.ethnicityItems,
+        ethnicity: null,
+        militaryOpen: false,
+        militaryItems: DEFAULT_VALUES.militaryItems,
+        military: null,
+        workplacePreferenceOpen: false,
+        workplacePreferenceItems: DEFAULT_VALUES.workplacePreferenceItems,
+        workplacePreference: null,
+    };
+
+    const handleSave = async (values: typeof initialValues) => {
+        console.log('Saving basic details:', values);
+        try {
+          // Simulate API call (replace with your actual save logic)
+          await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+          console.log('Saved values:', values);
+          Toast.show({
+            type: 'success',
+            text1: 'details saved successfully',
+          });
+        } catch (error) {
+          Toast.show({
+            type: 'error',
+            text1: 'Failed to save details information',
+          });
+        }
+      };
+
     return (
         <Formik
-            initialValues={{
-                firstName: '',
-                middleName: '',
-                profileTitle: '',
-                overallExperience: '',
-                emailAddress: '',
-                alternateEmailAddress: '',
-                knownAs: '',
-                otherName: '',
-                brief: '',
-                mobileNumber: '',
-                alternateMobileNumber: '',
-                genderOpen: false,
-                genderItems: DEFAULT_VALUES.genderItems,
-                gender: null,
-                nationalityOpen: false,
-                nationalityItems: DEFAULT_VALUES.nationalityItems,
-                nationality: null,
-                ethnicityOpen: false,
-                ethnicityItems: DEFAULT_VALUES.ethnicityItems,
-                ethnicity: null,
-                militaryOpen: false,
-                militaryItems: DEFAULT_VALUES.militaryItems,
-                military: null,
-                workplacePreferenceOpen: false,
-                workplacePreferenceItems: DEFAULT_VALUES.workplacePreferenceItems,
-                workplacePreference: null,
-            }}
+            initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={(values) => {
-                Alert.alert('Form Submitted', JSON.stringify(values, null, 2));
-            }}
+            onSubmit={handleSave}
         >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue, isSubmitting }) => (
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue, isSubmitting }) => {
+                console.log("errors", errors);
+                return (
                 <>
                 <View style={styles.container}>
                     <Input
@@ -260,7 +281,7 @@ const PersonalDetailsForm: React.FC = () => {
                 />
                 </View>
                 </>
-            )}
+            )}}
         </Formik>
     );
 };
