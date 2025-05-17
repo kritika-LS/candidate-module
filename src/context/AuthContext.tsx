@@ -3,8 +3,10 @@ import {
   signIn,
   signOut,
   fetchAuthSession,
-  type AuthSession,
-  fetchUserAttributes
+  resetPassword, 
+  confirmResetPassword,
+  fetchUserAttributes,
+  type AuthSession
 } from 'aws-amplify/auth';
 import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -43,6 +45,8 @@ type AuthContextType = {
     username: string | null;
     groups: string[];
   } | null>;
+  forgotPassword: (email: string) => Promise<void>;
+  resetPassword: (email: string, code: string, newPassword: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -202,6 +206,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }
 
+  const forgotPasswordHandler = async (email: string) => {
+    try {
+      console.log('Forgot Password:', email);
+      await resetPassword({username:email});
+    } catch (error) {
+      console.error("Forgot Password Error:", error);
+      throw error;
+    }
+  };
+  
+  const resetPasswordHandler = async (email: string, code: string, newPassword: string) => {
+    try {
+      await confirmResetPassword({
+        username: email,
+        confirmationCode: code,
+        newPassword: newPassword
+      });
+    } catch (error) {
+      console.error("Reset Password Error:", error);
+      throw error;
+    }
+  };
+      
   useEffect(() => {
     checkAuthState();
 
@@ -218,6 +245,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       logout,
       getSession,
       getAuthDetails,
+      forgotPassword: forgotPasswordHandler,
+      resetPassword: resetPasswordHandler
     }}>
       {children}
     </AuthContext.Provider>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, View, Alert } from "react-native";
 import { Header } from "../../../components/common/Header";
 import { OtpHeader } from "../../../components/features/OtpHeader";
@@ -15,10 +15,11 @@ import { ScreenNames } from "../../../utils/ScreenConstants";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../../types/navigation";
-import { resetPassword, confirmResetPassword } from "aws-amplify/auth";
+import { useAuth } from "../../../context/AuthContext";
 
 export const ForgetPasswordScreen = () => {
     const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+    const { forgotPassword, resetPassword } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -38,26 +39,11 @@ export const ForgetPasswordScreen = () => {
                 return;
             }
 
-            await resetPassword({ username: email });
+            await forgotPassword(email);
             setStep('verify');
         } catch (error) {
             console.error('Error sending reset code:', error);
             Alert.alert('Error', 'Failed to send verification code. Please try again.');
-        }
-    };
-
-    const handleVerifyCode = async () => {
-        if (otp.length !== 6) {
-            setErrors({...errors, otp: 'Please enter a valid 6-digit code'});
-            return;
-        }
-
-        try {
-            // We'll complete the reset in handleResetPassword
-            setStep('reset');
-        } catch (error) {
-            console.error('Error verifying code:', error);
-            Alert.alert('Error', 'Invalid verification code. Please try again.');
         }
     };
 
@@ -92,11 +78,8 @@ export const ForgetPasswordScreen = () => {
         if (!valid) return;
 
         try {
-            await confirmResetPassword({
-                username: email,
-                confirmationCode: otp,
-                newPassword: password
-            });
+            
+            await resetPassword(email,otp,password);
 
             Alert.alert(
                 'Success',
@@ -112,12 +95,19 @@ export const ForgetPasswordScreen = () => {
         }
     };
 
+    useEffect(() => {
+        if(otp.length === 6) setStep('reset');
+    }, [otp]);
+
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <Header title="Forgot Password" showBackButton onBackPress={() => {
                 if (step === 'verify') setStep('email');
-                else if (step === 'reset') setStep('verify');
-                else navigation.goBack();
+                else if (step === 'reset') {
+                    handleSendCode();
+                    setStep('verify');
+                }
+                else navigation.goBack()
             }} />
 
             <View style={styles.mainContainer}>
@@ -142,19 +132,10 @@ export const ForgetPasswordScreen = () => {
                     </>
                 ) : step === 'verify' ? (
                     <>
-                        <OtpHeader
-                            email={email}
-                            subText="A verification code has been sent to your email"
-                        />
                         <OtpVerification 
                             email={email}
                             onCodeChange={(code) => setOtp(code)}
                             onResend={handleSendCode}
-                        />
-                        <Button 
-                            title="Verify Code" 
-                            onPress={handleVerifyCode} 
-                            style={styles.verifyButton} 
                         />
                     </>
                 ) : (

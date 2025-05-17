@@ -5,7 +5,6 @@ import { PasswordInput } from '../../../components/common/PasswordInput';
 import { ConfirmPasswordInput } from '../../../components/common/ConfirmPasswordInput';
 import { signupSchema } from '../../../validations/signupValidation';
 import styles from './styles';
-import { signIn, signUp } from 'aws-amplify/auth';
 import { useNavigation } from '@react-navigation/native';
 import { TextStyle } from '../../../components/common/Text';
 import { CopyrightFooter } from '../../../components/common/CopyrightFooter';

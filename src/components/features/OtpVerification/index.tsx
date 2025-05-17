@@ -4,7 +4,6 @@ import { TextStyle } from "../../common/Text";
 import { theme } from "../../../theme";
 import { OtpHeader } from "../OtpHeader";
 import { useNavigation } from "@react-navigation/native";
-import { ScreenNames } from "../../../utils/ScreenConstants";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../../types/navigation";
 import { OTPInput } from "../../common/OtpInput";
@@ -51,14 +50,15 @@ export const OtpVerification = ({ email, onCodeChange, onResend, setOtpSent }: O
         return () => clearInterval(interval);
     }, [timer]);
 
-    const handleCodeChange = (index: number, text: string) => {
-        const updated = [...otpCode];
-        updated[index] = text;
-        setOtpCode(updated);
-        onCodeChange?.(updated.join(''));
-        // setOtpSent(false);
-        // navigation.navigate(ScreenNames.UploadResumeScreen)
-    };
+const handleCodeChange = (index: number, text: string) => {
+    setOtpCode(prev => {
+      const updated = [...prev];
+      updated[index] = text;
+      const fullCode = updated.join('');
+      onCodeChange?.(fullCode);
+      return updated;
+    });
+  };
 
     return (
         <View>

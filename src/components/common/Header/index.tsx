@@ -15,11 +15,13 @@ import Icon from '../Icon/Icon';
 interface HeaderProps {
   showBackButton?: boolean;
   title?: string;
+  onBackPress?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   showBackButton = false,
   title,
+  onBackPress,
 }) => {
   const navigation = useNavigation();
 
@@ -33,7 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
         {showBackButton && (
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => navigation.goBack()}>
+            onPress={onBackPress ? onBackPress : () => navigation.goBack()}>
             <Icon
               name="west"
               size={18}
