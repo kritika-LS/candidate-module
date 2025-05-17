@@ -1,40 +1,41 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Text, View } from 'react-native';
 import PhoneInput from 'react-native-phone-number-input';
 import { styles } from './styles';
 import { theme } from '../../../theme';
 import { TextStyle } from '../Text';
 
-export const PhoneNumberInput = (props:any) => {
+export const PhoneNumberInput = (props: any) => {
     const {
-        handleCountryCode = {},
+        handleCountryCode = () => {},
         label,
-        errors = {},
-        name,
-        touched = {},
+        error = "",
+        touched = "",
         centered = true,
         placeholder,
         square = false,
         labelStyle,
         containerStyle2 = {},
-        setIsValid = () => { },
+        setIsValid = () => {},
         disableArrowIcon = false,
-        countryPickerProps = false,
-        variant = ""
+        countryPickerProps = {},
+        variant = "",
     } = props;
-    const errorState = errors && name && errors[name] && touched && touched[name];
-    const phoneInput = React.useRef(null);
 
-    const handleisValid = (e) => {
-        return phoneInput.current?.isValidNumber(e)
-    }
+    const errorState = error && touched;
+    const phoneInput = React.useRef<PhoneInput>(null);
+
+    const handleIsValid = (number: string) => {
+        return phoneInput.current?.isValidNumber(number);
+    };
+
     React.useEffect(() => {
-        setIsValid(() => { return handleisValid })
-    }, [])
+        setIsValid(() => handleIsValid);
+    }, [setIsValid]);
 
     return (
         <View style={styles.inputWrapper}>
-            <TextStyle style={[styles.labelStyle, labelStyle]}>{label}</TextStyle>
+            {label && <TextStyle style={[styles.labelStyle, labelStyle]}>{label}</TextStyle>}
             <PhoneInput
                 ref={phoneInput}
                 containerStyle={[
@@ -44,20 +45,24 @@ export const PhoneNumberInput = (props:any) => {
                     containerStyle2,
                 ]}
                 textInputProps={{
-                    selectionColor: theme.colors.text.white
+                    selectionColor: theme.colors.text.white,
                 }}
-
-                textContainerStyle={[styles.inputContainer, errorState && styles.errorTextContainer]}
+                textContainerStyle={[
+                    styles.inputContainer,
+                    errorState && styles.errorTextContainer,
+                ]}
                 placeholder={placeholder}
                 textInputStyle={styles.textStyle}
-                // codeTextStyle={styles.textStyle}
                 layout="first"
-                {...props}
                 disableArrowIcon={disableArrowIcon}
                 countryPickerProps={countryPickerProps}
-            // countryPickerProps={{disableNativeModal: false}}
+                {...props}
             />
-            {/* {errorState && <ValidationMessage type="error" message={errors[name]} centered={centered} />} */}
+            {errorState && (
+                <TextStyle variant="regular" size="xs" style={styles.errorText}>
+                    {error}
+                </TextStyle>
+            )}
         </View>
     );
 };

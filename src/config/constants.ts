@@ -57,3 +57,31 @@ export const APP_IDENTIFIERS = {
   IOS_BUNDLE_ID: 'com.hummingbird',
   ANDROID_PACKAGE_NAME: 'com.hummingbird',
 };
+
+export const DEFAULT_VALUES = {
+    genderItems: [
+        { label: 'Male', value: 'male' },
+        { label: 'Female', value: 'female' },
+        { label: 'Other', value: 'other' },
+    ],
+    nationalityItems: [
+        { label: 'American', value: 'american' },
+        { label: 'Canadian', value: 'canadian' },
+        { label: 'Indian', value: 'indian' },
+    ],
+    ethnicityItems: [
+        { label: 'Asian', value: 'asian' },
+        { label: 'Hispanic', value: 'hispanic' },
+        { label: 'Caucasian', value: 'caucasian' },
+    ],
+    militaryItems: [
+        { label: 'Veteran', value: 'veteran' },
+        { label: 'Active Duty', value: 'active_duty' },
+        { label: 'Reserve', value: 'reserve' },
+    ],
+    workplacePreferenceItems: [
+        { label: 'Remote', value: 'remote' },
+        { label: 'On-site', value: 'on_site' },
+        { label: 'Hybrid', value: 'hybrid' },
+    ],
+};

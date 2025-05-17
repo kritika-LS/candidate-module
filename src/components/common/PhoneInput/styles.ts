@@ -1,19 +1,17 @@
-import { StyleSheet } from "react-native";
-import { theme } from "../../../theme";
+import { StyleSheet } from 'react-native';
+import { theme } from '../../../theme';
 
 export const styles = StyleSheet.create({
-
   inputWrapper: {
     marginBottom: 8,
   },
   containerStyle: {
     width: '100%',
-    borderRadius:8,
-    // paddingHorizontal: 12,
+    borderRadius: 8,
     borderColor: theme.colors.grey[400],
     borderWidth: 1,
     height: 50,
-    backgroundColor: theme.colors.text.white
+    backgroundColor: theme.colors.text.white,
   },
   squareContainer: {
     borderRadius: 8,
@@ -32,12 +30,15 @@ export const styles = StyleSheet.create({
   },
   textStyle: {
     fontSize: 14,
-    color: theme.colors.text.white,
+    color: theme.colors.text.primary, // Updated to use primary color for better contrast
     fontWeight: '400',
   },
   labelStyle: {
     fontSize: 16,
     marginBottom: 8,
-    // fontWeight: '700',
   },
-})
+  errorText: {
+    color: theme.colors.status.error,
+    marginTop: theme.spacing.xs,
+  },
+});
