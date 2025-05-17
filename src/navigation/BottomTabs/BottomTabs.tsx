@@ -7,23 +7,30 @@ import HomeScreen from '../../screens/HomScreen';
 import { ProfileScreen } from '../../screens/ProfileScreen';
 import { BottomTabsParamsList } from '../../types/navigation';
 import CustomTabBar from './CustomTabBar';
+import { SearchJobs } from '../../screens/SearchJobs';
+import { MyJobs } from '../../screens/MyJobs';
 
 const Tab = createBottomTabNavigator();
 
 const tabScreens: {
   name: keyof BottomTabsParamsList;
   component: React.ComponentType<any>;
-  icon: string;
 }[] = [
   {
     name: 'Home',
     component: HomeScreen,
-    icon: 'home',
+  },
+  {
+    name: 'Search Jobs',
+    component: SearchJobs,
+  },
+  {
+    name: 'My Jobs',
+    component: MyJobs,
   },
   {
     name: 'Profile',
     component: ProfileScreen,
-    icon: 'person-outline',
   },
 ];
 

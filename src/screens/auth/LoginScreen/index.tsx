@@ -21,6 +21,7 @@ import { AuthStackParamList } from '../../../types/navigation';
 import { loginSchema } from '../../../validations/loginValidation';
 import { useAuth } from '../../../context/AuthContext';
 import * as yup from 'yup';
+import Toast from 'react-native-toast-message';
 
 export const LoginScreen = () => {
 
@@ -38,10 +39,22 @@ export const LoginScreen = () => {
             await login(email, password, rememberAccount);
         } catch (error: any) {
             if (error.name === 'UserNotFoundException') {
+                Toast.show({
+                    type: 'error',
+                    text1: 'This email address is not registered with us. Try signing up'
+                })
                 setErrors({...errors, email: 'User not found. Please sign up.'});
             } else if (error.name === 'NotAuthorizedException') {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Please enter a valid password'
+                })
                 setErrors({...errors, password: 'Incorrect username or password.'});
             } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Login Failed'
+                })
                 setErrors({...errors, password: error.message || 'Login failed'});
             }
         }

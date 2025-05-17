@@ -5,7 +5,7 @@ import { styles } from './styles';
 import { theme } from '../../../theme';
 import { TextStyle } from '../Text';
 
-export const PhoneNumberInput = props => {
+export const PhoneNumberInput = (props:any) => {
     const {
         handleCountryCode = {},
         label,

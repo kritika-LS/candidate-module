@@ -3,196 +3,42 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Overview } from './Overview';
 import ProfileDrawer from '../../navigation/ProfileDrawer';
 import CandidateInfoCard from '../../components/features/Dashboard/CandidateInfoCard/CandidateInfoCard';
-import { Dimensions, Pressable, SafeAreaView, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { Button, Dimensions, Pressable, SafeAreaView, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles } from './styles';
 import { TabView } from 'react-native-tab-view';
 import { TextStyle } from '../../components/common/Text';
 import { theme } from '../../theme';
 import Icon from '../../components/common/Icon/Icon';
+import CustomModal from '../../components/common/Modal';
+import { AccordionItem, Route } from '../../types/profile';
+import { PersonalDetails } from './PersonalDetails';
+import HistoryListCard from '../../components/features/HistoryListCard';
+import UploadFileModal from '../../components/features/UploadFileModal';
 
 const screenWidth = Dimensions.get('window').width;
 
-// ----- Type Definitions -----
-type Route = {
-    key: string;
-    title: string;
-    icon: string;
-};
-
-type AccordionItem = {
-    title: string;
-    completed: boolean;
-    content: React.ReactNode;
-};
-
 const Drawer = createDrawerNavigator();
-
-const PersonalDetailsSection = () => {
-    const [expandedItem, setExpandedItem] = useState<string | null>(null);
-    
-    const accordionItems: AccordionItem[] = [
-        {
-            title: 'Basic Information',
-            completed: false,
-            content: (
-                <View style={styles.accordionContent}>
-                    <TextStyle style={styles.sectionTitle}>Upload Picture</TextStyle>
-                    <TextStyle style={styles.subTitle}>Accepted File Formats: PNG, JPEG, JPG up to 10 MB</TextStyle>
-                    
-                    <View style={styles.formGroup}>
-                        <TextStyle style={styles.label}>First Name *</TextStyle>
-                        <TextInput 
-                            style={styles.input}
-                            value="Alex"
-                        />
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                        <TextStyle style={styles.label}>Middle Name</TextStyle>
-                        <TextInput 
-                            style={styles.input}
-                            placeholder="Enter middle name"
-                        />
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                        <TextStyle style={styles.label}>Profile Title *</TextStyle>
-                        <TextInput 
-                            style={styles.input}
-                            value="Registered Nurse"
-                        />
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                        <TextStyle style={styles.label}>Overall Experience *</TextStyle>
-                        <TextInput 
-                            style={styles.input}
-                            value="2"
-                        />
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                        <TextStyle style={styles.label}>Email Address *</TextStyle>
-                        <TextInput 
-                            style={styles.input}
-                            value="Janecooper@example.com"
-                        />
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                        <TextStyle style={styles.label}>Alternate Email Address</TextStyle>
-                        <TextInput 
-                            style={styles.input}
-                            placeholder="Enter alternate email address"
-                        />
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                        <TextStyle style={styles.label}>Mobile Number *</TextStyle>
-                        <View style={styles.phoneInput}>
-                            <View style={styles.countryCode}>
-                                <TextStyle>US (+1)</TextStyle>
-                            </View>
-                            <TextInput 
-                                style={[styles.input, {flex: 1}]}
-                                placeholder="Enter mobile number"
-                            />
-                        </View>
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                        <TextStyle style={styles.label}>Alternate Mobile Number</TextStyle>
-                        <View style={styles.phoneInput}>
-                            <View style={styles.countryCode}>
-                                <TextStyle>US (+1)</TextStyle>
-                            </View>
-                            <TextInput 
-                                style={[styles.input, {flex: 1}]}
-                                placeholder="Enter mobile number"
-                            />
-                        </View>
-                    </View>
-                    
-                    <View style={styles.formGroup}>
-                        <TextStyle style={styles.label}>Known As</TextStyle>
-                        <TextInput 
-                            style={styles.input}
-                            placeholder="Enter known as"
-                        />
-                    </View>
-                </View>
-            )
-        },
-        {
-            title: 'Address Details',
-            completed: false,
-            content: <View style={styles.accordionContent}><TextStyle>Address Details Form</TextStyle></View>
-        },
-        {
-            title: 'Professional Details',
-            completed: false,
-            content: <View style={styles.accordionContent}><TextStyle>Professional Details Form</TextStyle></View>
-        },
-        {
-            title: 'Portfolio',
-            completed: false,
-            content: <View style={styles.accordionContent}><TextStyle>Portfolio Form</TextStyle></View>
-        },
-        {
-            title: 'Job Preferences',
-            completed: false,
-            content: <View style={styles.accordionContent}><TextStyle>Job Preferences Form</TextStyle></View>
-        },
-        {
-            title: 'Submittal Information',
-            completed: false,
-            content: <View style={styles.accordionContent}><TextStyle>Submittal Information Form</TextStyle></View>
-        },
-        {
-            title: 'Emergency Contact and Address',
-            completed: false,
-            content: <View style={styles.accordionContent}><TextStyle>Emergency Contact Form</TextStyle></View>
-        }
-    ];
-
-    return (
-        <ScrollView style={styles.personalDetailsContainer}>
-            <TextStyle style={styles.sectionHeader}>Personal Details</TextStyle>
-            
-            {accordionItems.map((item, index) => (
-                <View key={index} style={styles.accordionItem}>
-                    <TouchableOpacity 
-                        style={styles.accordionHeader}
-                        onPress={() => setExpandedItem(expandedItem === item.title ? null : item.title)}
-                    >
-                        <View style={styles.accordionTitleContainer}>
-                            {/* {item.completed ? (
-                                <Icon name="check-circle" size={20} color={theme.colors.status.success} />
-                            ) : (
-                                <View style={styles.incompleteCircle} />
-                            )} */}
-                            <TextStyle style={styles.accordionTitle}>{item.title}</TextStyle>
-                        </View>
-                        <Icon 
-                            name={expandedItem === item.title ? "chevron-up" : "chevron-down"} 
-                            size={20} 
-                            color={theme.colors.text.light} 
-                        />
-                    </TouchableOpacity>
-                    
-                    {expandedItem === item.title && item.content}
-                </View>
-            ))}
-        </ScrollView>
-    );
-};
 
 const WorkHistorySection = () => {
     return (
         <ScrollView style={styles.sectionContainer}>
-            <TextStyle style={styles.sectionHeader}>Work History</TextStyle>
+            {/* <TextStyle style={styles.sectionHeader}>Work History</TextStyle> */}
             {/* Work history content goes here */}
-            <TextStyle>Work history content will be displayed here</TextStyle>
+            {/* <TextStyle>Work history content will be displayed here</TextStyle> */}
+            <HistoryListCard
+                listIcon={'office-building'}
+                title='Registered Nurse'
+                subtitle1='ICU'
+                subtitle2='Trauma Hospital'
+                workSpaceName='Springfield Memorial Hospital - 867567'
+                ratio='1:4'
+                startDate='Jan 2020'
+                endDate='Present'
+                location='New York, NY'
+                pillText={'Travel'}
+                onEdit={() => console.log('Edit pressed')}
+                onDelete={() => console.log('Delete pressed')}
+            />
         </ScrollView>
     );
 };
@@ -200,9 +46,18 @@ const WorkHistorySection = () => {
 const EducationSection = () => {
     return (
         <ScrollView style={styles.sectionContainer}>
-            <TextStyle style={styles.sectionHeader}>Education</TextStyle>
-            {/* Education content goes here */}
-            <TextStyle>Education content will be displayed here</TextStyle>
+            <HistoryListCard
+                listIcon={'bookshelf'}
+                title='Bachelor of Science in Nursing '
+                subtitle1='Bachelors'
+                subtitle2='Full-Time'
+                workSpaceName='Sapphire School of Medical Sciences'
+                startDate='Dec 20, 2019'
+                endDate='Oct 20, 2024'
+                location='Pembroke Pines, Illinois, US'
+                onEdit={() => console.log('Edit pressed')}
+                onDelete={() => console.log('Delete pressed')}
+            />
         </ScrollView>
     );
 };
@@ -226,11 +81,13 @@ const OverviewSection = () => {
 export const ProfileScreen = () => {
 
     const [index, setIndex] = useState(0);
+    const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
+    const [modalVisible, setModalVisible] = useState(false);
     const [routes] = useState<Route[]>([
         { key: 'Overview', title: 'Overview', icon: 'account-circle-outline' },
         { key: 'PersonalDetails', title: 'Personal Details', icon: 'home-outline' },
-        { key: 'Work History', title: 'WorkHistory', icon: 'briefcase-outline' },
+        { key: 'WorkHistory', title: 'Work History', icon: 'briefcase-outline' },
         { key: 'Education', title: 'Education', icon: 'tune' },
         { key: 'ProfessionalInformation', title: 'Professional Information', icon: 'tune' }
     ]);
@@ -239,11 +96,11 @@ export const ProfileScreen = () => {
         switch (route.key) {
         case 'Overview':
             return (
-            <OverviewSection />
+                <OverviewSection />
             );
         case 'PersonalDetails':
             return (
-                <PersonalDetailsSection />
+                <PersonalDetails expandedItem={expandedItem} setExpandedItem={setExpandedItem} />
             );
         case 'WorkHistory':
             return (
@@ -290,9 +147,42 @@ export const ProfileScreen = () => {
         // <ProfileDrawer />
         <SafeAreaView style={styles.container}>
 
-            <View style={styles.candidateInfoCard}>
-                <CandidateInfoCard firstName='' lastName='' />
-            </View>
+            { !expandedItem ?
+                <View style={styles.candidateInfoCard}>
+                    <CandidateInfoCard firstName='Jane' lastName='Cooper' />
+                </View> : null
+            }
+            {/* <Button title="Open Modal" onPress={() => setModalVisible(true)} /> */}
+
+            
+            {/* <UploadFileModal
+                isVisible={modalVisible}
+                onClose={() => setModalVisible(false)}
+                onUpload={() => {
+                    console.log('Upload clicked');
+                    setModalVisible(false);
+                }}
+                uploadProgress={90} // Example progress value
+                uploading={false} // Set to true if uploading
+            /> */}
+
+            {/* <CustomModal
+                isVisible={modalVisible}
+                title="Unsaved Changes"
+                onClose={() => setModalVisible(false)}
+                primaryButtonText="Save"
+                secondaryButtonText="No"
+                onPrimaryPress={() => {
+                console.log('Yes clicked');
+                setModalVisible(false);
+                }}
+                onSecondaryPress={() => {
+                console.log('No clicked');
+                setModalVisible(false);
+                }}
+            >
+                <TextStyle size='xs' color={theme.colors.text.light} style={{width: "80%"}}>You have unsaved changes. Do you want to save before exiting?</TextStyle>
+            </CustomModal> */}
 
             <TabView
                 navigationState={{ index, routes }}

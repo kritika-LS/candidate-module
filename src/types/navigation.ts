@@ -28,6 +28,8 @@ export type DrawerParamList = {
 
 export type BottomTabsParamsList = {
     Home: undefined;
+    'Search Jobs': undefined;
+    'My Jobs': undefined;
     Profile: undefined;
 }
 

@@ -1,55 +1,14 @@
-import { StyleSheet } from "react-native";
-import { theme } from "../../theme";
+import { Dimensions, StyleSheet } from "react-native";
+import { theme } from "../../../theme";
 
 export const styles = StyleSheet.create({
 
-	container: {
-		flex: 1,
-		// backgroundColor: theme,
-	},
-	candidateInfoCard: {
-		padding: theme.spacing.md,
-	},
-	scene: {
-		flex: 1,
-		padding: 16,
-	},
 	input: {
 		borderWidth: 1,
 		borderColor: '#ccc',
 		borderRadius: 6,
 		padding: 10,
 		marginBottom: 12
-	},
-	tabBarContainer: {
-		flexDirection: 'row',
-		backgroundColor: '#fff',
-		width: '100%',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-	tabItem: {
-		flexDirection: 'column',
-		justifyContent: 'center',
-		alignItems: 'center',
-		width: '25%',
-		paddingVertical: 10,
-	},
-	icon: {
-		marginBottom: 4,
-	},
-	tabText: {
-		fontSize: 10,
-	},
-	activeIndicator: {
-		height: 2,
-		marginTop: 6,
-		width: '100%',
-		backgroundColor: theme.colors.primary.main,
-	},
-	sectionContainer: {
-		// flex: 1,
-		padding: 16,
 	},
 	sectionHeader: {
 		marginBottom: 16,
@@ -99,7 +58,8 @@ export const styles = StyleSheet.create({
 		borderColor: theme.colors.primary.main,
 	},
 	accordionContent: {
-		padding: 16,
+		paddingHorizontal: 16,
+		paddingVertical: 8,
 	},
 	sectionTitle: {
 		fontSize: 16,
@@ -108,9 +68,10 @@ export const styles = StyleSheet.create({
 		color: theme.colors.text.dark,
 	},
 	subTitle: {
-		fontSize: 12,
+		fontSize: 10,
 		color: theme.colors.text.light,
 		marginBottom: 16,
+		marginTop: 8
 	},
 	formGroup: {
 		marginBottom: 16,
@@ -139,6 +100,38 @@ export const styles = StyleSheet.create({
 	},
 	iconSpacing: {
 		marginLeft: theme.spacing.xs,
+	},
+	uploadSection: {
+		alignItems: 'flex-start'
+	},
+	profilepic: {
+		height: 48,
+		width: 48,
+		backgroundColor: theme.colors.text.white,
+		padding: 1,
+		borderWidth: 1,
+		borderColor: theme.colors.grey[400],
+		borderRadius: 50,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	profilePicIcon: {
+		backgroundColor: theme.colors.grey[300],
+		borderRadius: 50,
+		height: 44,
+		width: 44,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	uploadProfilePic: {
+		marginLeft: theme.spacing.lg,
+	},
+	uploadBtn: {
+		borderWidth: 1,
+		borderColor: theme.colors.primary.main,
+		borderRadius: theme.spacing.lg,
+		paddingHorizontal: theme.spacing.md,
+		paddingVertical: theme.spacing.sm,
+		width: Dimensions.get('screen').width*0.32,
 	}
-
 })

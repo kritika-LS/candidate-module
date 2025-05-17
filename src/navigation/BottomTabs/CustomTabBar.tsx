@@ -27,6 +27,12 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({ state, descriptors, navigat
           case 'Home':
             iconName = isFocused ? 'home' : 'home-outline';
             break;
+          case 'Search Jobs':
+            iconName = isFocused ? 'magnify' : 'magnify';
+            break;
+          case 'My Jobs':
+            iconName = isFocused ? 'briefcase' : 'briefcase-outline';
+            break;
           case 'Profile':
             iconName = isFocused ? 'account' : 'account-outline';
             break;

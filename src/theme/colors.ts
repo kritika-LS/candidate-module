@@ -1,3 +1,5 @@
+import { blue } from "react-native-reanimated/lib/typescript/Colors";
+
 export const colors = {
   primary: {
     main: '#015CCB',
@@ -23,6 +25,7 @@ export const colors = {
     main: '#00AE52',
     light: '#CCEFDC',
     success_100: '#00AE52',
+    accent: '#00796B',
   },
   blue_light: '#E8F4FF',
   grey: {
@@ -62,6 +65,9 @@ export const colors = {
     info: '#9C87D4',
     success: '#34C759',
   },
+  blue: {
+    light: '#347CD5',
+  }
 };
 
 export type AppColors = typeof colors;
