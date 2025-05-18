@@ -14,34 +14,11 @@ import { AccordionItem, Route } from '../../types/profile';
 import { PersonalDetails } from './PersonalDetails';
 import HistoryListCard from '../../components/features/HistoryListCard';
 import UploadFileModal from '../../components/features/UploadFileModal';
+import WorkHistorySection from './WorkHistory';
 
 const screenWidth = Dimensions.get('window').width;
 
 const Drawer = createDrawerNavigator();
-
-const WorkHistorySection = () => {
-    return (
-        <ScrollView style={styles.sectionContainer}>
-            {/* <TextStyle style={styles.sectionHeader}>Work History</TextStyle> */}
-            {/* Work history content goes here */}
-            {/* <TextStyle>Work history content will be displayed here</TextStyle> */}
-            <HistoryListCard
-                listIcon={'office-building'}
-                title='Registered Nurse'
-                subtitle1='ICU'
-                subtitle2='Trauma Hospital'
-                workSpaceName='Springfield Memorial Hospital - 867567'
-                ratio='1:4'
-                startDate='Jan 2020'
-                endDate='Present'
-                location='New York, NY'
-                pillText={'Travel'}
-                onEdit={() => console.log('Edit pressed')}
-                onDelete={() => console.log('Delete pressed')}
-            />
-        </ScrollView>
-    );
-};
 
 const EducationSection = () => {
     return (
