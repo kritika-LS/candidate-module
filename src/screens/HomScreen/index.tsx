@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Button, ScrollView } from 'react-native';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { DrawerParamList } from '../../types/navigation';
@@ -12,6 +12,9 @@ import { TextStyle } from '../../components/common/Text';
 import Icon from '../../components/common/Icon/Icon';
 import { theme } from '../../theme';
 import { DashboardStats } from '../../components/features/Dashboard/DashboardStats';
+import { fetchRecommendedJobs } from '../../store/thunk/jobs.thunk';
+import { clearJobsError } from '../../store/slices/jobs.slice';
+import { useDispatch } from 'react-redux';
 
 const pendingActions = [
   { id: '1', text: 'You have a pending Skills Checklist' },
@@ -57,6 +60,20 @@ const jobData: Job[] = [
 type Props = DrawerScreenProps<DrawerParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
+
+  const dispatch = useDispatch();
+  // const jobs = useAppSelector((state) => state.jobs.jobs);
+  // const loading = useAppSelector((state) => state.jobs.loading);
+  // const error = useAppSelector((state) => state.jobs.error);
+
+  useEffect(() => {
+    dispatch(fetchRecommendedJobs({ page: 0, pageSize: 10, sortOrder: 'Desc', sortBy: 'RELEVANCE' }));
+  
+    return () => {
+    dispatch(clearJobsError()); // Cleanup on unmount
+    };
+  }, [dispatch]);
+
   return (
     <ScrollView style={styles.container}>
       <DashboardGreetingsCard firstName='Jane' lastName='Cooper' />

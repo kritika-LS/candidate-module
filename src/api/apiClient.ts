@@ -1,7 +1,7 @@
 import axios, {AxiosInstance, AxiosError, AxiosRequestConfig} from 'axios';
-import { ENV } from '../../config/env';
-import { APP_CONSTANTS, AUTH_CONSTANTS } from '../../config/constants';
-import { ApiError } from '../../models/types/common';
+import { ENV } from '../config/env';
+import { APP_CONSTANTS, AUTH_CONSTANTS } from '../config/constants';
+import { ApiError } from '../models/types/common';
 
 class ApiClient {
   private static instance: ApiClient;

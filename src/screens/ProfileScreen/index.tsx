@@ -123,23 +123,25 @@ export const ProfileScreen = () => {
       const { navigationState, jumpTo } = props;
     
       return (
-        <View style={styles.tabBarContainer}>
-          {navigationState.routes.map((route:any, index: number) => {
-            const focused = navigationState.index === index;
-            const color = focused ? theme.colors.primary.main : theme.colors.text.light;
-    
-            return (
-              <Pressable
-                key={route.key}
-                onPress={() => jumpTo(route.key)}
-                style={styles.tabItem}
-              >
-                <TextStyle style={[styles.tabText, { color }]}>{route.title}</TextStyle>
-                {focused && <View style={styles.activeIndicator} />}
-              </Pressable>
-            );
-          })}
-        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ flex: 0.2 }}>
+            <View style={styles.tabBarContainer}>
+            {navigationState.routes.map((route:any, index: number) => {
+                const focused = navigationState.index === index;
+                const color = focused ? theme.colors.primary.main : theme.colors.text.light;
+        
+                return (
+                        <Pressable
+                            key={route.key}
+                            onPress={() => jumpTo(route.key)}
+                            style={styles.tabItem}
+                        >
+                            <TextStyle style={[styles.tabText, { color }]}>{route.title}</TextStyle>
+                            {focused && <View style={styles.activeIndicator} />}
+                        </Pressable>
+                );
+            })}
+            </View>
+        </ScrollView>
       );
     };
     

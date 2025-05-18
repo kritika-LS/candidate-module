@@ -11,16 +11,21 @@ import { ReferencesScreen } from '../screens/ReferencesScreen';
 import { DocumentsScreen } from '../screens/DocumentsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import BottomTabs from './BottomTabs/BottomTabs';
+import { StyleSheet, Text, View } from 'react-native';
+import DrawerHeader from '../components/CustomDrawer/DrawerHeader';
 
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
 
 const DrawerNavigator = () => (
   <Drawer.Navigator
-    screenOptions={{ headerShown: true }}
+    screenOptions={{
+      header: () => <DrawerHeader />,
+      headerTitle: '',
+    }}
     drawerContent={(props) => <CustomDrawer {...props} />}
   >
-    <Drawer.Screen name="BottomTabs" component={BottomTabs} />
+    <Drawer.Screen name="BottomTabs" component={BottomTabs} options={{ title: '' }} />
     <Drawer.Screen name="Home" component={HomeScreen} />
     <Drawer.Screen name="ScreeningsScreen" component={ScreeningsScreen} />
     <Drawer.Screen name="SkillsChecklistScreen" component={SkillsChecklistScreen} />

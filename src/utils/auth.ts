@@ -10,6 +10,8 @@ import {
       const idToken = sessionResult.tokens?.idToken?.toString();
       const accessToken = sessionResult.tokens?.accessToken?.toString();
     //   const refreshToken = sessionResult.tokens?.refreshToken?.toString();
+
+    console.log('Session result:', sessionResult);
   
       const currentUser = await getCurrentUser();
       const userAttributes = await fetchUserAttributes();

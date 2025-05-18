@@ -25,6 +25,7 @@ export const styles = StyleSheet.create({
 		flexDirection: 'row',
 		backgroundColor: '#fff',
 		width: '100%',
+		height: 50,
 		justifyContent: 'space-between',
 		alignItems: 'center',
 	},
@@ -32,8 +33,9 @@ export const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		width: '25%',
+		// width: '25%',
 		paddingVertical: 10,
+		paddingHorizontal: 16,
 	},
 	icon: {
 		marginBottom: 4,

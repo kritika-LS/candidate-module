@@ -11,7 +11,7 @@ const SplashScreen = () => {
   const navigation = useNavigation<NavigationProp>();
 
   const handleAnimationFinish = () => {
-    navigation.replace(ScreenNames.WalkthroughScreen);
+    navigation.navigate(ScreenNames.WalkthroughScreen);
   };
 
   return <AnimatedSplash onAnimationFinish={handleAnimationFinish} />;

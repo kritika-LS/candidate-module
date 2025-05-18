@@ -21,6 +21,7 @@ import { loginSchema } from '../../../validations/loginValidation';
 import { useAuth } from '../../../context/AuthContext';
 import * as yup from 'yup';
 import Toast from 'react-native-toast-message';
+import { getAuthDetails } from '../../../utils/auth';
 
 export const LoginScreen = () => {
 
@@ -36,6 +37,8 @@ export const LoginScreen = () => {
     const handleLogin = async () => {
         try {
             await login(email, password, rememberAccount);
+            const result = await getAuthDetails();
+            console.log('Login result:', result);
         } catch (error: any) {
             if (error.name === 'UserNotFoundException') {
                 Toast.show({
