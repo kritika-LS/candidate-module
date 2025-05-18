@@ -2,6 +2,7 @@ import axios, {AxiosInstance, AxiosError, AxiosRequestConfig} from 'axios';
 import { ENV } from '../config/env';
 import { APP_CONSTANTS, AUTH_CONSTANTS } from '../config/constants';
 import { ApiError } from '../models/types/common';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class ApiClient {
   private static instance: ApiClient;
@@ -13,7 +14,6 @@ class ApiClient {
       timeout: APP_CONSTANTS.API_TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${AUTH_CONSTANTS.AUTH_TOKEN}`,
       },
     });
 
@@ -39,6 +39,7 @@ class ApiClient {
           data: config.data,
           params: config.params,
         });
+        config.headers['Authorization'] = `Bearer ${AsyncStorage.getItem("auth_token")}`;
         return config;
       },
       error => {

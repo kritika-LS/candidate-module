@@ -107,7 +107,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string, rememberAccount: boolean = false) => {
     try {
-      await signIn({ username: email, password });
+      const result:any = await signIn({ username: email, password });
+      await getAuthDetails();
       setIsAuthenticated(true);
 
       if (rememberAccount) {
@@ -164,6 +165,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const currentUser = await getCurrentUser();
       const userAttributes = await fetchUserAttributes();
+
+      await AsyncStorage.setItem('auth_token', accessToken || '');
 
       let groups: string[] = [];
       if (currentUser) {

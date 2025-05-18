@@ -14,7 +14,7 @@ import { theme } from '../../theme';
 import { DashboardStats } from '../../components/features/Dashboard/DashboardStats';
 import { fetchRecommendedJobs } from '../../store/thunk/jobs.thunk';
 import { clearJobsError } from '../../store/slices/jobs.slice';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
 
 const pendingActions = [
   { id: '1', text: 'You have a pending Skills Checklist' },
@@ -61,7 +61,7 @@ type Props = DrawerScreenProps<DrawerParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   // const jobs = useAppSelector((state) => state.jobs.jobs);
   // const loading = useAppSelector((state) => state.jobs.loading);
   // const error = useAppSelector((state) => state.jobs.error);

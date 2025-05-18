@@ -102,7 +102,7 @@ const WalkthroughScreen: React.FC<WalkthroughScreenProps> = ({onDone}) => {
         {currentIndex > 0 ? (
           <TouchableOpacity onPress={scrollToPrev} style={styles.arrowWrapper}>
             {/* <Text style={styles.arrow}>←</Text> */}
-            <Icon name="west" size={24} color="#fff" />
+            <Icon name="arrow-left" size={24} color="#fff" />
           </TouchableOpacity>
         ) : (
           <View style={styles.arrowPlaceholder} />
@@ -111,7 +111,7 @@ const WalkthroughScreen: React.FC<WalkthroughScreenProps> = ({onDone}) => {
         {/* Right Arrow or CTA */}
         {currentIndex < walkthroughData.length - 1 ? (
           <TouchableOpacity onPress={scrollToNext} style={styles.arrowWrapper}>
-            <Icon name="east" size={24} color="#fff" />
+            <Icon name="arrow-right" size={24} color="#fff" />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity style={styles.ctaButton} onPress={onPressExploreOpportunities}>
