@@ -1,6 +1,6 @@
 import axios, {AxiosInstance, AxiosError, AxiosRequestConfig} from 'axios';
 import { ENV } from '../config/env';
-import { APP_CONSTANTS, AUTH_CONSTANTS } from '../config/constants';
+import { APP_CONSTANTS } from '../config/constants';
 import { ApiError } from '../models/types/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -30,7 +30,7 @@ class ApiClient {
   private setupInterceptors() {
     // Request interceptor
     this.axiosInstance.interceptors.request.use(
-      config => {
+      async config => {
         console.log('🌐 Request:', {
           method: config.method?.toUpperCase(),
           url: config.url,
@@ -39,7 +39,16 @@ class ApiClient {
           data: config.data,
           params: config.params,
         });
-        config.headers['Authorization'] = `Bearer ${AsyncStorage.getItem("auth_token")}`;
+
+        try {
+          const token = await AsyncStorage.getItem('auth_token');
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+        } catch (error) {
+          console.error('Error fetching auth token:', error);
+        }
+
         return config;
       },
       error => {
