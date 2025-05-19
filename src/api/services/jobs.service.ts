@@ -10,6 +10,6 @@ import { ENDPOINTS } from "../endPoints";
     sortBy: 'RELEVANCE'
   ): Promise<any[]> {
     return apiClient.get<any[]>(
-        `${ENDPOINTS.JOBS.recommendedJobs}/${page}/${pageSize}?sortOrder=${sortOrder}&sortBy=${sortBy}`,);
+        `${ENDPOINTS.DASHBOARD.recommendedJobs}/${page}/${pageSize}?sortOrder=${sortOrder}&sortBy=${sortBy}`,);
   }
  }

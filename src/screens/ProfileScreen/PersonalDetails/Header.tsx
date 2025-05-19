@@ -1,11 +1,30 @@
-import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { Alert, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import Icon from "../../../components/common/Icon/Icon";
 import { TextStyle } from "../../../components/common/Text";
 import { theme } from "../../../theme";
+import DocumentPicker from 'react-native-document-picker';
 
 export const Header = () => {
+
+  	const [document, setDocument] = useState<any>(null);
+
+	const handleDocumentUpload = async () => {
+		try {
+		  const res = await DocumentPicker.pick({
+			type: [DocumentPicker.types.images],
+		  });
+		  setDocument(res[0]);
+		} catch (err) {
+		  if (DocumentPicker.isCancel(err)) {
+			// User cancelled the picker
+		  } else {
+			Alert.alert('Error', 'Failed to pick document');
+		  }
+		}
+	};
+
 	return (
 		<View style={[styles.flexRow, styles.uploadSection]}>
 
@@ -16,7 +35,7 @@ export const Header = () => {
 			</View>
 
 			<View style={styles.uploadProfilePic}>
-				<TouchableOpacity style={[styles.flexRow, styles.uploadBtn]}>
+				<TouchableOpacity style={[styles.flexRow, styles.uploadBtn]} onPress={handleDocumentUpload}>
 					<Icon name="tray-arrow-up" size={16} color={theme.colors.primary.main} />
 					<TextStyle size="xs" color={theme.colors.primary.main} style={styles.iconSpacing}>Upload Picture</TextStyle>
 				</TouchableOpacity>

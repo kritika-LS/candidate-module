@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
     padding: theme.spacing.md,
   },
   section: {
+    flex: 1,
     // marginTop: theme.spacing.md,
   },
   sectionTitle: {
@@ -38,5 +39,35 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.grey[100],
     borderRadius: 2,
     marginLeft: 12
+  },
+  jobHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flex: 1,
+  },
+  sortSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dropdown: {
+    borderWidth: 0.5,
+    borderRadius: 24,
+    backgroundColor: '#fafafa',
+    borderColor: theme.colors.text.light,
+    width: 120,
+    marginVertical: 12,
+    alignSelf: 'center',
+  },
+  dropdownItem: {
+    justifyContent: 'flex-start',
+  },
+  dropdownLabel: {
+    fontSize: 12,
+    color: theme.colors.primary.main,
+  },
+  dropdownContainer: {
+    borderColor: '#d4d4d4',
   },
 });

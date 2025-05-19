@@ -21,7 +21,6 @@ export const styles = StyleSheet.create({
 		paddingVertical: 2,
 		paddingHorizontal: 8,
 		borderRadius: 4,
-		top: 5,
         marginLeft: 10,
 	},
     flexRow: {

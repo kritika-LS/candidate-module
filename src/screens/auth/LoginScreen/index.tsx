@@ -37,8 +37,6 @@ export const LoginScreen = () => {
     const handleLogin = async () => {
         try {
             await login(email, password, rememberAccount);
-            const result = await getAuthDetails();
-            console.log('Login result:', result);
         } catch (error: any) {
             if (error.name === 'UserNotFoundException') {
                 Toast.show({
@@ -55,7 +53,7 @@ export const LoginScreen = () => {
             } else {
                 Toast.show({
                     type: 'error',
-                    text1: 'Login Failed'
+                    text1: error.message
                 })
                 setErrors({...errors, password: error.message || 'Login failed'});
             }

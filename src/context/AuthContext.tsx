@@ -6,7 +6,8 @@ import {
   resetPassword, 
   confirmResetPassword,
   fetchUserAttributes,
-  type AuthSession
+  type AuthSession,
+  resendSignUpCode
 } from 'aws-amplify/auth';
 import React, { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -47,6 +48,7 @@ type AuthContextType = {
   } | null>;
   forgotPassword: (email: string) => Promise<void>;
   resetPassword: (email: string, code: string, newPassword: string) => Promise<void>;
+  handleResendCode: (username: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -73,7 +75,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkAuthState = async () => {
     try {
-      // Check if we have stored credentials
+      const authState = await AsyncStorage.getItem('@auth:isAuthenticated');
+      if (authState === 'true') {
+        setIsAuthenticated(true);
+      }
+
+      // Check if we have stored credentials and attempt silent sign-in
       const rememberAccount = await AsyncStorage.getItem('@auth:rememberAccount');
       if (rememberAccount === 'true') {
         const encryptedEmail = await AsyncStorage.getItem('@auth:email');
@@ -90,15 +97,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             'your-secret-key'
           ).toString(CryptoJS.enc.Utf8);
 
-          await login(email, password, true);
-          return;
+          try {
+            await login(email, password, true); // Attempt login with stored credentials
+            return;
+          } catch (loginError) {
+            console.error("Silent login failed:", loginError);
+            // Clear stored credentials if silent login fails
+            await AsyncStorage.multiRemove([
+              '@auth:rememberAccount',
+              '@auth:email',
+              '@auth:password',
+              '@auth:isAuthenticated'
+            ]);
+          }
         }
       }
 
-      // Fall back to regular session check
-      const session = await getSession();
-      setIsAuthenticated(!!session);
+      // If not remembered or silent login failed, check for a valid session
+      if (!isAuthenticated) {
+        const session = await getSession();
+        setIsAuthenticated(!!session);
+      }
     } catch (error) {
+      console.error("checkAuthState error:", error);
       setIsAuthenticated(false);
     } finally {
       setIsLoading(false);
@@ -107,9 +128,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string, rememberAccount: boolean = false) => {
     try {
-      const result:any = await signIn({ username: email, password });
+      await signIn({ username: email, password });
       await getAuthDetails();
       setIsAuthenticated(true);
+      // await AsyncStorage.setItem('@auth:isAuthenticated', 'true');
 
       if (rememberAccount) {
         const encryptedEmail = CryptoJS.AES.encrypt(
@@ -128,13 +150,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // Schedule token refresh
-      refreshManager.current.scheduleRefresh(async () => {
-        try {
-          await getSession();
-        } catch (error) {
-          await logout();
-        }
-      });
+      // refreshManager.current.scheduleRefresh(async () => {
+      //   try {
+      //     await getSession();
+      //   } catch (error) {
+      //     await logout();
+      //   }
+      // });
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -145,11 +167,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut();
       setIsAuthenticated(false);
+      await AsyncStorage.setItem('@auth:isAuthenticated', 'false'); // Persist auth state
       refreshManager.current.clearRefresh();
       await AsyncStorage.multiRemove([
         '@auth:rememberAccount',
         '@auth:email',
-        '@auth:password'
+        '@auth:password',
+        '@auth:isAuthenticated'
       ]);
     } catch (error) {
       console.error('Logout error:', error);
@@ -159,12 +183,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const getAuthDetails = async() => {
     try {
       const sessionResult = await fetchAuthSession();
-      const idToken = sessionResult.tokens?.idToken?.toString();
-      const accessToken = sessionResult.tokens?.accessToken?.toString();
+      const idToken = sessionResult.tokens?.idToken?.toString() || null;
+      const accessToken = sessionResult.tokens?.accessToken?.toString() || null;
       //   const refreshToken = sessionResult.tokens?.refreshToken?.toString();
 
       const currentUser = await getCurrentUser();
-      const userAttributes = await fetchUserAttributes();
+      const userAttributes: Record<string, any> = await fetchUserAttributes();
 
       await AsyncStorage.setItem('auth_token', accessToken || '');
 
@@ -231,6 +255,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw error;
     }
   };
+
+  const handleResendCode = async (username:string) => {
+    try {
+      await resendSignUpCode({ username });
+      console.log('Verification code resent successfully');
+      // Optionally, display a success message to the user
+    } catch (error) {
+      console.log('Error resending verification code:', error);
+      // Handle the error appropriately, e.g., display an error message to the user
+    }
+  };
       
   useEffect(() => {
     checkAuthState();
@@ -249,7 +284,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       getSession,
       getAuthDetails,
       forgotPassword: forgotPasswordHandler,
-      resetPassword: resetPasswordHandler
+      resetPassword: resetPasswordHandler,
+      handleResendCode,
     }}>
       {children}
     </AuthContext.Provider>

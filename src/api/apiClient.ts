@@ -42,6 +42,7 @@ class ApiClient {
 
         try {
           const token = await AsyncStorage.getItem('auth_token');
+          console.log('🌐 Token:', token);
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
           }

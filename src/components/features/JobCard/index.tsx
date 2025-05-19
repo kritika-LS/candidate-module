@@ -12,7 +12,12 @@ const JobCard: React.FC<{ job: Job }> = ({ job }) => {
 		<View style={styles.card}>
 
 			<View style={styles.jobHeader}>
-				<TextStyle size='sm' variant='bold'>{job.title} <View><TextStyle size='xs' style={styles.tag}>{job.type}</TextStyle></View></TextStyle>
+				<View style={[styles.flexRow]}>
+					<TextStyle size='sm' variant='bold'>
+						{job.jobTitle} 
+					</TextStyle>
+					{job.jobType && <TextStyle size='xs' style={styles.tag}>{job.jobType}</TextStyle>}
+				</View>
 				
 				<View style={styles.jobHeader}>
 					<TouchableOpacity>
@@ -25,46 +30,46 @@ const JobCard: React.FC<{ job: Job }> = ({ job }) => {
 			</View>
 
 			<View style={[styles.flexRow, styles.companyInfoSection]}>
-				<View style={styles.flexRow}>
+				{job.facilityName && <View style={[styles.flexRow, {marginRight: theme.spacing.md}]}>
 					<Icon name='hospital-building' size={14} color='green' />
-					<TextStyle size='sm' color={'green'} style={styles.iconSpacing}>{job.companyName}</TextStyle>
-				</View>
-				<View style={[styles.flexRow, {marginLeft: theme.spacing.md}]}>
+					<TextStyle size='sm' color={'green'} style={styles.iconSpacing}>{job.facilityName}</TextStyle>
+				</View>}
+				<View style={[styles.flexRow]}>
 					<Icon name='map-marker-outline' color={theme.colors.grey[800]} size={14} />
-					<TextStyle size='sm' color={theme.colors.grey[800]} style={styles.iconSpacing}>{job.location}</TextStyle>
+					<TextStyle size='sm' color={theme.colors.grey[800]} style={styles.iconSpacing}>{job.city ? job.city + ',' : ""} {job.state ? job.state + ',' : ""} {job.country}</TextStyle>
 				</View>
 			</View>
 
 			<View style={styles.flexRow}>
 				<Icon name='file-document-outline' size={12} color={theme.colors.grey[800]} />
-				<TextStyle size='xs' color={theme.colors.grey[800]} style={styles.ref}>Ref#: {job.reference}</TextStyle>
+				<TextStyle size='xs' color={theme.colors.grey[800]} style={styles.ref}>Job Reference Number: {job.jobReferenceNumber}</TextStyle>
 			</View>
 
-			<TextStyle size='sm' variant='medium' style={styles.rate}>{job.rate} / week</TextStyle>
+			<TextStyle size='sm' variant='medium' style={styles.rate}>{job.payRateMinimum} - {job.payRateMaximum} / week</TextStyle>
 
 			<View style={styles.labels}>
 				<View style={[styles.greenLabel, styles.flexRow]}>
 					<Icon name='briefcase-variant-outline' size={12} color={theme.colors.green.success_100} />
-					<TextStyle size='xs' color={theme.colors.green.success_100} style={styles.iconSpacing}>Experience: {job.experience}</TextStyle>
+					<TextStyle size='xs' color={theme.colors.green.success_100} style={styles.iconSpacing}>Experience: {job.jobExperienceLevel}</TextStyle>
 				</View>
 				<View style={[styles.blueLabel, styles.flexRow]}>
 					<Icon name='timer-sand-empty' size={12} color={theme.colors.primary.main} />
-					<TextStyle size='xs' color={theme.colors.primary.main} style={styles.iconSpacing}>Shift: {job.shift}</TextStyle>
+					<TextStyle size='xs' color={theme.colors.primary.main} style={styles.iconSpacing}>Shift: {job.shiftDetails} Day</TextStyle>
 				</View>
 			</View>
 
 			<View style={[styles.detailContainer]}>
 				<View style={styles.detailPill}>
-					<TextStyle size="xs" color={theme.colors.grey[800]}>Start Date: {job.startDate}</TextStyle>
+					<TextStyle size="xs" color={theme.colors.grey[800]}>Start Date: {job.validFrom}</TextStyle>
 				</View>
 				<View style={styles.detailPill}>
-					<TextStyle size="xs" color={theme.colors.grey[800]}>End Date: {job.endDate}</TextStyle>
+					<TextStyle size="xs" color={theme.colors.grey[800]}>End Date: {job.validTill}</TextStyle>
 				</View>
 				<View style={styles.detailPill}>
 					<TextStyle size="xs" color={theme.colors.grey[800]}>Duration of Work: {job.duration}</TextStyle>
 				</View>
 				<View style={styles.detailPill}>
-					<TextStyle size="xs" color={theme.colors.grey[800]}>Openings: {job.openings}</TextStyle>
+					<TextStyle size="xs" color={theme.colors.grey[800]}>Openings: {job.numberOfOpenings}</TextStyle>
 				</View>
 			</View>
 
@@ -72,7 +77,7 @@ const JobCard: React.FC<{ job: Job }> = ({ job }) => {
 			<View style={[styles.flexRow, styles.jobCardFooter]}>
 				<View style={styles.flexRow}>
 					<Icon name='clock-outline' size={12} color={theme.colors.grey[500]} />
-					<TextStyle size='xs' color={theme.colors.grey[500]} style={styles.iconSpacing}>Posted {job.postedAgo}</TextStyle>
+					<TextStyle size='xs' color={theme.colors.grey[500]} style={styles.iconSpacing}>Posted {job.postedOn}</TextStyle>
 				</View>
 
 				<TouchableOpacity style={styles.applyButton}>

@@ -1,19 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, Dimensions } from 'react-native';
 import { getGreeting } from '../../../../utils/getGreeting';
+import { useAppSelector } from '../../../../hooks/useAppDispatch';
 
 interface GreetingsCardProps {
-  firstName: string;
-  lastName: string;
+  // firstName: string;
+  // lastName: string;
 }
 
-const DashboardGreetingsCard: React.FC<GreetingsCardProps> = ({
-  firstName = 'Jane',
-  lastName = 'Cooper',
-}) => {
+const DashboardGreetingsCard: React.FC<GreetingsCardProps> = () => {
+
+  const candidateData = useAppSelector((state) => state?.candidate?.candidate?.responsePayload) || {};
+  const { firstName, lastName } = candidateData || {};
+
+  if (!candidateData) {
+    // Optionally render a loading state or return null
+    return  <Text>Loading greeting...</Text>
+  }
 
   const fullName = `${firstName} ${lastName}`;
-  const greeting = `${getGreeting()}, ${fullName}!`;
+  const greeting = candidateData ? `${getGreeting()}, ${fullName}!` : `${getGreeting()}!`;
 
   return(
     <ImageBackground

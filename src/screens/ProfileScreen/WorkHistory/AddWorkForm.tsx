@@ -466,6 +466,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: theme.spacing.md,
+    // backgroundColor: '#fff',
   },
   formSection: {
     marginBottom: theme.spacing.lg,

@@ -3,6 +3,7 @@ import { View, Text, FlatList, ViewToken, TouchableOpacity } from 'react-native'
 import { styles } from './styles';
 import Icon from '../../../common/Icon/Icon';
 import { theme } from '../../../../theme';
+import { useAppSelector } from '../../../../hooks/useAppDispatch';
 
 type StatCardProps = {
   icon: React.ReactNode;
@@ -11,44 +12,6 @@ type StatCardProps = {
   bgColor: string;
   iconBgColor: string;
 };
-
-const data: StatCardProps[] = [
-  {
-    icon: <Icon name="briefcase-outline" size={12} color="white" />,
-    label: 'Saved Jobs',
-    count: 12,
-    bgColor: '#E6DBFD',
-    iconBgColor: "#8800FF",
-  },
-  {
-    icon: <Icon name="file-multiple-outline" size={12} color="white" />,
-    label: 'Applications',
-    count: 4,
-    bgColor: '#FFF2CC',
-    iconBgColor: theme.colors.accent.main,
-  },
-  {
-    icon: <Icon name="monitor" size={12} color="white" />,
-    label: 'Onboardings',
-    count: 4,
-    bgColor: '#DAF0FF',
-    iconBgColor: theme.colors.primary.main,
-  },
-  {
-    icon: <Icon name="file-clock-outline" size={12} color="white" />,
-    label: 'Assignments',
-    count: 3,
-    bgColor: '#E5F8E8',
-    iconBgColor: theme.colors.green.success_100,
-  },
-  {
-    icon: <Icon name="account-search-outline" size={12} color="white" />,
-    label: 'Screenings',
-    count: 3,
-    bgColor: '#ffded1',
-    iconBgColor: '#ff9066',
-  },
-];
 
 const StatCard = ({ icon, label, count, bgColor, iconBgColor }: StatCardProps) => {
   return (
@@ -66,6 +29,46 @@ export const DashboardStats = () => {
   const listRef = useRef<FlatList>(null);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(true);
+
+  const dashboardStats = useAppSelector((state) => state?.dashboardStats?.statistics?.responsePayload) || {};
+
+  const data: StatCardProps[] = [
+    {
+      icon: <Icon name="briefcase-outline" size={12} color="white" />,
+      label: 'Saved Jobs',
+      count: dashboardStats.totalSavedJobs,
+      bgColor: '#E6DBFD',
+      iconBgColor: "#8800FF",
+    },
+    {
+      icon: <Icon name="file-multiple-outline" size={12} color="white" />,
+      label: 'Applications',
+      count: dashboardStats.totalAppliedJobs,
+      bgColor: '#FFF2CC',
+      iconBgColor: theme.colors.accent.main,
+    },
+    {
+      icon: <Icon name="monitor" size={12} color="white" />,
+      label: 'Onboardings',
+      count: dashboardStats.totalOnboardedJobs,
+      bgColor: '#DAF0FF',
+      iconBgColor: theme.colors.primary.main,
+    },
+    {
+      icon: <Icon name="file-clock-outline" size={12} color="white" />,
+      label: 'Assignments',
+      count: dashboardStats.totalOfferedJobs,
+      bgColor: '#E5F8E8',
+      iconBgColor: theme.colors.green.success_100,
+    },
+    {
+      icon: <Icon name="account-search-outline" size={12} color="white" />,
+      label: 'Screenings',
+      count: dashboardStats.totalOffersAccepted,
+      bgColor: '#ffded1',
+      iconBgColor: '#ff9066',
+    },
+  ];
 
   const handleScroll = (event: any) => {
     const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;

@@ -9,8 +9,12 @@ import { theme } from '../../../theme';
 import { Button } from '../../../components/common/Button';
 import { DEFAULT_VALUES } from '../../../config/constants';
 import Toast from 'react-native-toast-message';
+import { useAppSelector } from '../../../hooks/useAppDispatch';
 
 const PersonalDetailsForm: React.FC = () => {
+
+  const candidatePersonalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload);
+
     const validationSchema = Yup.object().shape({
         firstName: Yup.string().required('First Name is required'),
         middleName: Yup.string().required('Middle Name is required'),
@@ -23,32 +27,33 @@ const PersonalDetailsForm: React.FC = () => {
     });
 
     const initialValues={
-        firstName: '',
-        middleName: '',
-        profileTitle: '',
-        overallExperience: '',
-        emailAddress: '',
-        alternateEmailAddress: '',
-        knownAs: '',
+        firstName: candidatePersonalDetails?.firstName || '',
+        lastName: candidatePersonalDetails?.lastName || '',
+        middleName: candidatePersonalDetails?.middleName || '',
+        profileTitle: candidatePersonalDetails?.profileTitle || '',
+        overallExperience: candidatePersonalDetails?.overallYearsOfExperience || '',
+        emailAddress: candidatePersonalDetails?.emailAddress || '', 
+        alternateEmailAddress: candidatePersonalDetails?.alternateEmailAddress || '',
+        knownAs: candidatePersonalDetails?.knownAs || '',
+        brief: candidatePersonalDetails?.brief || '',
+        mobileNumber: candidatePersonalDetails?.mobileNumber || '',
+        alternateMobileNumber: candidatePersonalDetails?.alternatePhoneNumber || '',
         otherName: '',
-        brief: '',
-        mobileNumber: '',
-        alternateMobileNumber: '',
         genderOpen: false,
         genderItems: DEFAULT_VALUES.genderItems,
-        gender: null,
+        gender: candidatePersonalDetails?.gender || null,
         nationalityOpen: false,
         nationalityItems: DEFAULT_VALUES.nationalityItems,
-        nationality: null,
+        nationality: candidatePersonalDetails?.nationality || null,
         ethnicityOpen: false,
         ethnicityItems: DEFAULT_VALUES.ethnicityItems,
-        ethnicity: null,
+        ethnicity: candidatePersonalDetails?.ethnicity || null,
         militaryOpen: false,
         militaryItems: DEFAULT_VALUES.militaryItems,
-        military: null,
+        military: candidatePersonalDetails?.militaryStatus || null,
         workplacePreferenceOpen: false,
         workplacePreferenceItems: DEFAULT_VALUES.workplacePreferenceItems,
-        workplacePreference: null,
+        workplacePreference: candidatePersonalDetails?.workplacePreference || null,
     };
 
     const handleSave = async (values: typeof initialValues) => {
@@ -141,6 +146,7 @@ const PersonalDetailsForm: React.FC = () => {
                     <PhoneNumberInput
                         label="Mobile Number"
                         required
+                        vallue={values.mobileNumber}
                         onChangeText={(value) => setFieldValue('mobileNumber', value)}
                         error={errors.mobileNumber}
                         touched={touched.mobileNumber}

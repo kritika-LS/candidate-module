@@ -17,9 +17,21 @@ import {Button} from '../../../../components/common/Button';
 import {Formik} from 'formik';
 import Toast from 'react-native-toast-message';
 import { addressValidationSchema2 } from '../../../../validations/addressValidation';
+import { useAppSelector } from '../../../../hooks/useAppDispatch';
 
 const AddressDetailsScreen: React.FC = () => {
   const navigation = useNavigation();
+
+  const candidateAddressDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload?.address);
+
+  const candidateAddress = {
+    address1: candidateAddressDetails?.[0]?.address1 || '',
+    address2: candidateAddressDetails?.[0]?.address2 || '',
+    city: candidateAddressDetails?.[0]?.city || '',
+    zipCode: candidateAddressDetails?.[0]?.zipCode || '',
+    stateCode: candidateAddressDetails?.[0]?.stateCode || '',
+    countryCode: candidateAddressDetails?.[0]?.countryCode || '',
+  };
 
   const defaultAddress = {
     address1: '',
@@ -31,8 +43,8 @@ const AddressDetailsScreen: React.FC = () => {
   };
 
   const initialValues = {
-    permanentAddress: {...defaultAddress},
-    currentAddress: {...defaultAddress},
+    permanentAddress: {...candidateAddress},
+    currentAddress: {...candidateAddress},
     isSamePermanent: false,
     notes: '',
     permanentNotes: '', // Add a separate field for permanent address notes

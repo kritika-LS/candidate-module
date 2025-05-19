@@ -7,14 +7,15 @@ interface Props {
   text: string;
 }
 
-const PendingActionItem: React.FC<Props> = ({ text }) => (
-  <View style={styles.container}>
-    <TextStyle style={styles.text} size='xs'>{text}</TextStyle>
-    <TouchableOpacity style={styles.button}>
-      <TextStyle style={styles.buttonText}>View</TextStyle>
-    </TouchableOpacity>
-  </View>
-);
+const PendingActionItem: React.FC<Props> = ({ text }) => {
+  return(
+    <View style={styles.container}>
+      <TextStyle style={styles.text} size='xs'>{text}</TextStyle>
+      <TouchableOpacity style={styles.button}>
+        <TextStyle style={styles.buttonText}>View</TextStyle>
+      </TouchableOpacity>
+    </View>
+)};
 
 const styles = StyleSheet.create({
   container: {

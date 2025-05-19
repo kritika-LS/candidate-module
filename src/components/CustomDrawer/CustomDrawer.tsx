@@ -14,6 +14,8 @@ import {
 import { styles } from './styles';
 import Icon from '../common/Icon/Icon';
 import { useAuth } from '../../context/AuthContext';
+import { useAppSelector } from '../../hooks/useAppDispatch';
+import moment from 'moment';
 
 const drawerItems = [
   { label: 'My Screenings', icon: 'account-search-outline', route: 'My Screenings' },
@@ -26,6 +28,10 @@ const drawerItems = [
 const CustomDrawer = ({ navigation }: any) => {
 
   const { logout } = useAuth(); // Get logout function from AuthContext
+  const candidateData = useAppSelector((state) => state?.candidate?.candidate?.responsePayload) || {};
+  const { lastActiveAccessLog } = candidateData || {};
+
+  const formattedDate = moment(lastActiveAccessLog?.date).format('MMM DD, YYYY HH:mm:ss');
 
   const handleNavigate = (route: string) => {
     navigation.navigate(route);
@@ -67,7 +73,7 @@ const CustomDrawer = ({ navigation }: any) => {
 
       {/* Footer */}
       <View style={styles.footer}>
-        <Text style={styles.timestamp}>Last Active: Apr 22, 2025 15:31:49</Text>
+        <Text style={styles.timestamp}>Last Active: {formattedDate}</Text>
         <TouchableOpacity style={styles.logout} onPress={handleLogout}>
           <Icon name="logout" size={20} color="#fff" />
           <Text style={styles.logoutText}>Logout</Text>

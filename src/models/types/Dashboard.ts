@@ -4,20 +4,25 @@ export interface PendingAction {
 }
 
 export interface Job {
-	id: string;
-	title: string;
-	type: string;
-	companyName: string;
-	location: string;
-	reference: string;
-	rate: string;
-	experience: string;
-	shift: string;
-	openings: number;
-	startDate: string;
-	endDate: string;
+	jobId: string;
+	jobTitle: string;
+	jobType: string;
+	facilityName: string;
+	city: string;
+	state: string;
+	country: string;
+	jobReferenceNumber: string;
+	payRateMinimum: string;
+	payRateMaximum: string;
+	overallYearsOfExperienceMinimum: string;
+	overallYearsOfExperienceMaximum: string;
+	jobExperienceLevel: string;
+	shiftDetails: string;
+	numberOfOpenings: number;
+	validFrom: string;
+	validTill: string;
 	duration: string;
-	postedAgo: string;
+	postedOn: string;
 }
 
 export type JobList = Job[];

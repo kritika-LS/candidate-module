@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text, Button, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, ScrollView, ActivityIndicator } from 'react-native';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { DrawerParamList } from '../../types/navigation';
 import DashboardGreetingsCard from '../../components/features/Dashboard/DashboardGreetingsCard/DashboardGreetingsCard';
@@ -14,69 +14,97 @@ import { theme } from '../../theme';
 import { DashboardStats } from '../../components/features/Dashboard/DashboardStats';
 import { fetchRecommendedJobs } from '../../store/thunk/jobs.thunk';
 import { clearJobsError } from '../../store/slices/jobs.slice';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
-
-const pendingActions = [
-  { id: '1', text: 'You have a pending Skills Checklist' },
-  { id: '2', text: 'Personal information is incomplete' },
-  { id: '3', text: 'You have a pending onboarding for Registered Nurse at Starlight Medical Center' },
-];
-
-const jobData: Job[] = [
-  {
-    id: 'j1',
-    title: 'Registered Nurse',
-    type: 'Travel',
-    companyName: 'Starlight Medical Center',
-    location: 'Syracuse, NY, US',
-    reference: 'RE-1032YPL',
-    rate: '$2484 - $2681',
-    experience: '0-2 years',
-    shift: '3x12 Day',
-    openings: 1,
-    startDate: 'Dec 02, 2024',
-    endDate: 'Mar 02, 2025',
-    duration: '3 Months',
-    postedAgo: '2 days ago',
-  },
-  {
-    id: 'j2',
-    title: 'Registered Nurse',
-    type: 'Travel',
-    companyName: 'Starlight Medical Center',
-    location: 'Syracuse, NY, US',
-    reference: 'RE-1032YPL',
-    rate: '$2484 - $2681',
-    experience: '0-2 years',
-    shift: '3x12 Day',
-    openings: 1,
-    startDate: 'Dec 02, 2024',
-    endDate: 'Mar 02, 2025',
-    duration: '3 Months',
-    postedAgo: '2 days ago',
-  },
-];
+import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
+import { fetchPendingActions } from '../../store/thunk/pendingActions.thunk';
+import { fetchDashboardStatistics } from '../../store/thunk/dashboardStats.thunk';
+import { fetchCandidate } from '../../store/thunk/candidate.thunk';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { fetchCandidatePersonalDetails } from '../../store/thunk/candidatePersonalDetails.thunk';
 
 type Props = DrawerScreenProps<DrawerParamList, 'Home'>;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const dispatch = useAppDispatch();
-  // const jobs = useAppSelector((state) => state.jobs.jobs);
-  // const loading = useAppSelector((state) => state.jobs.loading);
-  // const error = useAppSelector((state) => state.jobs.error);
+  const jobs = useAppSelector((state) => state.jobs.jobs);
+  const pendingActionsData = useAppSelector((state) => state.pendingActions.actions) as unknown as { responsePayload: Record<string, { pending: boolean; messages: string[] }> };
+
+  //@ts-ignore
+  const jobData: Job[] = jobs?.responsePayload || [];
+
+  const [open, setOpen] = useState(false);
+  const [sortByOption, setSortByOption] = useState('Relevance');
+  const [items, setItems] = useState([
+    { label: 'Relevance', value: 'Relevance' },
+    { label: 'Newest', value: 'Newest' },
+    { label: 'Highest Pay', value: 'PayRate' },
+  ]);
+
+  const [loading, setLoading] = useState(true); // Add a loading state
+
+  const pendingActions = Object.entries(pendingActionsData?.responsePayload || {})
+    .filter(([, value]) => (value as { pending: boolean; messages: string[] }).pending && (value as { pending: boolean; messages: string[] }).messages.length > 0)
+    .flatMap(([, value]) => (value as { pending: boolean; messages: string[] }).messages)
+    .map((message, index) => ({ id: String(index + 1), text: message }));
+
+  const pendingActionsCount = pendingActions.length;
 
   useEffect(() => {
-    dispatch(fetchRecommendedJobs({ page: 0, pageSize: 10, sortOrder: 'Desc', sortBy: 'RELEVANCE' }));
-  
-    return () => {
-    dispatch(clearJobsError()); // Cleanup on unmount
+    const fetchData = async () => {
+      setLoading(true); // Set loading to true before starting API calls
+      let sortOrder: 'Asc' | 'Desc' = 'Desc';
+      let sortBy: 'RELEVANCE' | 'POSTED_DATE' | 'PAYRATE' = 'RELEVANCE';
+
+      switch (sortByOption) {
+        case 'Newest':
+          sortBy = 'NEWEST';
+          sortOrder = 'Desc';
+          break;
+        case 'Pay Rate':
+          sortBy = 'PAYRATE';
+          sortOrder = 'Desc';
+          break;
+        default:
+          sortBy = 'RELEVANCE';
+          sortOrder = 'Desc';
+          break;
+      }
+
+      try {
+        await Promise.all([
+          dispatch(fetchRecommendedJobs({ page: 0, pageSize: 10, sortOrder: 'Desc', sortBy: sortByOption.toUpperCase() })),
+          dispatch(fetchPendingActions()),
+          dispatch(fetchDashboardStatistics()),
+          dispatch(fetchCandidate()),
+          dispatch(fetchCandidatePersonalDetails()),
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Optionally handle the error, e.g., display an error message to the user
+      } finally {
+        setLoading(false); // Set loading to false after all API calls complete (or fail)
+      }
     };
-  }, [dispatch]);
+
+    fetchData();
+
+    return () => {
+      dispatch(clearJobsError()); // Cleanup on unmount
+    };
+  }, [dispatch, sortByOption]);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={theme.colors.primary.main} />
+        <TextStyle style={{ marginTop: 16 }}>Loading data...</TextStyle>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
-      <DashboardGreetingsCard firstName='Jane' lastName='Cooper' />
+      <DashboardGreetingsCard />
 
       {/* <View> */}
         <DashboardStats />
@@ -85,7 +113,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.body}>
 
         <View style={styles.section}>
-          <CandidateInfoCard firstName='Jane' lastName='Cooper' />
+          <CandidateInfoCard />
         </View>
 
         <View style={styles.pendingActionSection}>
@@ -93,7 +121,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             <Icon name='alert-circle' size={12} color={theme.colors.status.error} />
             <TextStyle size='xs' color={theme.colors.status.error} style={{marginLeft: 6}}>Pending Actions</TextStyle>
             <View style={styles.pendingTasks}>
-              <TextStyle size='xs' color={theme.colors.secondary.dark}>03</TextStyle>
+              <TextStyle size='xs' color={theme.colors.secondary.dark}>{pendingActionsCount < 10 ? `0${pendingActionsCount}` : pendingActionsCount}</TextStyle>
             </View>
           </View>
           {pendingActions.map((item) => (
@@ -102,12 +130,32 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Jobs for you</Text>
+          <View style={styles.jobHeader}>
+            <Text style={styles.sectionTitle}>{jobData.length || 0} Jobs for you</Text>
+            <View style={styles.sortSection}>
+              <TextStyle size='xs'>
+                Sort by
+              </TextStyle>
+              <DropDownPicker
+                open={open}
+                value={sortByOption}
+                items={items}
+                setOpen={setOpen}
+                setValue={setSortByOption}
+                setItems={setItems}
+                style={styles.dropdown}
+                listItemLabelStyle={styles.dropdownLabel}
+                dropDownContainerStyle={styles.dropdownContainer}
+                textStyle={styles.dropdownLabel}  // Add this for consistent text styling
+              />
+            </View>
+          </View>
+
           {jobData.map((job) => (
-            <JobCard key={job.id} job={job} />
+            <JobCard key={job.jobId} job={job} />
           ))}
         </View>
-        
+
       </View>
     </ScrollView>
   );

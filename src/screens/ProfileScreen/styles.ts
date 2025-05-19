@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		// width: '25%',
+		// width: '21%',
 		paddingVertical: 10,
 		paddingHorizontal: 16,
 	},
@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
 		marginBottom: 4,
 	},
 	tabText: {
-		fontSize: 10,
+		fontSize: 12,
 	},
 	activeIndicator: {
 		height: 2,

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Overview } from './Overview';
+import { Overview, OverviewSection } from './Overview';
 import ProfileDrawer from '../../navigation/ProfileDrawer';
 import CandidateInfoCard from '../../components/features/Dashboard/CandidateInfoCard/CandidateInfoCard';
 import { Button, Dimensions, Pressable, SafeAreaView, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
@@ -15,49 +15,39 @@ import { PersonalDetails } from './PersonalDetails';
 import HistoryListCard from '../../components/features/HistoryListCard';
 import UploadFileModal from '../../components/features/UploadFileModal';
 import WorkHistorySection from './WorkHistory';
+import EducationSection from './Education';
+import { fetchCandidateWorkHistory } from '../../store/thunk/candidateWorkHistory.thunk';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
+import { fetchCandidateEducations } from '../../store/thunk/candidateEducation.thunk';
+import { fetchCandidateProfessionalInformation } from '../../store/thunk/candidateProfessionalInfo.thunk';
+import { fetchCandidateReferences } from '../../store/thunk/candidateReferences.thunk';
+import { ProfessionalInformationSection } from './ProfessionalInformation';
 
 const screenWidth = Dimensions.get('window').width;
 
 const Drawer = createDrawerNavigator();
 
-const EducationSection = () => {
-    return (
-        <ScrollView style={styles.sectionContainer}>
-            <HistoryListCard
-                listIcon={'bookshelf'}
-                title='Bachelor of Science in Nursing '
-                subtitle1='Bachelors'
-                subtitle2='Full-Time'
-                workSpaceName='Sapphire School of Medical Sciences'
-                startDate='Dec 20, 2019'
-                endDate='Oct 20, 2024'
-                location='Pembroke Pines, Illinois, US'
-                onEdit={() => console.log('Edit pressed')}
-                onDelete={() => console.log('Delete pressed')}
-            />
-        </ScrollView>
-    );
-};
-
-const OverviewSection = () => {
-    return (
-        <ScrollView style={styles.sectionContainer}>
-            <View style={styles.profileCompletionContainer}>
-                <TextStyle style={styles.sectionHeader}>Profile Completion</TextStyle>
-                <View style={styles.completionItems}>
-                    <TextStyle style={styles.completionItem}>Overview</TextStyle>
-                    <TextStyle style={styles.completionItem}>Personal Details</TextStyle>
-                    <TextStyle style={styles.completionItem}>Work History</TextStyle>
-                    <TextStyle style={styles.completionItem}>Education</TextStyle>
-                </View>
-            </View>
-        </ScrollView>
-    );
-};
+// const OverviewSection = () => {
+//     return (
+//         <ScrollView style={styles.sectionContainer}>
+//             <View style={styles.profileCompletionContainer}>
+//                 <TextStyle style={styles.sectionHeader}>Profile Completion</TextStyle>
+//                 <View style={styles.completionItems}>
+//                     <TextStyle style={styles.completionItem}>Overview</TextStyle>
+//                     <TextStyle style={styles.completionItem}>Personal Details</TextStyle>
+//                     <TextStyle style={styles.completionItem}>Work History</TextStyle>
+//                     <TextStyle style={styles.completionItem}>Education</TextStyle>
+//                 </View>
+//             </View>
+//         </ScrollView>
+//     );
+// };
 
 export const ProfileScreen = () => {
 
-    const [index, setIndex] = useState(0);
+    const dispatch = useAppDispatch();
+
+    const [index, setIndex] = useState(1);
     const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -71,42 +61,42 @@ export const ProfileScreen = () => {
 
     const renderScene = ({ route }: { route: any }) => {
         switch (route.key) {
-        case 'Overview':
-            return (
-                <OverviewSection />
-            );
-        case 'PersonalDetails':
-            return (
-                <PersonalDetails expandedItem={expandedItem} setExpandedItem={setExpandedItem} />
-            );
-        case 'WorkHistory':
-            return (
-                <WorkHistorySection />
-            );
-        case 'Education':
-            return (
-                <EducationSection />
-            );
-        case 'ProfessionalInformation':
-            return (
-                <TextStyle>ProfessionalInformation</TextStyle>
-            );
-        default:
-            return null;
+            case 'Overview':
+                return (
+                    <OverviewSection />
+                );
+            case 'PersonalDetails':
+                return (
+                    <PersonalDetails expandedItem={expandedItem} setExpandedItem={setExpandedItem} />
+                );
+            case 'WorkHistory':
+                return (
+                    <WorkHistorySection />
+                );
+            case 'Education':
+                return (
+                    <EducationSection />
+                );
+            case 'ProfessionalInformation':
+                return (
+                    <ProfessionalInformationSection />
+                );
+            default:
+                return null;
         }
     };
 
-    const renderScrollableTabBar = (props:any) => {
-      const { navigationState, jumpTo } = props;
-    
-      return (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ flex: 0.2 }}>
+    const renderScrollableTabBar = (props: any) => {
+        const { navigationState, jumpTo } = props;
+
+        return (
+            // <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ flex: 0.2 }}>
             <View style={styles.tabBarContainer}>
-            {navigationState.routes.map((route:any, index: number) => {
-                const focused = navigationState.index === index;
-                const color = focused ? theme.colors.primary.main : theme.colors.text.light;
-        
-                return (
+                {navigationState.routes.map((route: any, index: number) => {
+                    const focused = navigationState.index === index;
+                    const color = focused ? theme.colors.primary.main : theme.colors.text.light;
+
+                    return (
                         <Pressable
                             key={route.key}
                             onPress={() => jumpTo(route.key)}
@@ -115,25 +105,51 @@ export const ProfileScreen = () => {
                             <TextStyle style={[styles.tabText, { color }]}>{route.title}</TextStyle>
                             {focused && <View style={styles.activeIndicator} />}
                         </Pressable>
-                );
-            })}
+                    );
+                })}
             </View>
-        </ScrollView>
-      );
+            // </ScrollView>
+        );
     };
-    
+
+    useEffect(() => {
+        const fetchData = async () => {
+            // setLoading(true); // Set loading to true before starting API calls
+
+            try {
+                await Promise.all([
+                    dispatch(fetchCandidateWorkHistory()),
+                    dispatch(fetchCandidateEducations()),
+                    dispatch(fetchCandidateProfessionalInformation()),
+                    dispatch(fetchCandidateReferences()),
+                ]);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                // Optionally handle the error, e.g., display an error message to the user
+            } finally {
+                // setLoading(false); // Set loading to false after all API calls complete (or fail)
+            }
+        };
+
+        fetchData();
+
+        // return () => {
+        //     dispatch(clearJobsError()); // Cleanup on unmount
+        // };
+    }, [dispatch]);
+
     return (
         // <ProfileDrawer />
         <SafeAreaView style={styles.container}>
 
-            { !expandedItem ?
+            {!expandedItem ?
                 <View style={styles.candidateInfoCard}>
                     <CandidateInfoCard firstName='Jane' lastName='Cooper' showCompleteButton={false} />
                 </View> : null
             }
             {/* <Button title="Open Modal" onPress={() => setModalVisible(true)} /> */}
 
-            
+
             {/* <UploadFileModal
                 isVisible={modalVisible}
                 onClose={() => setModalVisible(false)}

@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
             style={styles.backButton}
             onPress={onBackPress ? onBackPress : () => navigation.goBack()}>
             <Icon
-              name="west"
+              name="arrow-left"
               size={18}
               color={theme.colors.text.white}
             />
