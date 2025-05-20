@@ -37,7 +37,7 @@ export const SignUpScreen = () => {
 					email: email,
 				},
 			},
-		});
+		}); 
 		await getAuthDetails();
   
 	  console.log("Sign up successful!", response);
