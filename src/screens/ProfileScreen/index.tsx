@@ -21,7 +21,7 @@ import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { fetchCandidateEducations } from '../../store/thunk/candidateEducation.thunk';
 import { fetchCandidateProfessionalInformation } from '../../store/thunk/candidateProfessionalInfo.thunk';
 import { fetchCandidateReferences } from '../../store/thunk/candidateReferences.thunk';
-import { ProfessionalInformationSection } from './ProfessionalInformation';
+import { ProfessionalInformation } from './ProfessionalInformation';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -79,7 +79,9 @@ export const ProfileScreen = () => {
                 );
             case 'ProfessionalInformation':
                 return (
-                    <ProfessionalInformationSection />
+                    <>
+                    <ProfessionalInformation expandedItem={expandedItem} setExpandedItem={setExpandedItem} />
+                    </>
                 );
             default:
                 return null;
