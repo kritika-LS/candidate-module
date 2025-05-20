@@ -10,6 +10,8 @@ export type AccordionItem = {
     completed: boolean;
     content: React.ReactNode;
     icon: string;
+    handlePress?: () => void;
+    ScreenName: string;
 };
 
 export interface SelectOption {

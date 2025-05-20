@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Input } from '../../../components/common/Input';
@@ -10,8 +10,9 @@ import { Button } from '../../../components/common/Button';
 import { DEFAULT_VALUES } from '../../../config/constants';
 import Toast from 'react-native-toast-message';
 import { useAppSelector } from '../../../hooks/useAppDispatch';
+import { Header } from './Header';
 
-const PersonalDetailsForm: React.FC = () => {
+const BasicInformationScreen: React.FC = () => {
 
   const candidatePersonalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload);
 
@@ -75,8 +76,10 @@ const PersonalDetailsForm: React.FC = () => {
       };
 
     return (
+        <SafeAreaView style={styles.container}>
+            <Header />
         <KeyboardAvoidingView
-              style={styles.container}
+              style={{flex: 1}}
               behavior={Platform.select({ ios: 'padding', android: undefined })}
             >
         <Formik
@@ -289,6 +292,7 @@ const PersonalDetailsForm: React.FC = () => {
             )}}
         </Formik>
         </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 };
 
@@ -297,6 +301,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 16,
         backgroundColor: '#fff',
+        paddingHorizontal: 16,
     },
     label: {
         marginTop: 16,
@@ -335,4 +340,4 @@ const styles = StyleSheet.create({
       },
 });
 
-export default PersonalDetailsForm;
+export default BasicInformationScreen;

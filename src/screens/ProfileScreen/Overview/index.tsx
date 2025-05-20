@@ -1,70 +1,65 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import { TextStyle } from "../../../components/common/Text";
+import { useAppSelector } from "../../../hooks/useAppDispatch";
 import { styles } from "./styles";
 
+import {
+  SectionCard,
+  CardItem,
+  IconItem,
+  BadgeItem
+} from "../../../components/common/SectionCard"; // Update path
+import { TextStyle } from "../../../components/common/Text";
+import { capitalize } from "../../../utils/textUtils";
+
 export const OverviewSection = () => {
-    return (
-        <ScrollView style={styles.container}>
-          {/* <TextStyle style={styles.title}>Overview</TextStyle> */}
-    
-          <View style={styles.card}>
-            <TextStyle size="md" variant="bold">Professional Details</TextStyle>
-            <View style={styles.cardContent}>
-              <TextStyle size="sm">Role:</TextStyle>
-              <TextStyle size="sm">RN - Behavioral Health</TextStyle>
-            </View>
-            <View style={styles.cardContent}>
-              <TextStyle size="sm">Experience:</TextStyle>
-              <TextStyle size="sm">3 Years</TextStyle>
-            </View>
-          </View>
-    
-          <View style={styles.card}>
-            <TextStyle size="md" variant="bold">Contact Information</TextStyle>
-            <View style={styles.cardContentSection}>
-              <TextStyle style={styles.sectionTitle}>Primary</TextStyle>
-              <View style={styles.cardContent}>
-                <TextStyle size="sm">Phone:</TextStyle>
-                <TextStyle size="sm">+1 54265589262</TextStyle>
-              </View>
-              <View style={styles.cardContent}>
-                <TextStyle size="sm">Email:</TextStyle>
-                <TextStyle size="sm">Kritika.J@lancesoft.com</TextStyle>
-              </View>
-            </View>
-            <View style={styles.cardContentSection}>
-              <TextStyle style={styles.sectionTitle}>Alternate</TextStyle>
-              <View style={styles.cardContent}>
-                <TextStyle size="sm">Phone:</TextStyle>
-                <TextStyle size="sm">Not updated</TextStyle>
-              </View>
-              <View style={styles.cardContent}>
-                <TextStyle size="sm">Email:</TextStyle>
-                <TextStyle size="sm">Not updated</TextStyle>
-              </View>
-            </View>
-          </View>
-    
-          <View style={styles.card}>
-            <TextStyle size="md" variant="bold">Job Preferences</TextStyle>
-            <View style={styles.cardContent}>
-              <TextStyle size="sm">Day:</TextStyle>
-              <View style={styles.badge}>
-                <TextStyle size="sm">Day</TextStyle>
-              </View>
-            </View>
-            <View style={styles.cardContent}>
-                <TextStyle size="sm">MH:</TextStyle>
-                 <View style={styles.badge}>
-                <TextStyle size="sm">MH</TextStyle>
-              </View>
-            </View>
-            <View style={styles.cardContent}>
-              <TextStyle size="sm">Travel:</TextStyle>
-              <TextStyle size="sm">-</TextStyle>
-            </View>
-          </View>
-        </ScrollView>
-      );
-}
+  const candidateData = useAppSelector((state) => state?.candidatePersonalDetails?.personalDetails?.responsePayload) || {};
+  const {
+    emailAddress,
+    mobileNumber,
+    alternatePhoneNumber,
+    alternateEmailAddress,
+    profileTitle,
+    resumes = [],
+    overallYearsOfExperience,
+    workTypePreference,
+    preferredLocation,
+    preferredShift,
+    shiftStartTime,
+    shiftEndTime,
+    ratePerHour,
+    currency,
+  } = candidateData || {};
+
+  return (
+    <ScrollView style={styles.container}>
+      <SectionCard title="Professional Details">
+        <CardItem label="Role" value={`${profileTitle} - ${resumes[0]?.specialties || "-"}`} />
+        <CardItem label="Experience" value={`${overallYearsOfExperience || "-"} Years`} />
+      </SectionCard>
+
+      <SectionCard title="Contact Information">
+        <View style={styles.cardContentSection}>
+          <TextStyle style={styles.sectionTitle}>Primary</TextStyle>
+          <CardItem label="Phone" value={mobileNumber || "Not updated"} />
+          <CardItem label="Email" value={emailAddress || "Not updated"} />
+        </View>
+
+        <View style={styles.cardContentSection}>
+          <TextStyle style={styles.sectionTitle}>Alternate</TextStyle>
+          <CardItem label="Phone" value={alternatePhoneNumber || "Not updated"} />
+          <CardItem label="Email" value={alternateEmailAddress || "Not updated"} />
+        </View>
+      </SectionCard>
+
+      <SectionCard title="Job Preferences" style={{marginBottom: 30}}>
+        <BadgeItem icon="watch-import-variant" text={shiftStartTime && shiftEndTime ? `${shiftStartTime} - ${shiftEndTime}` : "-"} />
+        <BadgeItem icon="weather-sunset-up" text={capitalize(preferredShift) || '-'} />
+        <BadgeItem icon="map-marker-outline" text={preferredLocation || '-'} />
+        <IconItem icon="file-clock-outline" label={workTypePreference || '-'} />
+        <IconItem icon="currency-usd" label={currency || '-'} />
+        <IconItem icon="cash-multiple" label={ratePerHour || '-'} />
+      </SectionCard>
+    </ScrollView>
+  );
+};

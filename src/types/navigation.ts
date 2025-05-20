@@ -14,6 +14,7 @@ export type AuthStackParamList = {
     ForgetPasswordScreen: undefined;
     MultiStepRegistrationScreen: undefined;
     RegistrationASuccessScreen: undefined;
+    PersonalDetailsScreen: undefined;
 };
   
 export type DrawerParamList = {
@@ -23,7 +24,8 @@ export type DrawerParamList = {
     ReferencesScreen: undefined;
     DocumentsScreen: undefined;
     SettingsScreen: undefined;
-    BottomTabs: undefined
+    BottomTabs: undefined;
+    BasicInformationScreen: undefined;
 };
 
 export type BottomTabsParamsList = {

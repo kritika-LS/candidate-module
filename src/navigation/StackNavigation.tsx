@@ -10,7 +10,6 @@ import MultiStepRegistrationScreen from '../screens/MultiStepRegistrationScreen'
 import { AuthStackParamList } from '../types/navigation';
 import HomeScreen from '../screens/HomScreen';
 import { RegistrationASuccessScreen } from '../screens/RegistrationSuccessScreen';
-import PersonalDetailsForm from '../screens/ProfileScreen/PersonalDetails/BasicInformationScreen';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -40,7 +39,6 @@ const AppNavigator = () => (
     <Stack.Screen name="ForgetPasswordScreen" component={ForgetPasswordScreen} />
     <Stack.Screen name="MultiStepRegistrationScreen" component={MultiStepRegistrationScreen} />
     <Stack.Screen name="RegistrationASuccessScreen" component={RegistrationASuccessScreen} />
-    {/* <Stack.Screen name="PersonalDetailsScreen" component={PersonalDetailsForm} /> */}
     {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
   </Stack.Navigator>
 );

@@ -6,13 +6,14 @@ import Icon from "../../../components/common/Icon/Icon";
 import { theme } from "../../../theme";
 import { styles } from "./styles";
 import { Header } from "./Header";
-import PersonalDetailsForm from "./PersonalDetailsForm";
 import PortfolioScreen from "./Portfolio";
 import ProfessionalDetailsScreen from "./ProfessionalDetails";
 import SubmittalInformationScreen from "./SubmittalInformation";
 import AddressDetailsScreen from "./Address";
 import EmergencyContactAddressScreen from "./EmergencyContactAndAddress";
 import JobPreferencesForm from "./JobPreferences";
+import { useNavigation } from "@react-navigation/native";
+import BasicInformationScreen from "./BasicInformationScreen";
 
 interface PersonalDetailsProps {
 	expandedItem: string | null;
@@ -21,17 +22,20 @@ interface PersonalDetailsProps {
 
 export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, setExpandedItem }) => {
 
+	const navigation = useNavigation();
+
 	const accordionItems: AccordionItem[] = [
 		{
 			title: 'Basic Information',
 			icon: 'account-circle-outline',
 			completed: false,
+			ScreenName: 'PersonalDetailsForm',
 			content: (
 				<View style={styles.accordionContent}>
 					
 					<Header />
 
-					<PersonalDetailsForm />
+					<BasicInformationScreen />
 					
 				</View>
 			)
@@ -40,6 +44,7 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 			title: 'Address Details',
 			icon: 'home-edit-outline',
 			completed: false,
+			ScreenName: 'PersonalDetailsForm',
 			content: (
 				<View style={styles.accordionContent}>
 					<AddressDetailsScreen />
@@ -50,6 +55,7 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 			title: 'Professional Details',
 			icon: 'book-edit-outline',
 			completed: false,
+			ScreenName: 'PersonalDetailsForm',
 			content: (
 				<View style={styles.accordionContent}>
 					<ProfessionalDetailsScreen />
@@ -60,6 +66,7 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 			title: 'Portfolio',
 			icon: 'web',
 			completed: true,
+			ScreenName: 'PersonalDetailsForm',
 			content: (
 				<View style={styles.accordionContent}>
 					<PortfolioScreen />
@@ -71,12 +78,14 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 			title: 'Job Preferences',
 			icon: 'cog-outline',
 			completed: false,
+			ScreenName: 'PersonalDetailsForm',
 			content: <View style={styles.accordionContent}><JobPreferencesForm /></View>
 		},
 		{
 			title: 'Submittal Information',
 			icon: 'clipboard-text-outline',
 			completed: true,
+			ScreenName: 'PersonalDetailsForm',
 			content: (
 				<View style={styles.accordionContent}>
 					<SubmittalInformationScreen />
@@ -87,6 +96,7 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 			title: 'Emergency Contact and Address',
 			icon: 'shield-alert-outline',
 			completed: true,
+			ScreenName: 'PersonalDetailsForm',
 			content: <View style={styles.accordionContent}>
 				<EmergencyContactAddressScreen />
 			</View>
@@ -103,18 +113,47 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 				</View>
 			</View>
 
-			{accordionItems.map((item, index) => (
+			<View style={styles.accordionItem}>
+			{accordionItems.map((item, index) => {
+
+				const handlePress = () => {
+					console.log(item.ScreenName),"-------------";
+					navigation.navigate("BasicInformationScreen");
+				};
+
+				return(
+					<TouchableOpacity
+						style={styles.accordionHeader}
+						onPress={handlePress}
+					>
+						<View style={styles.accordionTitleContainer}>
+							<Icon name={item.icon} size={18} color={theme.colors.grey[500]} />
+							<TextStyle size="sm" style={styles.accordionTitle}>{item.title}</TextStyle>
+						</View>
+
+						<View style={styles.flexRow}>
+							{!item.completed ?
+								<Icon name="file-alert-outline" size={12} color={theme.colors.status.error} />
+								: null
+							}
+							<Icon
+								name={"chevron-up"}
+								size={20}
+								color={theme.colors.grey[500]}
+								style={styles.iconSpacing}
+							/>
+						</View>
+					</TouchableOpacity>
+				)})}
+			</View>
+
+			{/* {accordionItems.map((item, index) => (
 				<View key={index} style={styles.accordionItem}>
 					<TouchableOpacity
 						style={styles.accordionHeader}
 						onPress={() => setExpandedItem(expandedItem === item.title ? null : item.title)}
 					>
 						<View style={styles.accordionTitleContainer}>
-							{/* {item.completed ? (
-                                <Icon name="check-circle" size={20} color={theme.colors.status.success} />
-                            ) : (
-                                <View style={styles.incompleteCircle} />
-                            )} */}
 							<Icon name={item.icon} size={18} color={theme.colors.grey[500]} />
 							<TextStyle size="sm" style={styles.accordionTitle}>{item.title}</TextStyle>
 						</View>
@@ -135,7 +174,7 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 
 					{expandedItem === item.title && item.content}
 				</View>
-			))}
+			))} */}
 		</ScrollView>
 	);
 }

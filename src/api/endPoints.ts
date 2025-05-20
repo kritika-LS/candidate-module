@@ -14,6 +14,7 @@ export const ENDPOINTS = {
       educations: '/api/v1/candidate/educations',
       professionalInformation: '/api/v1/candidate/professional-information',
       references: '/api/v1/candidate/references',
+      resume: '/api/v1/candidate/resume',
     },
   } as const;
   

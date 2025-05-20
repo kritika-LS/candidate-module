@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { CandidatePersonalDetailsPayload } from '../../types/personalDetails';
 
  type CandidatePersonalDetails = any;
 
@@ -6,12 +7,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
   personalDetails: CandidatePersonalDetails | null;
   loading: boolean;
   error: string | null;
+  updateLoading: boolean;
+  updateError: string | null;
  }
 
  const initialState: CandidatePersonalDetailsState = {
   personalDetails: null,
   loading: false,
   error: null,
+  updateLoading: false,
+  updateError: null,
  };
 
  const candidatePersonalDetailsSlice = createSlice({
@@ -33,6 +38,21 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
       state.loading = false;
       state.error = action.payload;
     },
+    updatePersonalDetailsStart: (state) => {
+      state.updateLoading = true;
+      state.updateError = null;
+    },
+    updatePersonalDetailsSuccess: (
+      state,
+      action: PayloadAction<CandidatePersonalDetailsPayload>, // Assuming success returns the updated payload
+    ) => {
+      state.updateLoading = false;
+      state.personalDetails = action.payload; // Update the stored details with the response
+    },
+    updatePersonalDetailsFailure: (state, action: PayloadAction<string>) => {
+      state.updateLoading = false;
+      state.updateError = action.payload;
+    },
     clearCandidatePersonalDetailsError: (state) => {
       state.error = null;
     },
@@ -43,6 +63,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
   fetchCandidatePersonalDetailsStart,
   fetchCandidatePersonalDetailsSuccess,
   fetchCandidatePersonalDetailsFailure,
+  updatePersonalDetailsStart,
+  updatePersonalDetailsSuccess,
+  updatePersonalDetailsFailure,
   clearCandidatePersonalDetailsError,
  } = candidatePersonalDetailsSlice.actions;
 

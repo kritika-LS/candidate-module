@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Overview, OverviewSection } from './Overview';
-import ProfileDrawer from '../../navigation/ProfileDrawer';
+import { OverviewSection } from './Overview';
 import CandidateInfoCard from '../../components/features/Dashboard/CandidateInfoCard/CandidateInfoCard';
-import { Button, Dimensions, Pressable, SafeAreaView, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Pressable, SafeAreaView, View } from 'react-native';
 import { styles } from './styles';
 import { TabView } from 'react-native-tab-view';
 import { TextStyle } from '../../components/common/Text';
 import { theme } from '../../theme';
-import Icon from '../../components/common/Icon/Icon';
-import CustomModal from '../../components/common/Modal';
-import { AccordionItem, Route } from '../../types/profile';
+import { Route } from '../../types/profile';
 import { PersonalDetails } from './PersonalDetails';
 import HistoryListCard from '../../components/features/HistoryListCard';
 import UploadFileModal from '../../components/features/UploadFileModal';
@@ -26,22 +23,6 @@ import { ProfessionalInformation } from './ProfessionalInformation';
 const screenWidth = Dimensions.get('window').width;
 
 const Drawer = createDrawerNavigator();
-
-// const OverviewSection = () => {
-//     return (
-//         <ScrollView style={styles.sectionContainer}>
-//             <View style={styles.profileCompletionContainer}>
-//                 <TextStyle style={styles.sectionHeader}>Profile Completion</TextStyle>
-//                 <View style={styles.completionItems}>
-//                     <TextStyle style={styles.completionItem}>Overview</TextStyle>
-//                     <TextStyle style={styles.completionItem}>Personal Details</TextStyle>
-//                     <TextStyle style={styles.completionItem}>Work History</TextStyle>
-//                     <TextStyle style={styles.completionItem}>Education</TextStyle>
-//                 </View>
-//             </View>
-//         </ScrollView>
-//     );
-// };
 
 export const ProfileScreen = () => {
 
@@ -135,9 +116,6 @@ export const ProfileScreen = () => {
 
         fetchData();
 
-        // return () => {
-        //     dispatch(clearJobsError()); // Cleanup on unmount
-        // };
     }, [dispatch]);
 
     return (

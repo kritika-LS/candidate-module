@@ -15,6 +15,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../../types/navigation';
 import { signUp } from 'aws-amplify/auth';
 import * as yup from 'yup';
+import Toast from 'react-native-toast-message';
+import { getAuthDetails } from '../../../utils/auth';
 
 export const SignUpScreen = () => {
 
@@ -31,21 +33,25 @@ export const SignUpScreen = () => {
 			username: email,
 			password: password, 
 			options: {
-			userAttributes: {
-				email: email,
-			},
+				userAttributes: {
+					email: email,
+				},
 			},
 		});
+		await getAuthDetails();
   
 	  console.log("Sign up successful!", response);
   
 	  navigation.navigate(ScreenNames.EmailVerificationScreen, {
-		email: email,
-		password: password
+			email: email,
+			password: password
 	  });
 	} catch (error) {
+		Toast.show({
+		  type: 'error',
+		  text1: error?.message
+		});
 	  console.log("Sign up error caught:", error);
-	//   Alert.alert("Sign Up Failed", error?.message || "Unknown error");
 	}
   };
   

@@ -8,6 +8,7 @@ import candidateWorkHistoryReducer from './slices/candidateWorkHistory.slice';
 import candidateEducationReducer from './slices/candidateEducation.slice';
 import candidateProfessionalInfoReducer from './slices/candidateProfessionalInfo.slice';
 import candidateReferencesReducer from './slices/candidateReferences.slice';
+import candidateResumeReducer from './slices/candidateResume.slice'; 
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,8 @@ export const store = configureStore({
     candidateEducation: candidateEducationReducer,
     candidateProfessionalInfo: candidateProfessionalInfoReducer,
     candidateReferences: candidateReferencesReducer,
+    candidateResume: candidateResumeReducer,
+    
   },
 });
 

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   TextInput,
   SafeAreaView,
@@ -13,8 +12,12 @@ import * as Yup from 'yup';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Input } from '../../../../components/common/Input';
-import Icon from 'react-native-vector-icons/Ionicons';
 import DocumentPicker from 'react-native-document-picker';
+import { theme } from '../../../../theme';
+import { TextStyle } from '../../../../components/common/Text';
+import Icon from '../../../../components/common/Icon/Icon';
+import { SaveButton } from '../../../../components/features/SaveButton';
+import { UploadButton } from '../../../../components/features/UploadButton';
 // import { styles } from './styles';
 
 interface CertificateFormValues {
@@ -33,7 +36,7 @@ const Certificate = () => {
     expiryDate: false,
   });
 
-  const [certificate, setCertificate] = useState(null);
+  const [certificate, setCertificate] = useState<{ name: string | null } | null>(null);
 
   const handleCertificateUpload = async () => {
     try {
@@ -52,6 +55,10 @@ const Certificate = () => {
         console.error('Error picking document:', err);
       }
     }
+  };
+
+  const handleDeleteUploadedFile = () => {
+    setCertificate(null);
   };
 
   const initialValues: CertificateFormValues = {
@@ -129,16 +136,16 @@ const Certificate = () => {
                 />
 
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>
-                  Issued Date <Text style={{ color: 'red' }}>*</Text>
-                </Text>
+                <TextStyle style={styles.label}>
+                  Issued Date <TextStyle style={{ color: 'red' }}>*</TextStyle>
+                </TextStyle>
                 <TouchableOpacity
                   style={styles.datePickerButton}
                   onPress={() => setShowDatePicker({ ...showDatePicker, issuedDate: true })}
                 >
-                  <Text style={styles.input}>
+                  <TextStyle style={styles.input}>
                     {values.issuedDate ? values.issuedDate.toString() : 'Select issued date'}
-                  </Text>
+                  </TextStyle>
                   <Icon name="calendar-outline" size={20} color="#ccc" />
                 </TouchableOpacity>
                 {showDatePicker.issuedDate && (
@@ -153,21 +160,21 @@ const Certificate = () => {
                   />
                 )}
                 {touched.issuedDate && errors.issuedDate && (
-                  <Text style={styles.error}>{errors.issuedDate}</Text>
+                  <TextStyle style={styles.error}>{errors.issuedDate}</TextStyle>
                 )}
               </View>
 
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>
-                  Expiry Date <Text style={{ color: 'red' }}>*</Text>
-                </Text>
+                <TextStyle style={styles.label}>
+                  Expiry Date <TextStyle style={{ color: 'red' }}>*</TextStyle>
+                </TextStyle>
                 <TouchableOpacity
                   style={styles.datePickerButton}
                   onPress={() => setShowDatePicker({ ...showDatePicker, expiryDate: true })}
                 >
-                  <Text style={styles.input}>
+                  <TextStyle style={styles.input}>
                     {values.expiryDate ? values.expiryDate.toString() : 'Select expiry date'}
-                  </Text>
+                  </TextStyle>
                   <Icon name="calendar-outline" size={20} color="#ccc" />
                 </TouchableOpacity>
                 {showDatePicker.expiryDate && (
@@ -182,12 +189,12 @@ const Certificate = () => {
                   />
                 )}
                 {touched.expiryDate && errors.expiryDate && (
-                  <Text style={styles.error}>{errors.expiryDate}</Text>
+                  <TextStyle style={styles.error}>{errors.expiryDate}</TextStyle>
                 )}
    
               </View>
 
-              <Text style={styles.label}>State</Text>
+              <TextStyle style={styles.label}>State</TextStyle>
               <DropDownPicker
                 open={values.stateOpen}
                 setOpen={(open) => setFieldValue('stateOpen', open)}
@@ -206,22 +213,18 @@ const Certificate = () => {
                 style={styles.dropdown}
               />
               {touched.state && errors.state && (
-                <Text style={styles.error}>{errors.state}</Text>
+                <TextStyle style={styles.error}>{errors.state}</TextStyle>
               )}
-               <View style={styles.uploadGroup}>
-              <TouchableOpacity onPress={handleCertificateUpload} style={styles.uploadBtn}>
-                <Text style={styles.uploadBtnText}>Upload Resume</Text>
-              </TouchableOpacity>
-              {certificate && <Text style={styles.fileName}>{certificate.name}</Text>}
-              <Text style={styles.note}>Accepted file formats: PDF, DOC, DOCX</Text>
-              <Text style={styles.note}>Max file size: 10 MB</Text>
-              </View>
-              <TouchableOpacity
-                style={styles.saveBtn}
-                onPress={() => handleSubmit()}
-              >
-                <Text style={styles.saveBtnText}>Save</Text>
-              </TouchableOpacity>
+
+              <UploadButton 
+                handleUpload={handleCertificateUpload} 
+                buttonTitle='Upload Certificate' 
+                subText='Accepted file formats: PNG, JPEG, JPG up to 10 MB'
+                fileName={certificate ? certificate?.name : ''}
+                handleDelete={handleDeleteUploadedFile}
+              />
+              
+              <SaveButton onPress={handleSubmit} />
             </View>
           )}
         </Formik>
@@ -259,12 +262,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
       },
-      saveButtonText: {
+      saveButtonTextStyle: {
         color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
       },
-      errorText: {
+      errorTextStyle: {
         color: 'red',
         fontSize: 12,
         marginTop: 4,
@@ -282,7 +285,7 @@ const styles = StyleSheet.create({
         paddingVertical: 14,
         alignItems: 'center',
       },
-      saveBtnText: {
+      saveBtnTextStyle: {
         color: '#fff',
         fontWeight: '600',
         fontSize: 16,
@@ -301,25 +304,23 @@ const styles = StyleSheet.create({
       },
       uploadBtn: {
         borderWidth: 1,
-        borderColor: '#007bff',
-        paddingVertical: 5,
-        borderRadius: 15,
+        borderColor: theme.colors.blue.light,
+        paddingVertical: 8,
+        paddingHorizontal: 18,
+        borderRadius: 24,
         alignItems: 'center',
-        marginTop: 10,
-        width:'70%',
+        marginTop: 16,
+        flexDirection: 'row',
+        justifyContent: 'center',
       },
-      uploadBtnText: {
-        color: '#007bff',
-        fontSize: 18,
-        fontWeight: 'bold',
+      uploadBtnTextStyle: {
+        marginLeft: 10,
       },
       fileName: {
         marginTop: 10,
         fontSize: 16,
       },
       note: {
-        fontSize: 14,
-        color: '#555',
         marginTop: 5,
       },
 })

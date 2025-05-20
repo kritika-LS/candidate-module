@@ -50,7 +50,7 @@ export const styles = StyleSheet.create({
 		backgroundColor: theme.colors.primary.main,
 	},
 	sectionContainer: {
-		// flex: 1,
+		flex: 1,
 		padding: 16,
 	},
 	sectionHeader: {

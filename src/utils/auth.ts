@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
     getCurrentUser,
     fetchAuthSession,
@@ -7,28 +8,30 @@ import {
   export async function getAuthDetails() {
     try {
       const sessionResult = await fetchAuthSession();
-      const idToken = sessionResult.tokens?.idToken?.toString();
-      const accessToken = sessionResult.tokens?.accessToken?.toString();
-    //   const refreshToken = sessionResult.tokens?.refreshToken?.toString();
+      const idToken = sessionResult.tokens?.idToken?.toString() || null;
+      const accessToken = sessionResult.tokens?.accessToken?.toString() || null;
+      //   const refreshToken = sessionResult.tokens?.refreshToken?.toString();
 
-    console.log('Session result:', sessionResult);
-  
+      console.log('Session Result:', sessionResult);
+
       const currentUser = await getCurrentUser();
-      const userAttributes = await fetchUserAttributes();
-  
+      const userAttributes: Record<string, any> = await fetchUserAttributes();
+
+      await AsyncStorage.setItem('auth_token', accessToken || '');
+
       let groups: string[] = [];
       if (currentUser) {
         try {
           // In v6, groups are often part of the ID token or user attributes.
           // You might need to inspect these to find the groups.
           // The exact location depends on your Cognito setup.
-  
+
           // Option 1: Check ID Token claims (if groups are there)
           const parsedIdToken = idToken ? JSON.parse(atob(idToken.split('.')[1])) : null;
           if (parsedIdToken && parsedIdToken['cognito:groups']) {
             groups = parsedIdToken['cognito:groups'];
           }
-  
+
           // Option 2: Check user attributes (if groups are stored as an attribute)
           if (userAttributes && userAttributes['cognito:groups']) {
             groups = JSON.parse(userAttributes['cognito:groups'] as string);
@@ -41,7 +44,7 @@ import {
           console.log('Error extracting user groups:', error);
         }
       }
-  
+
       return {
         idToken,
         accessToken,

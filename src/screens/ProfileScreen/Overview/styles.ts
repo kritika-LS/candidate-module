@@ -35,8 +35,8 @@ export const styles = StyleSheet.create({
       fontWeight: 'medium',
     },
     sectionTitle: {
-      fontSize: 16,
-      fontWeight: 'medium',
+      fontSize: 14,
+      fontWeight: 'bold',
       color: '#1f2937',
       marginTop: 8,
       marginBottom: 4,

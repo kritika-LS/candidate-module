@@ -27,13 +27,13 @@ export const ProfessionalInformation: React.FC<ProfessionalInformationProps> = (
 		},
 		{
 			title: 'License',
-			icon: 'license-outline',
+			icon: 'card-account-details-outline',
 			completed: false,
 			content: <View style={styles.accordionContent}><License /></View>,
 		},
 		{
 			title: 'Reference',
-			icon: 'account-multiple-outline',
+			icon: 'account-arrow-right-outline',
 			completed: false,
 			content: <View style={styles.accordionContent}><Reference /></View>,
 		},
@@ -45,7 +45,7 @@ export const ProfessionalInformation: React.FC<ProfessionalInformationProps> = (
 		},
 		{
 			title: 'Background Information',
-			icon: 'information-outline',
+			icon: 'shield-check-outline',
 			completed: false,
 			content: <View style={styles.accordionContent}><BackgroundInformation /></View>,
 		},
@@ -54,7 +54,7 @@ export const ProfessionalInformation: React.FC<ProfessionalInformationProps> = (
 	return (
 		<ScrollView style={styles.ProfessionalInformationContainer}>
 			<View style={[styles.flexRow, styles.sectionHeader]}>
-				<TextStyle size='md' variant='bold'>Personal Details</TextStyle>
+				<TextStyle size='md' variant='bold'>Professional Information</TextStyle>
 				<View style={styles.flexRow}>
 					<Icon name='file-alert-outline' size={12} color={theme.colors.status.error} />
 					<TextStyle size='xs' color={theme.colors.status.error} style={styles.iconSpacing}>Incomplete</TextStyle>
@@ -68,7 +68,7 @@ export const ProfessionalInformation: React.FC<ProfessionalInformationProps> = (
 						onPress={() => setExpandedItem(expandedItem === item.title ? null : item.title)}
 					>
 						<View style={styles.accordionTitleContainer}>
-							<Icon name={item.icon} size={18} color={theme.colors.grey[500]} />
+							<Icon name={item.icon} size={18} color={theme.colors.grey[600]} />
 							<TextStyle size='sm' style={styles.accordionTitle}>{item.title}</TextStyle>
 						</View>
 

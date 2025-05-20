@@ -1,13 +1,17 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
- import { CandidatePersonalDetailsService } from '../../api/services/candidatePersonalDetails.service'; // Adjust path
- import {
+import { CandidatePersonalDetailsService } from '../../api/services/candidatePersonalDetails.service'; // Adjust path
+import {
   fetchCandidatePersonalDetailsStart,
   fetchCandidatePersonalDetailsSuccess,
   fetchCandidatePersonalDetailsFailure,
- } from '../slices/candidatePersonalDetails.slice'; // Adjust path
- import { ApiError } from '../../models/types/common';
+  updatePersonalDetailsFailure,
+  updatePersonalDetailsSuccess,
+  updatePersonalDetailsStart,
+} from '../slices/candidatePersonalDetails.slice'; // Adjust path
+import { ApiError } from '../../models/types/common';
+import { CandidatePersonalDetailsPayload } from '../../types/personalDetails';
 
- export const fetchCandidatePersonalDetails = createAsyncThunk(
+export const fetchCandidatePersonalDetails = createAsyncThunk(
   'candidatePersonalDetails/fetchCandidatePersonalDetails',
   async (_, { dispatch }) => { // No input needed
     try {
@@ -25,4 +29,24 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
       throw error;
     }
   },
- );
+);
+
+export const updateCandidatePersonalDetails = createAsyncThunk(
+  'candidatePersonalDetails/updateCandidatePersonalDetails',
+  async (payload: CandidatePersonalDetailsPayload, { dispatch }) => {
+    try {
+      dispatch(updatePersonalDetailsStart());
+      const response = await CandidatePersonalDetailsService.updateCandidatePersonalDetails(payload);
+      dispatch(updatePersonalDetailsSuccess(response));
+      return response;
+    } catch (error) {
+      const apiError = error as ApiError;
+      dispatch(
+        updatePersonalDetailsFailure(
+          apiError.message || 'Failed to update candidate personal details',
+        ),
+      );
+      throw error;
+    }
+  },
+);

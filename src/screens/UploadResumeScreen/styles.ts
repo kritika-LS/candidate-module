@@ -61,7 +61,16 @@ export const styles = StyleSheet.create({
       marginTop: 10,
     },
     loader: {
-      marginVertical: 20,
+      height: 75,
+      width: 75,
+      borderRadius: 50,
+      padding: 2,
+      borderWidth: 1,
+      borderColor: theme.colors.primary.main,
+      backgroundColor: theme.colors.text.white,
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 99999,
     },
     cancelBtn: {
       marginTop: 20,
@@ -74,5 +83,9 @@ export const styles = StyleSheet.create({
     cancelText: {
       color: theme.colors.primary.main,
       fontWeight: '600',
+    },
+    lottie: {
+      width: '100%',
+      height: '100%',
     },
 })

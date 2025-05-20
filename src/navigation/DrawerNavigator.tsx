@@ -13,6 +13,8 @@ import { SettingsScreen } from '../screens/SettingsScreen';
 import BottomTabs from './BottomTabs/BottomTabs';
 import { StyleSheet, Text, View } from 'react-native';
 import DrawerHeader from '../components/CustomDrawer/DrawerHeader';
+import PersonalDetailsForm from '../screens/ProfileScreen/PersonalDetails/BasicInformationScreen';
+import BasicInformationScreen from '../screens/ProfileScreen/PersonalDetails/BasicInformationScreen';
 
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -32,6 +34,7 @@ const DrawerNavigator = () => (
     <Drawer.Screen name="ReferencesScreen" component={ReferencesScreen} />
     <Drawer.Screen name="DocumentsScreen" component={DocumentsScreen} />
     <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
+    <Drawer.Screen name="BasicInformationScreen" component={BasicInformationScreen} />
   </Drawer.Navigator>
 );
 
