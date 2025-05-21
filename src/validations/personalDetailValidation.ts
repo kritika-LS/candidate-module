@@ -17,10 +17,10 @@ export const personalDetailsSchema = yup.object().shape({
     .max(128, 'Email cannot exceed 128 characters')
     .nullable(),
 
-//   mobileNumber: yup
-//     .string()
-//     .required('Mobile number is required')
-//     .matches(/^[0-9]+$/, 'Please enter a valid mobile number')
-//     .max(32, 'Mobile number cannot exceed 32 characters'),
+  mobileNumber: yup
+    .string()
+    .required('Mobile number is required')
+    .matches(/^[0-9]+$/, 'Please enter a valid mobile number')
+    .max(32, 'Mobile number cannot exceed 32 characters'),
 
 });

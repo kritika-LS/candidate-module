@@ -20,6 +20,7 @@ export const PhoneNumberInput = (props: any) => {
         disableArrowIcon = false,
         countryPickerProps = {},
         variant = "",
+        onBlur = () => {}, // Added onBlur prop
     } = props;
 
     const errorState = error && touched;
@@ -56,6 +57,7 @@ export const PhoneNumberInput = (props: any) => {
                 layout="first"
                 disableArrowIcon={disableArrowIcon}
                 countryPickerProps={countryPickerProps}
+                onBlur={onBlur} // Added onBlur handler
                 {...props}
             />
             {errorState && (

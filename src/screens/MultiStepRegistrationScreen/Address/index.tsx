@@ -1,53 +1,206 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useEffect, useState, useCallback, useRef} from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Switch,
-  ActivityIndicator,
-  SafeAreaView,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
-// import {
-//   useAppDispatch,
-//   useAppSelector,
-// } from '../../../../hooks/common/useAppDispatch';
-// import {RootState} from '../../../../store';
-// import {
-//   updateAddressInfo,
-//   updatePhysicalAddress,
-//   updateMailingAddress,
-//   saveAddressStart,
-//   saveAddressSuccess,
-//   saveAddressFailure,
-// } from '../../../../store/slices/profile';
-// import {
-//   saveAddress,
-//   fetchConsultantInfo,
-// } from '../../../../store/middleware/thunks/profile.thunk';
-import {theme} from '../../../theme';
-import {TextStyle} from '../../../components/common/Text';
-import {Input} from '../../../components/common/Input';
-import {Button} from '../../../components/common/Button';
-import {Header} from '../../../components/common/Header';
-import {Address} from '../../../models/types/Registration';
-import {addressValidationSchema} from '../../../models/validations/profileValidations';
-// import {CommonService} from '../../../../api/services/common.service';
-// import {getCurrentIP} from '../../../../utils/ip-utils';
-// import {
-//   getCity,
-//   getGeoCoding,
-//   GetCityACResp,
-// } from '../../../../api/services/autocomplete';
-import Toast from 'react-native-toast-message';
-import Icon from '../../../components/common/Icon/Icon';
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { theme } from '../../../theme';
+import { Input } from '../../../components/common/Input';
+import { Button } from '../../../components/common/Button';
 
-interface RouteParams {
-  onboardId: number;
-}
+const AddressSchema = Yup.object().shape({
+  physicalAddress: Yup.object().shape({
+    address: Yup.string().required('Address is required'),
+    zipCode: Yup.string().required('Zip Code is required'),
+    city: Yup.string().required('City is required'),
+    stateCode: Yup.string().nullable(),
+    countryCode: Yup.string().nullable(),
+  }),
+  mailingAddress: Yup.object().shape({
+    address: Yup.string().required('Address is required'),
+    zipCode: Yup.string().required('Zip Code is required'),
+    city: Yup.string().required('City is required'),
+    stateCode: Yup.string().nullable(),
+    countryCode: Yup.string().nullable(),
+  }),
+});
+
+const AddressInfoScreen = ({ data, onChange, errors, touched, setTouched }) => {
+  const navigation = useNavigation();
+  const [formData, setFormData] = useState({ addressType: 'permanent' });
+
+  const onAddressTypeChange = (type) => {
+    setFormData({ ...formData, addressType: type });
+  };
+
+  const handleSubmit = (data) => {
+    console.log('Form data:', data);
+    if (onChange) {
+      onChange(data);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
+        <View >
+          <View style={styles.radioGroup}>
+          <TouchableOpacity 
+            style={styles.radioButton} 
+            onPress={() => onAddressTypeChange('permanent')}
+          >
+            <View style={styles.radioCircle}>
+              {formData.addressType === 'permanent' && <View style={styles.selectedRb} />}
+            </View>
+            <Text style={styles.radioLabel}>Permanent Address</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.radioButton} 
+            onPress={() => onAddressTypeChange('current')}
+          >
+            <View style={styles.radioCircle}>
+              {formData.addressType === 'current' && <View style={styles.selectedRb} />}
+            </View>
+            <Text style={styles.radioLabel}>Current Address</Text>
+          </TouchableOpacity>
+          </View>
+          <TouchableOpacity 
+            style={styles.radioButton} 
+            onPress={() => onAddressTypeChange('both')}
+          >
+            <View style={styles.radioCircle}>
+              {formData.addressType === 'both' && <View style={styles.selectedRb} />}
+            </View>
+            <Text style={styles.radioLabel}>Both (Same Address)</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.formSection}>
+          <Input
+            label="Address"
+            required
+            value={data.physicalAddress.address}
+            onChangeText={(text) => {
+              onChange({ ...data, physicalAddress: { ...data?.physicalAddress, address: text } });
+            }}
+            error={errors?.physicalAddress?.address}
+            touched={touched?.physicalAddress?.address}
+            placeholder="Enter Address"
+            onBlur={() => setTouched({ ...touched, physicalAddress: { ...touched?.physicalAddress, address: true } })}
+          />
+
+          <Input
+            label="Zip Code"
+            required
+            value={data.physicalAddress.zipCode}
+            onChangeText={(text) => {
+              onChange({ ...data, physicalAddress: { ...data?.physicalAddress, zipCode: text } });
+            }}
+            error={errors?.physicalAddress?.zipCode}
+            touched={touched?.physicalAddress?.zipCode}
+            keyboardType="numeric"
+            placeholder="Enter ZIP code to find address"
+            onBlur={() => setTouched({ ...touched, physicalAddress: { ...touched?.physicalAddress, zipCode: true } })}
+          />
+
+          <Input
+            label="City"
+            required
+            value={data.physicalAddress.city}
+            onChangeText={(text) => {
+              onChange({ ...data, physicalAddress: { ...data.physicalAddress, city: text } });
+            }}
+            touched={touched?.physicalAddress?.city}
+            error={errors?.physicalAddress?.city}
+            placeholder="Enter city name"
+            onBlur={() => setTouched({ ...touched, physicalAddress: { ...touched?.physicalAddress, city: true } })}
+          />
+
+          <Input
+            label="State"
+            value={data.physicalAddress.stateCode}
+            onChangeText={(text) => {
+              onChange({ ...data, physicalAddress: { ...data.physicalAddress, stateCode: text } });
+            }}
+            onBlur={() => setTouched({ ...touched, physicalAddress: { ...touched?.physicalAddress, stateCode: true } })}
+          />
+
+          <Input
+            label="Country"
+            value={data.physicalAddress.countryCode}
+            onChangeText={(text) => {
+              onChange({ ...data, physicalAddress: { ...data.physicalAddress, countryCode: text } });
+            }}
+            onBlur={() => setTouched({ ...touched, physicalAddress: { ...touched?.physicalAddress, countryCode: true } })}
+          />
+        </View>
+
+        {!data.isSamePhysical && (
+          <View style={styles.formSection}>
+            <Input
+              label="Address"
+              required
+              value={data.mailingAddress.address}
+              onChangeText={(text) => {
+                onChange({ ...data, mailingAddress: { ...data.mailingAddress, address: text } });
+              }}
+              touched={touched?.mailingAddress?.address}
+              error={errors?.mailingAddress?.address}
+              onBlur={() => setTouched({ ...touched, mailingAddress: { ...touched?.mailingAddress, address: true } })}
+            />
+
+            <Input
+              label="Zip Code"
+              required
+              value={data.mailingAddress.zipCode}
+              onChangeText={(text) => {
+                onChange({ ...data, mailingAddress: { ...data.mailingAddress, zipCode: text } });
+              }}
+              error={errors?.mailingAddress?.zipCode}
+              touched={touched?.mailingAddress?.zipCode}
+              keyboardType="numeric"
+              placeholder="Enter ZIP code to find address"
+              onBlur={() => setTouched({ ...touched, mailingAddress: { ...touched?.mailingAddress, zipCode: true } })}
+            />
+
+            <Input
+              label="City"
+              required
+              value={data.mailingAddress.city}
+              onChangeText={(text) => {
+                onChange({ ...data, mailingAddress: { ...data.mailingAddress, city: text } });
+              }}
+              error={errors?.mailingAddress?.city}
+              touched={touched?.mailingAddress?.city}
+              placeholder="Enter city name"
+              onBlur={() => setTouched({ ...touched, mailingAddress: { ...touched?.mailingAddress, city: true } })}
+            />
+
+            <Input
+              label="State"
+              value={data.mailingAddress.stateCode}
+              onChangeText={(text) => {
+                onChange({ ...data, mailingAddress: { ...data.mailingAddress, stateCode: text } });
+              }}
+              onBlur={() => setTouched({ ...touched, mailingAddress: { ...touched?.mailingAddress, stateCode: true } })}
+            />
+
+            <Input
+              label="Country"
+              value={data.mailingAddress.countryCode}
+              onChangeText={(text) => {
+                onChange({ ...data, mailingAddress: { ...data.mailingAddress, countryCode: text } });
+              }}
+              onBlur={() => setTouched({ ...touched, mailingAddress: { ...touched?.mailingAddress, countryCode: true } })}
+            />
+          </View>
+        )}
+
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   safeArea: {
@@ -64,540 +217,40 @@ const styles = StyleSheet.create({
     padding: theme.spacing.md,
     marginBottom: theme.spacing.md,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
   },
-  toggleSection: {
-    marginBottom: theme.spacing.md,
-  },
-  sectionTitle: {
-    marginBottom: theme.spacing.md,
-    color: theme.colors.primary.main,
-  },
-  label: {
-    marginBottom: theme.spacing.xs,
-  },
-  inputContainer: {
-    marginBottom: theme.spacing.xs,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: theme.spacing.sm,
-  },
-  loadingFieldContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: theme.spacing.sm,
-    backgroundColor: theme.colors.grey[100],
-    borderRadius: 4,
-  },
-  loadingFieldText: {
-    marginLeft: theme.spacing.sm,
-  },
-  sameAddressToggle: {
+  radioGroup: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.primary.light + '20',
-    borderRadius: 8,
-  },
-  errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: theme.spacing.md,
-    backgroundColor: theme.colors.status.error + '20',
-    borderRadius: 8,
     marginBottom: theme.spacing.md,
   },
-  errorIcon: {
+  radioButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  radioCircle: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: theme.spacing.sm,
   },
-  errorMessage: {
-    flex: 1,
+  selectedRb: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: theme.colors.primary,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: theme.spacing.xl,
-  },
-  cancelButton: {
-    flex: 1,
-    marginRight: theme.spacing.xs,
-  },
-  saveButton: {
-    flex: 1,
-    marginLeft: theme.spacing.xs,
-  },
-  suggestionsContainer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 100,
-    backgroundColor: theme.colors.background.paper,
-    borderWidth: 1,
-    borderColor: theme.colors.grey[300],
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    zIndex: 10,
-    maxHeight: 200,
-  },
-  suggestionsList: {
-    maxHeight: 200,
-  },
-  suggestionItem: {
-    padding: theme.spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.grey[200],
-  },
-  autocompleteLoadingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: theme.spacing.xs,
-    marginTop: theme.spacing.xs,
-  },
-  zipCodeContainer: {
-    position: 'relative',
-    zIndex: 10,
-  },
-  cityContainer: {
-    position: 'relative',
-    zIndex: 9,
+  radioLabel: {
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.text.primary,
   },
 });
-
-interface AddressInfoScreenProps {
-  data: any;
-  onChange: (data: any) => void;
-  errors: any;
-}
-
-const AddressInfoScreen: React.FC<AddressInfoScreenProps> = ({ data, onChange, errors }) => {
-  const navigation = useNavigation()
-  const route = useRoute();
-    const originalPhysicalZip = useRef('');
-    const originalMailingZip = useRef('');
-    const originalPhysicalCity = useRef('');
-    const originalMailingCity = useRef('');
-   const [physicalZipSuggestions, setPhysicalZipSuggestions] = useState([]);
-    const [mailingZipSuggestions, setMailingZipSuggestions] = useState([]);
-    const [physicalCitySuggestions, setPhysicalCitySuggestions] = useState([]);
-    const [mailingCitySuggestions, setMailingCitySuggestions] = useState([]);
-    const [isTypingPhysicalZip, setIsTypingPhysicalZip] = useState(false);
-    const [isTypingMailingZip, setIsTypingMailingZip] = useState(false);
-    const [isTypingPhysicalCity, setIsTypingPhysicalCity] = useState(false);
-    const [isTypingMailingCity, setIsTypingMailingCity] = useState(false);
-    const [showPhysicalZipSuggestions, setShowPhysicalZipSuggestions] =
-      useState(false);
-    const [showMailingZipSuggestions, setShowMailingZipSuggestions] =
-      useState(false);
-    const [showPhysicalCitySuggestions, setShowPhysicalCitySuggestions] =
-      useState(false);
-    const [showMailingCitySuggestions, setShowMailingCitySuggestions] =
-      useState(false);
-  
-    const [loadingPhysicalZipSuggestions, setLoadingPhysicalZipSuggestions] =
-      useState(false);
-    const [loadingMailingZipSuggestions, setLoadingMailingZipSuggestions] =
-      useState(false);
-    const [loadingPhysicalCitySuggestions, setLoadingPhysicalCitySuggestions] =
-      useState(false);
-    const [loadingMailingCitySuggestions, setLoadingMailingCitySuggestions] =
-      useState(false);
-
-      const loadStatesForCountry = async (
-        countryCode: string,
-        addressType: 'physical' | 'mailing',
-      ) => {
-        try {
-          // const statesData = await CommonService.getStatesByCountry(countryCode);
-          // const statesList = statesData.map(s => ({value: s.code, text: s.name}));
-    
-          // if (addressType === 'physical') {
-          //   setPhysicalStates(statesList);
-          //   handlePhysicalAddressChange('stateCode', '');
-          // } else {
-          //   setMailingStates(statesList);
-          //   handleMailingAddressChange('stateCode', '');
-          // }
-        } catch (error) {
-          console.error(`Error loading states for ${addressType} address:`, error);
-        }
-      };
-
-const handlePhysicalAddressChange = (field: keyof Address, value: any) => {
-    if (!data.physicalAddress) {
-      return;
-    }
-
-    if (
-      field === 'countryCode' &&
-      value !== data.physicalAddress.countryCode
-    ) {
-      loadStatesForCountry(value, 'physical');
-    }
-
-    if (field === 'zipCode') {
-      if (value !== originalPhysicalZip.current) {
-        setIsTypingPhysicalZip(true);
-      }
-    } else if (field === 'city') {
-      if (value !== originalPhysicalCity.current) {
-        setIsTypingPhysicalCity(true);
-      }
-    }
-  };
- const handleMailingAddressChange = (field: keyof Address, value: any) => {
-    if (!data.mailingAddress) {
-      return;
-    }
-
-    if (
-      field === 'countryCode' &&
-      value !== data.mailingAddress.countryCode
-    ) {
-      loadStatesForCountry(value, 'mailing');
-    }
-
-    if (field === 'zipCode') {
-      if (value !== originalMailingZip.current) {
-        setIsTypingMailingZip(true);
-      }
-    } else if (field === 'city') {
-      if (value !== originalMailingCity.current) {
-        setIsTypingMailingCity(true);
-      }
-    }
-  };
-
-    const handleBlur = (field: string) => {
-  
-      if (field === 'physical_zipCode') {
-        setTimeout(() => setIsTypingPhysicalZip(false), 200);
-      } else if (field === 'mailing_zipCode') {
-        setTimeout(() => setIsTypingMailingZip(false), 200);
-      } else if (field === 'physical_city') {
-        setTimeout(() => setIsTypingPhysicalCity(false), 200);
-      } else if (field === 'mailing_city') {
-        setTimeout(() => setIsTypingMailingCity(false), 200);
-      }
-    };
-
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-        {/* Physical Address Section */}
-        <View style={styles.formSection}>
-          {/* <TextStyle variant="medium" size="lg" style={styles.sectionTitle}>
-            Permanent Address
-          </TextStyle> */}
-
-          <Input
-            label="Address"
-            required
-            value={data.physicalAddress?.address1 || ''}
-            onChangeText={(val)=>onChange({ ...data, physicalAddress: { ...data.physicalAddress, address1: val }})}
-            // onBlur={() => handleBlur('physical_address1')}
-            error={errors?.physicalAddress?.address1}
-            touched={errors?.physicalAddress?.address1}
-            // disabled={saveLoading}
-          />
-
-          <View style={styles.zipCodeContainer}>
-            <Input
-              label="Zip Code"
-              required
-              value={data.physicalAddress?.zipCode || ''}
-              onChangeText={(val)=>{
-                onChange({ ...data, physicalAddress: { ...data.physicalAddress, zipCode: val }});
-                handlePhysicalAddressChange('zipCode', val)
-              }}
-              // onBlur={() => handleBlur('physical_zipCode')}
-              // onFocus={() => handleFocus('physical_zipCode')}
-              error={errors?.physicalAddress?.zipCode}
-              touched={errors?.physicalAddress?.zipCode}
-              // disabled={saveLoading}
-              keyboardType="numeric"
-              placeholder="Enter ZIP code to find address"
-            />
-
-            {loadingPhysicalZipSuggestions && (
-              <View style={styles.autocompleteLoadingContainer}>
-                <ActivityIndicator
-                  size="small"
-                  color={theme.colors.primary.main}
-                />
-                <TextStyle
-                  variant="regular"
-                  size="sm"
-                  style={styles.loadingFieldText}>
-                  Searching addresses...
-                </TextStyle>
-              </View>
-            )}
-
-            {/* {showPhysicalZipSuggestions &&
-              physicalZipSuggestions.length > 0 && (
-                <View style={styles.suggestionsContainer}>
-                  <FlatList
-                    data={physicalZipSuggestions}
-                    keyExtractor={item => item.placeId}
-                    renderItem={({item}) => (
-                      <TouchableOpacity
-                        style={styles.suggestionItem}
-                        // onPress={() => handlePhysicalAddressSelect(item)}
-                      >
-                        <TextStyle variant="regular" size="sm">
-                          {item.value}
-                        </TextStyle>
-                      </TouchableOpacity>
-                    )}
-                    keyboardShouldPersistTaps="handled"
-                    nestedScrollEnabled
-                    style={styles.suggestionsList}
-                  />
-                </View>
-              )} */}
-          </View>
-
-          <View style={styles.cityContainer}>
-            <Input
-              label="City"
-              required
-              value={data.physicalAddress?.city || ''}
-              onChangeText={(val)=>{
-                onChange({ ...data, physicalAddress: { ...data.physicalAddress, city: val }});
-                handlePhysicalAddressChange('city', val);
-                }}
-              // onBlur={() => handleBlur('physical_city')}
-              // onFocus={() => handleFocus('physical_city')}
-              error={errors?.physicalAddress?.city}
-              touched={errors?.physicalAddress?.city}
-              // disabled={saveLoading}
-              placeholder="Enter city name"
-            />
-
-            {loadingPhysicalCitySuggestions && (
-              <View style={styles.autocompleteLoadingContainer}>
-                <ActivityIndicator
-                  size="small"
-                  color={theme.colors.primary.main}
-                />
-                <TextStyle
-                  variant="regular"
-                  size="sm"
-                  style={styles.loadingFieldText}>
-                  Searching cities...
-                </TextStyle>
-              </View>
-            )}
-
-            {showPhysicalCitySuggestions &&
-              physicalCitySuggestions.length > 0 && (
-                <View style={styles.suggestionsContainer}>
-                  <FlatList
-                    data={physicalCitySuggestions}
-                    keyExtractor={item => item.placeId}
-                    renderItem={({item}) => (
-                      <TouchableOpacity
-                        style={styles.suggestionItem}
-                        // onPress={() => handlePhysicalCitySelect(item)}
-                      >
-                        <TextStyle variant="regular" size="sm">
-                          {item.value}
-                        </TextStyle>
-                      </TouchableOpacity>
-                    )}
-                    keyboardShouldPersistTaps="handled"
-                    nestedScrollEnabled
-                    style={styles.suggestionsList}
-                  />
-                </View>
-              )}
-          </View>
-
-          <Input
-            label="State"
-            required
-            value={data.physicalAddress?.stateCode || ''}
-            onChangeText={(val)=>onChange({ ...data, physicalAddress: { ...data.physicalAddress, stateCode: val }})}
-            error={errors?.physicalAddress?.stateCode}
-            touched={errors?.physicalAddress?.stateCode}
-            disabled={true}
-          />
-
-          <Input
-            label="Country"
-            required
-            value={data.physicalAddress?.countryCode || ''}
-            onChangeText={(val)=>onChange({ ...data, physicalAddress: { ...data.physicalAddress, countryCode: val }})}
-            error={errors?.physicalAddress?.countryCode}
-            touched={errors?.physicalAddress?.countryCode}
-            disabled={true}
-          />
-        </View>
-
-        {/* Mailing Address Section */}
-        {!data.isSamePhysical && (
-          <View style={styles.formSection}>
-            <Input
-              label="Address"
-              required
-              value={data.mailingAddress?.address1 || ''}
-              onChangeText={(val)=>onChange({ ...data, mailingAddress: { ...data.mailingAddress, address1: val }})}
-              // onBlur={() => handleBlur('mailing_address1')}
-              error={errors?.mailingAddress?.address1}
-              touched={errors?.mailingAddress?.address1}
-              // disabled={saveLoading}
-            />
-
-            <View style={styles.zipCodeContainer}>
-              <Input
-                label="Zip Code"
-                required
-                value={data.mailingAddress?.zipCode || ''}
-                onChangeText={(val)=>{
-                  onChange({ ...data, mailingAddress: { ...data.mailingAddress, zipCode: val }});
-                  handleMailingAddressChange('zipCode', val);
-                }}
-                // onBlur={() => handleBlur('mailing_zipCode')}
-                // onFocus={() => handleFocus('mailing_zipCode')}
-                error={errors?.mailingAddress?.zipCode}
-                touched={errors?.mailingAddress?.zipCode}
-                // disabled={saveLoading}
-                keyboardType="numeric"
-                placeholder="Enter ZIP code to find address"
-              />
-
-              {loadingMailingZipSuggestions && (
-                <View style={styles.autocompleteLoadingContainer}>
-                  <ActivityIndicator
-                    size="small"
-                    color={theme.colors.primary.main}
-                  />
-                  <TextStyle
-                    variant="regular"
-                    size="sm"
-                    style={styles.loadingFieldText}>
-                    Searching addresses...
-                  </TextStyle>
-                </View>
-              )}
-
-              {showMailingZipSuggestions &&
-                mailingZipSuggestions.length > 0 && (
-                  <View style={styles.suggestionsContainer}>
-                    <FlatList
-                      data={mailingZipSuggestions}
-                      keyExtractor={item => item.placeId}
-                      renderItem={({item}) => (
-                        <TouchableOpacity
-                          style={styles.suggestionItem}
-                          // onPress={() => handleMailingAddressSelect(item)}
-                        >
-                          <TextStyle variant="regular" size="sm">
-                            {item.value}
-                          </TextStyle>
-                        </TouchableOpacity>
-                      )}
-                      keyboardShouldPersistTaps="handled"
-                      nestedScrollEnabled
-                      style={styles.suggestionsList}
-                    />
-                  </View>
-                )}
-            </View>
-
-            <View style={styles.cityContainer}>
-              <Input
-                label="City"
-                required
-                value={data.mailingAddress?.city || ''}
-                onChangeText={(val)=>{
-                  onChange({ ...data, mailingAddress: { ...data.mailingAddress, city: val }});
-                  handleMailingAddressChange('city', val);
-                }}
-                // onBlur={() => handleBlur('mailing_city')}
-                // onFocus={() => handleFocus('mailing_city')}
-                error={errors?.mailingAddress?.city}
-                touched={errors?.mailingAddress?.city}
-                // disabled={saveLoading}
-                placeholder="Enter city name"
-              />
-
-              {loadingMailingCitySuggestions && (
-                <View style={styles.autocompleteLoadingContainer}>
-                  <ActivityIndicator
-                    size="small"
-                    color={theme.colors.primary.main}
-                  />
-                  <TextStyle
-                    variant="regular"
-                    size="sm"
-                    style={styles.loadingFieldText}>
-                    Searching cities...
-                  </TextStyle>
-                </View>
-              )}
-
-              {showMailingCitySuggestions &&
-                mailingCitySuggestions.length > 0 && (
-                  <View style={styles.suggestionsContainer}>
-                    <FlatList
-                      data={mailingCitySuggestions}
-                      keyExtractor={item => item.placeId}
-                      renderItem={({item}) => (
-                        <TouchableOpacity
-                          style={styles.suggestionItem}
-                          // onPress={() => handleMailingCitySelect(item)}
-                        >
-                          <TextStyle variant="regular" size="sm">
-                            {item.value}
-                          </TextStyle>
-                        </TouchableOpacity>
-                      )}
-                      keyboardShouldPersistTaps="handled"
-                      nestedScrollEnabled
-                      style={styles.suggestionsList}
-                    />
-                  </View>
-                )}
-            </View>
-
-            <Input
-              label="State"
-              required
-              value={data.mailingAddress?.stateCode || ''}
-              onChangeText={(val) => onChange({ ...data, mailingAddress: { ...data.mailingAddress, stateCode: val }})}
-              error={errors?.mailingAddress?.stateCode}
-              touched={errors?.mailingAddress?.stateCode}
-              // disabled={true}
-            />
-
-            <Input
-              label="Country"
-              required
-              value={data.mailingAddress?.countryCode || ''}
-              onChangeText={(val) => onChange({ ...data, mailingAddress: { ...data.mailingAddress, countryCode: val }})}
-              error={errors?.mailingAddress?.countryCode}
-              touched={errors?.mailingAddress?.countryCode}
-              // disabled={true}
-            />
-          </View>
-        )}
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
 
 export default AddressInfoScreen;

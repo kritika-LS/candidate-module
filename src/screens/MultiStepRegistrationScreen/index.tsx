@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useImperativeHandle, useMemo, useRef, useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -40,17 +40,17 @@ type Route = {
 };
 
 type FormData = {
-  personal: { firstName?: string; lastName?: string, alternateEmail?:string };
+  personal: { firstName?: string; lastName?: string, alternateEmail?:string,mobileNumber?: string };
   address: {
     physicalAddress: {
-      address1?: string;
+      address?: string;
       city?: string;
       stateCode?: string;
       zipCode?: string;
       countryCode?: string;
     };
     mailingAddress: {
-      address1?: string;
+      address?: string;
       city?: string;
       stateCode?: string;
       zipCode?: string;
@@ -73,41 +73,55 @@ interface PersonalDetailsProps {
   data: FormData['personal'];
   onChange: (data: FormData['personal']) => void;
   errors: Record<string, string>;
+  touched: Record<string, boolean>;
+  setTouched: (data: Record<string, boolean>) => void;
 }
 
 const PersonalDetails : React.FC<PersonalDetailsProps> = ({
   data,
   onChange,
-  errors
+  errors,
+  touched,
+  setTouched
   }: {
     data: FormData['personal'];
     onChange: (data: FormData['personal']) => void;
     errors: Record<string, string>;
+    touched: Record<string, boolean>;
+    setTouched: (data: Record<string, boolean>) => void;
   }) => { 
     return(
-    <PersonalDetailsSection data={data} onChange={onChange} errors={errors} />
+    <PersonalDetailsSection data={data} onChange={onChange} errors={errors} touched={touched} setTouched={setTouched}/>
 )};
 
 const AddressDetails = ({
   data,
   onChange,
-  errors
+  errors,
+  touched,
+  setTouched
   }: {
     data: FormData['address'];
     onChange: (data: FormData['address']) => void;
     errors: any;
+    touched: any;
+    setTouched: (data: any) => void;
   }) => (
-    <AddressInfoScreen data={data} onChange={onChange} errors={errors} />
+    <AddressInfoScreen data={data} onChange={onChange} errors={errors} touched={touched} setTouched={setTouched} />
 );
 
 const ProfessionalDetails = ({
     data,
     onChange,
     errors,
+    touched,
+    setTouched
   }: {
     data: FormData['professional'];
     onChange: (data: FormData['professional']) => void;
-    errors:any
+    errors:any;
+    touched: any;
+    setTouched: (data: any) => void;
   }) => (
     
     <ProfessionalDetailsForm 
@@ -116,22 +130,30 @@ const ProfessionalDetails = ({
        errors={errors}
        professionsList={professionsList}
        specialtiesMap={specialtiesMap}
+       touched={touched} 
+       setTouched={setTouched}
     />
 );
 
 const JobPreferences = ({
     data,
     onChange,
-    errors
+    errors,
+    touched,
+    setTouched
   }: {
     data: FormData['jobPref'];
     onChange: (data: FormData['jobPref']) => void;
-    errors:any
+    errors:any;
+    touched: any;
+    setTouched: (data: any) => void;
   }) => (
     <JobPreferenceForm
       data={data}
       onChange={onChange}
       errors={errors}
+      touched={touched} 
+      setTouched={setTouched}
      />
 );
 
@@ -140,35 +162,41 @@ const JobPreferences = ({
 const MultiStepRegistrationScreen = () => {
   const [formData, setFormData] = useState<FormData>({
     personal: {},
-    address: {},
+    address: {
+      physicalAddress: {
+        address: '',
+        city: '',
+        stateCode: '',
+        zipCode: '',
+        countryCode: ''
+      },
+      mailingAddress: {
+        address: '',
+        city: '',
+        stateCode: '',
+        zipCode: '',
+        countryCode: ''
+      },
+      isSamePhysical: false
+    },
     professional: {},
     jobPref: {}
   });
   const [formErrors, setFormErrors] = useState({
+    personal: {},
+    address: {
+    },
+    professional: {},
+    jobPref: {}
+  });
+  const [formTouch, setFormTouch] = useState({
     personal: {},
     address: {},
     professional: {},
     jobPref: {}
   });
   const [index, setIndex] = useState(0);
-
-	// const [routes] = useState<Route[]>([
-  //   { key: 'personal', title: 'Personal Details', icon: 'account-circle-outline' },
-  //   { key: 'address', title: 'Address', icon: 'home-outline' },
-  //   { key: 'professional', title: 'Professional Details', icon: 'briefcase-outline' },
-  //   { key: 'jobPref', title: 'Job Preferences', icon: 'tune' }
-  // ]);
-
-  // const validateForm = () => {
-  //   const allValid = Object.values(formData).every(section =>
-  //     Object.values(section).every(value => value?.trim() !== '')
-  //   );
-  //   if (!allValid) {
-  //     Alert.alert('Validation Error', 'Please complete all fields before submitting.');
-  //     return false;
-  //   }
-  //   return true;
-  // };
+  const [isAllValid, setIsAllValid] = useState(false);
 
   const routes = useMemo(() => [
     {
@@ -245,31 +273,47 @@ const MultiStepRegistrationScreen = () => {
   const validateAddressInfo = async () => {
     try {
       await addressValidationSchema.validate(formData.address, { abortEarly: false });
-      setFormErrors((prev: any) => ({ ...prev, address: {} }));
+      setFormErrors((prev) => ({ ...prev, address: {} }));
       return true;
     } catch (err: any) {
       const errorObj: Record<string, any> = {};
   
-      err.inner.forEach((e: any) => {
-        if (!e.path) return;
+      if (err.inner && Array.isArray(err.inner)) {
+        err.inner.forEach((e: any) => {
+          if (!e.path) return;
   
-        const pathParts = e.path.split('.'); // e.g., ['physicalAddress', 'city']
-        let current = errorObj;
+          const pathParts = e.path.split('.'); // e.g., ['physicalAddress', 'city']
+          let current = errorObj;
   
-        pathParts.forEach((part: string, index: number) => {
-          if (index === pathParts.length - 1) {
-            current[part] = e.message;
-          } else {
-            if (!current[part]) current[part] = {};
-            current = current[part];
-          }
+          pathParts.forEach((part: string, index: number) => {
+            if (index === pathParts.length - 1) {
+              current[part] = e.message;
+            } else {
+              if (!current[part]) current[part] = {};
+              current = current[part];
+            }
+          });
         });
-      });
-      console.log('Address validation errors:', errorObj);
-      setFormErrors((prev: any) => ({ ...prev, address: errorObj }));
+      }
+  
+      console.error('Address validation errors:', errorObj);
+      setFormErrors((prev) => ({ ...prev, address: errorObj }));
       return false;
     }
   };
+  
+  const validateAll = async () => {
+    const isPersonalValid = await validatePersonalDetails();
+    const isProfessionalValid = await validateProfessionalDetails();
+    const isAddressValid = await validateAddressInfo();
+    const isJobPrefValid = await validateJobPreference();
+
+    setIsAllValid(isPersonalValid && isProfessionalValid && isAddressValid && isJobPrefValid);
+  };
+
+  useEffect(() => {
+    validateAll();
+  }, [formData]);
   
   console.log("tag errore",formErrors)
   // const handleSubmit = async() => {
@@ -293,6 +337,7 @@ const MultiStepRegistrationScreen = () => {
   //       Alert.alert('Success', 'Registration Professional complete!');
   //     }
   // };
+  console.log("formData",formData,formTouch)
   const handleSubmit = async () => {
     console.log('Submitted Data:', formData);
 
@@ -314,46 +359,58 @@ const MultiStepRegistrationScreen = () => {
         return (
           <PersonalDetails
           data={formData.personal}
-          onChange={data => setFormData(prev => ({ ...prev, personal: data }))}
+          onChange={data => {
+            setFormData(prev => ({ ...prev, personal: data }));
+            validatePersonalDetails();
+          }}
           errors={formErrors.personal}
+          touched={formTouch.personal}
+          setTouched={data => setFormTouch(prev => ({ ...prev, personal: data }))}
           />
         );
       case 'address':
         return (
           <AddressDetails
             data={formData.address}
-            onChange={data => setFormData(prev => ({ ...prev, address: data }))}
+            onChange={data => {
+              setFormData(prev => ({ ...prev, address: data }));
+              validateAddressInfo();
+            }}
             errors={formErrors.address}
+            touched={formTouch.address}
+            setTouched={data => setFormTouch(prev => ({ ...prev, address: data }))}
           />
         );
       case 'professional':
         return (
           <ProfessionalDetails
             data={formData.professional}
-            onChange={data => setFormData(prev => ({ ...prev, professional: data }))}
+            onChange={data => {
+              setFormData(prev => ({ ...prev, professional: data }));
+              validateProfessionalDetails();
+            }}
             errors={formErrors.professional}
+            touched={formTouch.professional}
+            setTouched={data => setFormTouch(prev => ({ ...prev, professional: data }))}
           />
         );
       case 'jobPref':
         return (
           <JobPreferences
             data={formData.jobPref}
-            onChange={data => setFormData(prev => ({ ...prev, jobPref: data }))}
+            onChange={data => {
+              setFormData(prev => ({ ...prev, jobPref: data }));
+              validateJobPreference();
+            }}
             errors={formErrors.jobPref}
+            touched={formTouch.jobPref}
+            setTouched={data => setFormTouch(prev => ({ ...prev, jobPref: data }))}
           />
         );
       default:
         return null;
     }
   };
-  
-
-	// const tabCompletion = {
-	// 	personal: formData.personal.name && formData.personal.phone,
-	// 	address: formData.address.street && formData.address.city,
-	// 	professional: formData.professional.occupation && formData.professional.experience,
-	// 	jobPref: formData.jobPref.jobTitle && formData.jobPref.location
-	// };
 
 const renderScrollableTabBar = (props:any) => {
   const { navigationState, jumpTo } = props;
@@ -396,7 +453,7 @@ return (
     />
 
     <View style={{ padding: 16 }}>
-        <Button title="Register" style={styles.registerBtn} onPress={handleSubmit} />
+        <Button title="Register" style={styles.registerBtn} onPress={handleSubmit} disabled={!isAllValid} />
     </View>
       <TermsPolicies />
       <CopyrightFooter />

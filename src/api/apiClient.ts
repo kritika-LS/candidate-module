@@ -31,14 +31,6 @@ class ApiClient {
     // Request interceptor
     this.axiosInstance.interceptors.request.use(
       async config => {
-        console.log('🌐 Request:', {
-          method: config.method?.toUpperCase(),
-          url: config.url,
-          baseURL: config.baseURL,
-          headers: config.headers,
-          data: config.data,
-          params: config.params,
-        });
 
         try {
           const token = await AsyncStorage.getItem('auth_token');
@@ -49,7 +41,14 @@ class ApiClient {
         } catch (error) {
           console.error('Error fetching auth token:', error);
         }
-
+        console.log('🌐 Request:', {
+          method: config.method?.toUpperCase(),
+          url: config.url,
+          baseURL: config.baseURL,
+          headers: config.headers,
+          data: config.data,
+          params: config.params,
+        });
         return config;
       },
       error => {
