@@ -4,6 +4,14 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  body:{
+    margin: 16,
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
+  },
   inputGroup: {
     marginBottom: 10,
     marginTop: 10,
@@ -29,15 +37,9 @@ export const styles = StyleSheet.create({
   calendarIcon: {
   },
   saveButton: {
-    backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    backgroundColor: '#fff', 
+    paddingHorizontal: 16, 
+    paddingBottom: 16
   },
   errorText: {
     color: 'red',

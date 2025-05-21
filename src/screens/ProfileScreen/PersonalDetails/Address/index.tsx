@@ -18,6 +18,7 @@ import {Formik} from 'formik';
 import Toast from 'react-native-toast-message';
 import { addressValidationSchema2 } from '../../../../validations/addressValidation';
 import { useAppSelector } from '../../../../hooks/useAppDispatch';
+import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 
 const AddressDetailsScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -72,13 +73,19 @@ console.log('Initial values:', initialValues);
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
+
+        <ProfileScreenHeader
+            headerIcon='home-outline'
+            headerTitle='Address Details'
+            completedStatus={false}
+        />
         <Formik
           initialValues={initialValues}
           validationSchema={addressValidationSchema2}
           onSubmit={handleSave}>
           {({values, errors, touched, handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting}) => (
             <>
-              {/* Current Address Section */}
+            
               <View style={styles.formSection}>
                 <TextStyle variant="medium" size="lg" style={styles.sectionTitle}>
                   Current Address
@@ -151,7 +158,6 @@ console.log('Initial values:', initialValues);
                 />
               </View>
 
-              {/* Same As Permanent Toggle */}
               <View style={styles.toggleSection}>
                 <View style={styles.sameAddressToggle}>
                   <TextStyle variant="regular" size="md">
@@ -177,7 +183,6 @@ console.log('Initial values:', initialValues);
                 </View>
               </View>
 
-              {/* Permanent Address Section */}
               {!values.isSamePermanent && (
                 <View style={styles.formSection}>
                   <TextStyle variant="medium" size="lg" style={styles.sectionTitle}>
@@ -271,7 +276,12 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: theme.spacing.md,
+    margin: 16,
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
   },
   formSection: {
     marginBottom: theme.spacing.lg,

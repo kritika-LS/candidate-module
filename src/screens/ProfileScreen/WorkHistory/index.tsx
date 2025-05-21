@@ -6,6 +6,7 @@ import AddWorkHistory from './AddWorkForm';
 import { theme } from '../../../theme';
 import { TextStyle } from '../../../components/common/Text';
 import { useAppSelector } from '../../../hooks/useAppDispatch';
+import { PrimaryMenu } from '../../../components/common/PrimaryMenu';
 
 const WorkHistorySection = () => {
 
@@ -17,13 +18,9 @@ const WorkHistorySection = () => {
     const accordionData = [
         {
             title: 'Work History',
-            icon: 'briefcase', // Add an icon property
-            content: (
-                <View style={styles.accordionContent}>
-                    <AddWorkHistory />
-                </View>
-
-            )
+            icon: 'briefcase', 
+			completed: false,
+			ScreenName: 'AddWorkHistory',
         },
     ];
 
@@ -33,57 +30,63 @@ const WorkHistorySection = () => {
                 <>
                     { WorkHistoryData.length > 0 ? (
                         <>
-                        <HistoryListCard
-                            listIcon={'office-building'}
-                            title='Registered Nurse'
-                            subtitle1='ICU'
-                            subtitle2='Trauma Hospital'
-                            workSpaceName='Springfield Memorial Hospital - 867567'
-                            ratio='1:4'
-                            startDate='Jan 2020'
-                            endDate='Present'
-                            location='New York, NY'
-                            pillText={'Travel'}
-                            onEdit={() => console.log('Edit pressed')}
-                            onDelete={() => console.log('Delete pressed')}
-                        />
-                        <TouchableOpacity
-                            style={styles.addWorkHistoryContainer}
-                            onPress={() => setShowHistoryList(false)}
-                        >
-                            <Icon name="add" size={20} color={theme.colors.primary.main} />
-                            <TextStyle color={theme.colors.primary.main} style={styles.addWorkHistoryText}>Add Work History</TextStyle>
-                        </TouchableOpacity>
+                            <HistoryListCard
+                                listIcon={'office-building'}
+                                title='Registered Nurse'
+                                subtitle1='ICU'
+                                subtitle2='Trauma Hospital'
+                                workSpaceName='Springfield Memorial Hospital - 867567'
+                                ratio='1:4'
+                                startDate='Jan 2020'
+                                endDate='Present'
+                                location='New York, NY'
+                                pillText={'Travel'}
+                                onEdit={() => console.log('Edit pressed')}
+                                onDelete={() => console.log('Delete pressed')}
+                            />
+                            <TouchableOpacity
+                                style={styles.addWorkHistoryContainer}
+                                onPress={() => setShowHistoryList(false)}
+                            >
+                                <Icon name="add" size={20} color={theme.colors.primary.main} />
+                                <TextStyle color={theme.colors.primary.main} style={styles.addWorkHistoryText}>Add Work History</TextStyle>
+                            </TouchableOpacity>
                         </>
                         ) : ( 
-                            <AddWorkHistory />
+                            <PrimaryMenu
+                                menuItems={accordionData}
+                            />
+                            // <AddWorkHistory />
                          )}
                 </>
             ) : (
-                accordionData.map((item, index) => (
-                    <View key={index} style={styles.accordionItem}>
-                        <TouchableOpacity
-                            style={styles.accordionHeader}
-                            onPress={() => setExpandedItem(expandedItem === item.title ? null : item.title)}
-                        >
-                            <View style={styles.accordionTitleContainer}>
-                                <Icon name={item.icon} size={18} color={'#888'} />
-                                <Text style={styles.accordionTitle}>{item.title}</Text>
-                            </View>
+                <PrimaryMenu
+                    menuItems={accordionData}
+                />
+                // accordionData.map((item, index) => (
+                //     <View key={index} style={styles.accordionItem}>
+                //         <TouchableOpacity
+                //             style={styles.accordionHeader}
+                //             onPress={() => setExpandedItem(expandedItem === item.title ? null : item.title)}
+                //         >
+                //             <View style={styles.accordionTitleContainer}>
+                //                 <Icon name={item.icon} size={18} color={'#888'} />
+                //                 <Text style={styles.accordionTitle}>{item.title}</Text>
+                //             </View>
 
-                            <View style={styles.flexRow}>
-                                <Icon
-                                    name={expandedItem === item.title ? "chevron-up" : "chevron-down"}
-                                    size={20}
-                                    color={'#888'}
-                                    style={styles.iconSpacing}
-                                />
-                            </View>
-                        </TouchableOpacity>
+                //             <View style={styles.flexRow}>
+                //                 <Icon
+                //                     name={expandedItem === item.title ? "chevron-up" : "chevron-down"}
+                //                     size={20}
+                //                     color={'#888'}
+                //                     style={styles.iconSpacing}
+                //                 />
+                //             </View>
+                //         </TouchableOpacity>
 
-                        {expandedItem === item.title && item.content}
-                    </View>
-                ))
+                //         {expandedItem === item.title && item.content}
+                //     </View>
+                // ))
             )}
         </ScrollView>
     );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert, TouchableOpacity, View } from "react-native";
+import { Alert, Image, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import Icon from "../../../components/common/Icon/Icon";
 import { TextStyle } from "../../../components/common/Text";
@@ -29,9 +29,18 @@ export const Header = () => {
 		<View style={[styles.flexRow, styles.uploadSection]}>
 
 			<View style={styles.profilepic}>
+			{document ? (
+				<Image
+					source={{ uri: document.uri }}
+					style={styles.profilePicImage}
+					resizeMode="cover"
+				/>
+				) : (
 				<View style={styles.profilePicIcon}>
 					<Icon name="account-outline" size={30} color={theme.colors.grey[500]} />
 				</View>
+			)}
+
 			</View>
 
 			<View style={styles.uploadProfilePic}>

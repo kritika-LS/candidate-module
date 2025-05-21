@@ -168,13 +168,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await signOut();
       setIsAuthenticated(false);
       await AsyncStorage.setItem('@auth:isAuthenticated', 'false'); // Persist auth state
+      const remember = await AsyncStorage.getItem('@auth:rememberAccount');
+
+      // Only remove credentials if rememberAccount is false
+      if (remember !== 'true') {
+        await AsyncStorage.multiRemove([
+          '@auth:rememberAccount',
+          '@auth:email',
+          '@auth:password',
+        ]);
+      }
       refreshManager.current.clearRefresh();
-      await AsyncStorage.multiRemove([
-        '@auth:rememberAccount',
-        '@auth:email',
-        '@auth:password',
-        '@auth:isAuthenticated'
-      ]);
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -190,7 +194,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const currentUser = await getCurrentUser();
       const userAttributes: Record<string, any> = await fetchUserAttributes();
 
+      console.log("------- before save -------", accessToken)
       await AsyncStorage.setItem('auth_token', accessToken || '');
+      console.log("-------- access token saved ------")
 
       let groups: string[] = [];
       if (currentUser) {

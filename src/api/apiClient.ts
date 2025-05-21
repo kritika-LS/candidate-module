@@ -16,7 +16,7 @@ class ApiClient {
         'Content-Type': 'application/json',
       },
     });
-
+    console.log('This is bond -007')
     this.setupInterceptors();
   }
 
@@ -27,13 +27,14 @@ class ApiClient {
     return ApiClient.instance;
   }
 
-  private setupInterceptors() {
+   private async setupInterceptors() {
     // Request interceptor
-    this.axiosInstance.interceptors.request.use(
-      async config => {
+     await this.axiosInstance.interceptors.request.use(
+       async config => {
 
         try {
           const token = await AsyncStorage.getItem('auth_token');
+          console.log('This is James-007')
           console.log('🌐 Token:', token);
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -95,6 +96,7 @@ class ApiClient {
       config,
       timestamp: new Date().toISOString(),
     });
+    this.setupInterceptors();
     return this.axiosInstance.get(url, config).then(response => {
       console.log('📥 GET Response:', {
         url,

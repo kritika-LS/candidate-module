@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
   },
   section: {
     flex: 1,
+    width: '100%'
     // marginTop: theme.spacing.md,
   },
   sectionTitle: {
@@ -44,24 +45,32 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flex: 1,
+    marginBottom: 12,
+    width: '100%',
   },
-  sortSection: {
+  titleContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  sortContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  sortByText: {
+    position: 'absolute',
+    right: 130,
+    top: 6
   },
   dropdown: {
     borderWidth: 0.5,
     borderRadius: 24,
     backgroundColor: '#fafafa',
-    borderColor: theme.colors.text.light,
+    borderColor: theme.colors.background.dark,
     width: 120,
-    marginVertical: 12,
-    alignSelf: 'center',
-  },
-  dropdownItem: {
-    justifyContent: 'flex-start',
+    height: 32,
+    minHeight: 32,
+    maxHeight: 32,
   },
   dropdownLabel: {
     fontSize: 12,
@@ -69,5 +78,6 @@ export const styles = StyleSheet.create({
   },
   dropdownContainer: {
     borderColor: '#d4d4d4',
+    zIndex: 1000,
   },
 });

@@ -20,6 +20,7 @@ import { fetchDashboardStatistics } from '../../store/thunk/dashboardStats.thunk
 import { fetchCandidate } from '../../store/thunk/candidate.thunk';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { fetchCandidatePersonalDetails } from '../../store/thunk/candidatePersonalDetails.thunk';
+import LottieView from 'lottie-react-native';
 
 type Props = DrawerScreenProps<DrawerParamList, 'Home'>;
 
@@ -51,12 +52,18 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     const fetchData = async () => {
+
+      console.log('HomeScreen: Adding a short delay before fetching data...');
+      await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+      console.log('HomeScreen: Delay finished, proceeding with data fetch.');
+
       setLoading(true); // Set loading to true before starting API calls
       let sortOrder: 'Asc' | 'Desc' = 'Desc';
       let sortBy: 'RELEVANCE' | 'POSTED_DATE' | 'PAYRATE' = 'RELEVANCE';
 
       switch (sortByOption) {
         case 'Newest':
+          //@ts-ignore
           sortBy = 'NEWEST';
           sortOrder = 'Desc';
           break;
@@ -96,8 +103,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   if (loading) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color={theme.colors.primary.main} />
-        <TextStyle style={{ marginTop: 16 }}>Loading data...</TextStyle>
+        <LottieView
+          source={require('../../../assets/animations/Loader 1.json')}
+          autoPlay
+          loop
+          style={{ width: 100, height: 100 }}
+        />
       </View>
     );
   }
@@ -132,8 +143,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.section}>
           <View style={styles.jobHeader}>
             <Text style={styles.sectionTitle}>{jobData.length || 0} Jobs for you</Text>
-            <View style={styles.sortSection}>
-              <TextStyle size='xs'>
+            <View>
+              <TextStyle size='sm' style={styles.sortByText}>
                 Sort by
               </TextStyle>
               <DropDownPicker

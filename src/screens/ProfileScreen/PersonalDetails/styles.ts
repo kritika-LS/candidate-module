@@ -138,5 +138,10 @@ export const styles = StyleSheet.create({
 		paddingHorizontal: theme.spacing.md,
 		paddingVertical: theme.spacing.sm,
 		width: Dimensions.get('screen').width*0.32,
-	}
+	},
+	profilePicImage: {
+		width: 42,
+		height: 42,
+		borderRadius: 30,
+	  },
 })

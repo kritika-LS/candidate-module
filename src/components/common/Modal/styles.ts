@@ -41,17 +41,18 @@ export const styles = StyleSheet.create({
       borderRadius: theme.spacing.lg,
     },
     primaryButton: {
-      backgroundColor: theme.colors.primary.main,
+      backgroundColor: theme.colors.blue.light,
     },
     primaryText: {
       color: '#fff',
       fontWeight: '600',
     },
     secondaryButton: {
-      backgroundColor: '#f0f0f0',
+      borderWidth: 1,
+      borderColor: theme.colors.blue.light
     },
     secondaryText: {
-      color: '#333',
+      color: theme.colors.blue.light,
       fontWeight: '500',
     },
 });

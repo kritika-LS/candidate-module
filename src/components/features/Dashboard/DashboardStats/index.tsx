@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, FlatList, ViewToken, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import Icon from '../../../common/Icon/Icon';
 import { theme } from '../../../../theme';
@@ -11,6 +11,7 @@ type StatCardProps = {
   count: number;
   bgColor: string;
   iconBgColor: string;
+  ScreenName: string;
 };
 
 const StatCard = ({ icon, label, count, bgColor, iconBgColor }: StatCardProps) => {
@@ -18,7 +19,7 @@ const StatCard = ({ icon, label, count, bgColor, iconBgColor }: StatCardProps) =
     <TouchableOpacity style={[styles.card, { backgroundColor: bgColor }]} activeOpacity={0.8}>
       <View style={styles.countsection}>
         <View style={[styles.iconCircle, { backgroundColor: iconBgColor }]}>{icon}</View>
-        <Text style={styles.count}>{count}</Text>
+        {count && <Text style={styles.count}>{count}</Text>}
       </View>
       <Text style={styles.label}>{label}</Text>
     </TouchableOpacity>
@@ -39,6 +40,7 @@ export const DashboardStats = () => {
       count: dashboardStats.totalSavedJobs,
       bgColor: '#E6DBFD',
       iconBgColor: "#8800FF",
+      ScreenName: '',
     },
     {
       icon: <Icon name="file-multiple-outline" size={12} color="white" />,
@@ -46,6 +48,7 @@ export const DashboardStats = () => {
       count: dashboardStats.totalAppliedJobs,
       bgColor: '#FFF2CC',
       iconBgColor: theme.colors.accent.main,
+      ScreenName: '',
     },
     {
       icon: <Icon name="monitor" size={12} color="white" />,
@@ -53,6 +56,7 @@ export const DashboardStats = () => {
       count: dashboardStats.totalOnboardedJobs,
       bgColor: '#DAF0FF',
       iconBgColor: theme.colors.primary.main,
+      ScreenName: '',
     },
     {
       icon: <Icon name="file-clock-outline" size={12} color="white" />,
@@ -60,6 +64,7 @@ export const DashboardStats = () => {
       count: dashboardStats.totalOfferedJobs,
       bgColor: '#E5F8E8',
       iconBgColor: theme.colors.green.success_100,
+      ScreenName: '',
     },
     {
       icon: <Icon name="account-search-outline" size={12} color="white" />,
@@ -67,6 +72,7 @@ export const DashboardStats = () => {
       count: dashboardStats.totalOffersAccepted,
       bgColor: '#ffded1',
       iconBgColor: '#ff9066',
+      ScreenName: '',
     },
   ];
 

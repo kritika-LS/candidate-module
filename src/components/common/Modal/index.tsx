@@ -35,7 +35,7 @@ const CustomModal: React.FC<Props> = ({
   style,
 }) => {
   return (
-    <Modal isVisible={isVisible} onBackdropPress={onClose} backdropColor={theme.colors.grey[300]}>
+    <Modal isVisible={isVisible} onBackdropPress={onClose} backdropColor={"#00000066"}>
       <View style={[styles.modalContainer, style]}>
         {/* Header */}
         {title && <View style={styles.header}>

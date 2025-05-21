@@ -18,6 +18,7 @@ import { TextStyle } from '../../../../components/common/Text';
 import Icon from '../../../../components/common/Icon/Icon';
 import { SaveButton } from '../../../../components/features/SaveButton';
 import { UploadButton } from '../../../../components/features/UploadButton';
+import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 // import { styles } from './styles';
 
 interface CertificateFormValues {
@@ -87,154 +88,173 @@ const Certificate = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView keyboardShouldPersistTaps="handled">
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSave}
-        >
-          {({
-            values,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            setFieldValue,
-            errors,
-            touched,
-          }) => (
-            <View style={styles.container}>
-              <Input
-                label="Certificate Name"
-                required
-                value={values.certificateName}
-                onChangeText={handleChange('certificateName')}
-                onBlur={handleBlur('certificateName')}
-                error={errors.certificateName}
-                touched={touched.certificateName}
-                placeholder="Search certificate name"
-                />
-
-              <Input
-                label="Certification Number"
-                required
-                value={values.certificationNumber}
-                onChangeText={handleChange('certificationNumber')}
-                onBlur={handleBlur('certificationNumber')}
-                error={errors.certificationNumber}
-                touched={touched.certificationNumber}
-                placeholder="Enter certification number"
-                />
-
-              <Input
-                label="Issued By"
-                required
-                value={values.issuedBy}
-                onChangeText={handleChange('issuedBy')}
-                onBlur={handleBlur('issuedBy')}
-                error={errors.issuedBy}
-                touched={touched.issuedBy}
-                placeholder="Enter issued by"
-                />
-
-              <View style={styles.inputGroup}>
-                <TextStyle style={styles.label}>
-                  Issued Date <TextStyle style={{ color: 'red' }}>*</TextStyle>
-                </TextStyle>
-                <TouchableOpacity
-                  style={styles.datePickerButton}
-                  onPress={() => setShowDatePicker({ ...showDatePicker, issuedDate: true })}
-                >
-                  <TextStyle style={styles.input}>
-                    {values.issuedDate ? values.issuedDate.toString() : 'Select issued date'}
-                  </TextStyle>
-                  <Icon name="calendar-outline" size={20} color="#ccc" />
-                </TouchableOpacity>
-                {showDatePicker.issuedDate && (
-                  <DateTimePicker
-                    value={values.issuedDate ? new Date(values.issuedDate) : new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      setShowDatePicker({ ...showDatePicker, issuedDate: false });
-                      setFieldValue('issuedDate', selectedDate);
-                    }}
+        <View style={styles.body}>
+          <ProfileScreenHeader
+            headerIcon='certificate-outline'
+            headerTitle='Certificate'
+            completedStatus={false}
+          />
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSave}
+          >
+            {({
+              values,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              setFieldValue,
+              errors,
+              touched,
+            }) => (
+              <View style={styles.container}>
+                <Input
+                  label="Certificate Name"
+                  required
+                  value={values.certificateName}
+                  onChangeText={handleChange('certificateName')}
+                  onBlur={handleBlur('certificateName')}
+                  error={errors.certificateName}
+                  touched={touched.certificateName}
+                  placeholder="Search certificate name"
                   />
-                )}
-                {touched.issuedDate && errors.issuedDate && (
-                  <TextStyle style={styles.error}>{errors.issuedDate}</TextStyle>
-                )}
-              </View>
 
-              <View style={styles.inputGroup}>
-                <TextStyle style={styles.label}>
-                  Expiry Date <TextStyle style={{ color: 'red' }}>*</TextStyle>
-                </TextStyle>
-                <TouchableOpacity
-                  style={styles.datePickerButton}
-                  onPress={() => setShowDatePicker({ ...showDatePicker, expiryDate: true })}
-                >
-                  <TextStyle style={styles.input}>
-                    {values.expiryDate ? values.expiryDate.toString() : 'Select expiry date'}
-                  </TextStyle>
-                  <Icon name="calendar-outline" size={20} color="#ccc" />
-                </TouchableOpacity>
-                {showDatePicker.expiryDate && (
-                  <DateTimePicker
-                    value={values.expiryDate ? new Date(values.expiryDate) : new Date()}
-                    mode="date"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      setShowDatePicker({ ...showDatePicker, expiryDate: false });
-                      setFieldValue('expiryDate', selectedDate);
-                    }}
+                <Input
+                  label="Certification Number"
+                  required
+                  value={values.certificationNumber}
+                  onChangeText={handleChange('certificationNumber')}
+                  onBlur={handleBlur('certificationNumber')}
+                  error={errors.certificationNumber}
+                  touched={touched.certificationNumber}
+                  placeholder="Enter certification number"
                   />
+
+                <Input
+                  label="Issued By"
+                  required
+                  value={values.issuedBy}
+                  onChangeText={handleChange('issuedBy')}
+                  onBlur={handleBlur('issuedBy')}
+                  error={errors.issuedBy}
+                  touched={touched.issuedBy}
+                  placeholder="Enter issued by"
+                  />
+
+                <View style={styles.inputGroup}>
+                  <TextStyle style={styles.label}>
+                    Issued Date <TextStyle style={{ color: 'red' }}>*</TextStyle>
+                  </TextStyle>
+                  <TouchableOpacity
+                    style={styles.datePickerButton}
+                    onPress={() => setShowDatePicker({ ...showDatePicker, issuedDate: true })}
+                  >
+                    <TextStyle style={styles.input}>
+                      {values.issuedDate ? values.issuedDate.toString() : 'Select issued date'}
+                    </TextStyle>
+                    <Icon name="calendar-outline" size={20} color="#ccc" />
+                  </TouchableOpacity>
+                  {showDatePicker.issuedDate && (
+                    <DateTimePicker
+                      value={values.issuedDate ? new Date(values.issuedDate) : new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowDatePicker({ ...showDatePicker, issuedDate: false });
+                        setFieldValue('issuedDate', selectedDate);
+                      }}
+                    />
+                  )}
+                  {touched.issuedDate && errors.issuedDate && (
+                    <TextStyle style={styles.error}>{errors.issuedDate}</TextStyle>
+                  )}
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <TextStyle style={styles.label}>
+                    Expiry Date <TextStyle style={{ color: 'red' }}>*</TextStyle>
+                  </TextStyle>
+                  <TouchableOpacity
+                    style={styles.datePickerButton}
+                    onPress={() => setShowDatePicker({ ...showDatePicker, expiryDate: true })}
+                  >
+                    <TextStyle style={styles.input}>
+                      {values.expiryDate ? values.expiryDate.toString() : 'Select expiry date'}
+                    </TextStyle>
+                    <Icon name="calendar-outline" size={20} color="#ccc" />
+                  </TouchableOpacity>
+                  {showDatePicker.expiryDate && (
+                    <DateTimePicker
+                      value={values.expiryDate ? new Date(values.expiryDate) : new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowDatePicker({ ...showDatePicker, expiryDate: false });
+                        setFieldValue('expiryDate', selectedDate);
+                      }}
+                    />
+                  )}
+                  {touched.expiryDate && errors.expiryDate && (
+                    <TextStyle style={styles.error}>{errors.expiryDate}</TextStyle>
+                  )}
+    
+                </View>
+
+                <TextStyle style={styles.label}>State</TextStyle>
+                <DropDownPicker
+                  open={values.stateOpen}
+                  setOpen={(open) => setFieldValue('stateOpen', open)}
+                  items={[
+                    { label: 'California', value: 'california' },
+                    { label: 'Texas', value: 'texas' },
+                    { label: 'New York', value: 'new-york' },
+                  ]}
+                  value={values.state}
+                  setValue={(callback) => setFieldValue('state', callback(values.state))}
+                  placeholder="Search state"
+                  searchable={true}
+                  searchPlaceholder="Search state"
+                  listMode="MODAL"
+                  modalProps={{ animationType: 'slide' }}
+                  style={styles.dropdown}
+                />
+                {touched.state && errors.state && (
+                  <TextStyle style={styles.error}>{errors.state}</TextStyle>
                 )}
-                {touched.expiryDate && errors.expiryDate && (
-                  <TextStyle style={styles.error}>{errors.expiryDate}</TextStyle>
-                )}
-   
+
+                <UploadButton 
+                  handleUpload={handleCertificateUpload} 
+                  buttonTitle='Upload Certificate' 
+                  subText='Accepted file formats: PNG, JPEG, JPG up to 10 MB'
+                  fileName={certificate ? certificate?.name : ''}
+                  handleDelete={handleDeleteUploadedFile}
+                />
               </View>
-
-              <TextStyle style={styles.label}>State</TextStyle>
-              <DropDownPicker
-                open={values.stateOpen}
-                setOpen={(open) => setFieldValue('stateOpen', open)}
-                items={[
-                  { label: 'California', value: 'california' },
-                  { label: 'Texas', value: 'texas' },
-                  { label: 'New York', value: 'new-york' },
-                ]}
-                value={values.state}
-                setValue={(callback) => setFieldValue('state', callback(values.state))}
-                placeholder="Search state"
-                searchable={true}
-                searchPlaceholder="Search state"
-                listMode="MODAL"
-                modalProps={{ animationType: 'slide' }}
-                style={styles.dropdown}
-              />
-              {touched.state && errors.state && (
-                <TextStyle style={styles.error}>{errors.state}</TextStyle>
-              )}
-
-              <UploadButton 
-                handleUpload={handleCertificateUpload} 
-                buttonTitle='Upload Certificate' 
-                subText='Accepted file formats: PNG, JPEG, JPG up to 10 MB'
-                fileName={certificate ? certificate?.name : ''}
-                handleDelete={handleDeleteUploadedFile}
-              />
-              
-              <SaveButton onPress={handleSubmit} />
-            </View>
-          )}
-        </Formik>
+            )}
+          </Formik>
+        </View>
       </ScrollView>
+      <View style={styles.saveButton}>
+        <SaveButton
+          title="Save"
+          onPress={handleSave}
+        />
+      </View>
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    body: {
+      margin: 16,
+      padding: 16,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#ddd',
+      backgroundColor: '#fff',
     },
       inputGroup: {
         marginBottom: 10,
@@ -257,15 +277,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
       },
       saveButton: {
-        backgroundColor: '#007bff',
-        padding: 15,
-        borderRadius: 5,
-        alignItems: 'center',
-      },
-      saveButtonTextStyle: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
+        backgroundColor: '#fff', 
+        paddingHorizontal: 16, 
+        paddingBottom: 16
       },
       errorTextStyle: {
         color: 'red',
@@ -297,7 +311,6 @@ const styles = StyleSheet.create({
       },
       safeArea: {
         flex: 1,
-        backgroundColor: '#fff',
       },
       uploadGroup: {
         alignItems: 'center',

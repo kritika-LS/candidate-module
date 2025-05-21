@@ -15,6 +15,18 @@ import { StyleSheet, Text, View } from 'react-native';
 import DrawerHeader from '../components/CustomDrawer/DrawerHeader';
 import PersonalDetailsForm from '../screens/ProfileScreen/PersonalDetails/BasicInformationScreen';
 import BasicInformationScreen from '../screens/ProfileScreen/PersonalDetails/BasicInformationScreen';
+import AddressDetailsScreen from '../screens/ProfileScreen/PersonalDetails/Address';
+import ProfessionalDetailsScreen from '../screens/ProfileScreen/PersonalDetails/ProfessionalDetails';
+import PortfolioScreen from '../screens/ProfileScreen/PersonalDetails/Portfolio';
+import JobPreferencesScreen from '../screens/ProfileScreen/PersonalDetails/JobPreferences';
+import SubmittalInformationScreen from '../screens/ProfileScreen/PersonalDetails/SubmittalInformation';
+import EmergencyContactAddressScreen from '../screens/ProfileScreen/PersonalDetails/EmergencyContactAndAddress';
+import AddWorkHistory from '../screens/ProfileScreen/WorkHistory/AddWorkForm';
+import Certificate from '../screens/ProfileScreen/ProfessionalInformation/Certificate';
+import License from '../screens/ProfileScreen/ProfessionalInformation/License';
+import ReferenceSection from '../screens/ProfileScreen/ProfessionalInformation/Reference';
+import ChartingSystem from '../screens/ProfileScreen/ProfessionalInformation/ChartingSystem';
+import BackgroundInformation from '../screens/ProfileScreen/ProfessionalInformation/BackgroundInformation';
 
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -35,6 +47,18 @@ const DrawerNavigator = () => (
     <Drawer.Screen name="DocumentsScreen" component={DocumentsScreen} />
     <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
     <Drawer.Screen name="BasicInformationScreen" component={BasicInformationScreen} />
+    <Drawer.Screen name="AddressDetailsScreen" component={AddressDetailsScreen} />
+    <Drawer.Screen name="ProfessionalDetailsScreen" component={ProfessionalDetailsScreen} />
+    <Drawer.Screen name="PortfolioScreen" component={PortfolioScreen} />
+    <Drawer.Screen name="JobPreferencesScreen" component={JobPreferencesScreen} />
+    <Drawer.Screen name="SubmittalInformationScreen" component={SubmittalInformationScreen} />
+    <Drawer.Screen name="EmergencyContactAddressScreen" component={EmergencyContactAddressScreen} />
+    <Drawer.Screen name="AddWorkHistory" component={AddWorkHistory} />
+    <Drawer.Screen name="CertificateScreen" component={Certificate} />
+    <Drawer.Screen name="LicenseScreen" component={License} />
+    <Drawer.Screen name="ReferenceSectionScreen" component={ReferenceSection} />
+    <Drawer.Screen name="ChartingSystemScreen" component={ChartingSystem} />
+    <Drawer.Screen name="BackgroundInformationScreen" component={BackgroundInformation} />
   </Drawer.Navigator>
 );
 

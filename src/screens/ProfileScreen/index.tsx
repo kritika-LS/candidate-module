@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { OverviewSection } from './Overview';
 import CandidateInfoCard from '../../components/features/Dashboard/CandidateInfoCard/CandidateInfoCard';
-import { Dimensions, Pressable, SafeAreaView, View } from 'react-native';
-import { styles } from './styles';
+import { Dimensions, Pressable, SafeAreaView, View, ScrollView } from 'react-native';
+import { styles } from './styles'; // Make sure this path is correct
 import { TabView } from 'react-native-tab-view';
 import { TextStyle } from '../../components/common/Text';
 import { theme } from '../../theme';
@@ -73,32 +73,35 @@ export const ProfileScreen = () => {
         const { navigationState, jumpTo } = props;
 
         return (
-            // <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ flex: 0.2 }}>
-            <View style={styles.tabBarContainer}>
-                {navigationState.routes.map((route: any, index: number) => {
-                    const focused = navigationState.index === index;
-                    const color = focused ? theme.colors.primary.main : theme.colors.text.light;
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={{ flexGrow: 0, alignItems: 'center' }}
+                style={{ maxHeight: 60, minHeight: 40 }}
+            >
+                <View style={styles.tabBarContainer}>
+                    {navigationState.routes.map((route: any, index: number) => {
+                        const focused = navigationState.index === index;
+                        const color = focused ? theme.colors.primary.main : theme.colors.text.light;
 
-                    return (
-                        <Pressable
-                            key={route.key}
-                            onPress={() => jumpTo(route.key)}
-                            style={styles.tabItem}
-                        >
-                            <TextStyle style={[styles.tabText, { color }]}>{route.title}</TextStyle>
-                            {focused && <View style={styles.activeIndicator} />}
-                        </Pressable>
-                    );
-                })}
-            </View>
-            // </ScrollView>
+                        return (
+                            <Pressable
+                                key={route.key}
+                                onPress={() => jumpTo(route.key)}
+                                style={styles.tabItem}
+                            >
+                                <TextStyle style={[styles.tabText, { color }]}>{route.title}</TextStyle>
+                                {focused && <View style={styles.activeIndicator} />}
+                            </Pressable>
+                        );
+                    })}
+                </View>
+            </ScrollView>
         );
     };
 
     useEffect(() => {
         const fetchData = async () => {
-            // setLoading(true); // Set loading to true before starting API calls
-
             try {
                 await Promise.all([
                     dispatch(fetchCandidateWorkHistory()),
@@ -108,9 +111,6 @@ export const ProfileScreen = () => {
                 ]);
             } catch (error) {
                 console.error('Error fetching data:', error);
-                // Optionally handle the error, e.g., display an error message to the user
-            } finally {
-                // setLoading(false); // Set loading to false after all API calls complete (or fail)
             }
         };
 
@@ -119,45 +119,13 @@ export const ProfileScreen = () => {
     }, [dispatch]);
 
     return (
-        // <ProfileDrawer />
         <SafeAreaView style={styles.container}>
 
             {!expandedItem ?
                 <View style={styles.candidateInfoCard}>
-                    <CandidateInfoCard firstName='Jane' lastName='Cooper' showCompleteButton={false} />
+                    <CandidateInfoCard showCompleteButton={false} />
                 </View> : null
             }
-            {/* <Button title="Open Modal" onPress={() => setModalVisible(true)} /> */}
-
-
-            {/* <UploadFileModal
-                isVisible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                onUpload={() => {
-                    console.log('Upload clicked');
-                    setModalVisible(false);
-                }}
-                uploadProgress={90} // Example progress value
-                uploading={false} // Set to true if uploading
-            /> */}
-
-            {/* <CustomModal
-                isVisible={modalVisible}
-                title="Unsaved Changes"
-                onClose={() => setModalVisible(false)}
-                primaryButtonText="Save"
-                secondaryButtonText="No"
-                onPrimaryPress={() => {
-                console.log('Yes clicked');
-                setModalVisible(false);
-                }}
-                onSecondaryPress={() => {
-                console.log('No clicked');
-                setModalVisible(false);
-                }}
-            >
-                <TextStyle size='xs' color={theme.colors.text.light} style={{width: "80%"}}>You have unsaved changes. Do you want to save before exiting?</TextStyle>
-            </CustomModal> */}
 
             <TabView
                 navigationState={{ index, routes }}

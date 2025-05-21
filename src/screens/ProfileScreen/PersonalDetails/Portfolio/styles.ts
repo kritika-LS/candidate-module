@@ -3,8 +3,14 @@ import { StyleSheet } from 'react-native';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // padding: 20,
-    // backgroundColor: '#f4f4f4',
+  },
+  body:{
+    margin: 16,
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
   },
   header: {
     // marginBottom: 20,
@@ -28,14 +34,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   saveButton: {
-    backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+    backgroundColor: '#fff', 
+    paddingHorizontal: 16, 
+    paddingBottom: 16
   },
 });

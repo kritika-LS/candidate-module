@@ -10,6 +10,7 @@ import License from './License';
 import Reference from './Reference';
 import ChartingSystem from './ChartingSystem';
 import BackgroundInformation from './BackgroundInformation';
+import { PrimaryMenu } from '../../../components/common/PrimaryMenu';
 
 interface ProfessionalInformationProps {
 	expandedItem: string | null;
@@ -23,30 +24,35 @@ export const ProfessionalInformation: React.FC<ProfessionalInformationProps> = (
 			title: 'Certificate',
 			icon: 'certificate-outline',
 			completed: false,
+			ScreenName: 'CertificateScreen',
 			content: <View style={styles.accordionContent}><Certificate /></View>,
 		},
 		{
 			title: 'License',
 			icon: 'card-account-details-outline',
 			completed: false,
+			ScreenName: 'LicenseScreen',
 			content: <View style={styles.accordionContent}><License /></View>,
 		},
 		{
 			title: 'Reference',
 			icon: 'account-arrow-right-outline',
 			completed: false,
+			ScreenName: 'ReferenceSectionScreen',
 			content: <View style={styles.accordionContent}><Reference /></View>,
 		},
 		{
 			title: 'Charting System',
-			icon: 'chart-bar-outline',
+			icon: 'link-variant',
 			completed: false,
+			ScreenName: 'ChartingSystemScreen',
 			content: <View style={styles.accordionContent}><ChartingSystem /></View>,
 		},
 		{
 			title: 'Background Information',
 			icon: 'shield-check-outline',
 			completed: false,
+			ScreenName: 'BackgroundInformationScreen',
 			content: <View style={styles.accordionContent}><BackgroundInformation /></View>,
 		},
 	];
@@ -61,7 +67,11 @@ export const ProfessionalInformation: React.FC<ProfessionalInformationProps> = (
 				</View>
 			</View>
 
-			{accordionItems.map((item, index) => (
+			<PrimaryMenu
+				menuItems={accordionItems}
+			/>
+
+			{/* {accordionItems.map((item, index) => (
 				<View key={index} style={styles.accordionItem}>
 					<TouchableOpacity
 						style={styles.accordionHeader}
@@ -88,7 +98,7 @@ export const ProfessionalInformation: React.FC<ProfessionalInformationProps> = (
 
 					{expandedItem === item.title && item.content}
 				</View>
-			))}
+			))} */}
 		</ScrollView>
 	);
 };

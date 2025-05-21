@@ -18,8 +18,8 @@ const DashboardGreetingsCard: React.FC<GreetingsCardProps> = () => {
     return  <Text>Loading greeting...</Text>
   }
 
-  const fullName = `${firstName} ${lastName}`;
-  const greeting = candidateData ? `${getGreeting()}, ${fullName}!` : `${getGreeting()}!`;
+  const fullName = (firstName || lastName) ? `${firstName} ${lastName}` : '';
+  const greeting = candidateData && fullName ? `${getGreeting()}, ${fullName}!` : `${getGreeting()}!`;
 
   return(
     <ImageBackground

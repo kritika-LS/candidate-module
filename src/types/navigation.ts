@@ -26,6 +26,18 @@ export type DrawerParamList = {
     SettingsScreen: undefined;
     BottomTabs: undefined;
     BasicInformationScreen: undefined;
+    AddressDetailsScreen: undefined;
+    ProfessionalDetailsScreen: undefined;
+    PortfolioScreen: undefined;
+    JobPreferencesScreen: undefined;
+    SubmittalInformationScreen: undefined;
+    EmergencyContactAddressScreen: undefined;
+    AddWorkHistory: undefined;
+    CertificateScreen: undefined;
+    LicenseScreen: undefined;
+    ReferenceSectionScreen: undefined;
+    ChartingSystemScreen: undefined;
+    BackgroundInformationScreen: undefined;
 };
 
 export type BottomTabsParamsList = {

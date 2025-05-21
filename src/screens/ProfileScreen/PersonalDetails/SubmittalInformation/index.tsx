@@ -7,6 +7,8 @@ import {
   Alert,
   Platform,
   TextInput,
+  SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useFormik } from 'formik';
@@ -15,6 +17,8 @@ import { styles } from './styles';
 import Icon from '../../../../components/common/Icon/Icon';
 import { theme } from '../../../../theme';
 import { TextStyle } from '../../../../components/common/Text';
+import { SaveButton } from '../../../../components/features/SaveButton';
+import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 
 const SubmittalInformationScreen: React.FC = () => {
   const MAX_CHAR_LENGTH = 256;
@@ -64,51 +68,62 @@ const SubmittalInformationScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputGroup}>
-        <TextStyle size='sm' style={styles.label}>Date of Birth</TextStyle>
-        <TouchableOpacity
-          style={styles.datePickerButton}
-          onPress={showDatepicker}>
-          <TextStyle size='sm' color={theme.colors.text.light}>
-            {formik.values.dateOfBirth ? formatDate(formik.values.dateOfBirth) : 'Select date of birth'}
-          </TextStyle>
-          <Icon name='calendar-outline' size={20} color={theme.colors.grey[400]} />
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={formik.values.dateOfBirth ? new Date(formik.values.dateOfBirth) : new Date()}
-            mode="date"
-            display="default"
-            onChange={onChangeDate}
+    <SafeAreaView style={{flex:1}}>
+      <ScrollView>
+        <View style={styles.container}>
+          <ProfileScreenHeader
+            headerIcon='clipboard-text-outline'
+            headerTitle='Submittal Information'
+            completedStatus={false}
           />
-        )}
-        {formik.touched.dateOfBirth && formik.errors.dateOfBirth && (
-          <Text style={styles.errorText}>{formik.errors.dateOfBirth}</Text>
-        )}
-      </View>
+          <View style={styles.inputGroup}>
+            <TextStyle size='sm' style={styles.label}>Date of Birth</TextStyle>
+            <TouchableOpacity
+              style={styles.datePickerButton}
+              onPress={showDatepicker}>
+              <TextStyle size='sm' color={theme.colors.text.light}>
+                {formik.values.dateOfBirth ? formatDate(formik.values.dateOfBirth) : 'Select date of birth'}
+              </TextStyle>
+              <Icon name='calendar-outline' size={20} color={theme.colors.grey[400]} />
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={formik.values.dateOfBirth ? new Date(formik.values.dateOfBirth) : new Date()}
+                mode="date"
+                display="default"
+                onChange={onChangeDate}
+              />
+            )}
+            {formik.touched.dateOfBirth && formik.errors.dateOfBirth && (
+              <Text style={styles.errorText}>{formik.errors.dateOfBirth}</Text>
+            )}
+          </View>
 
-      <View style={styles.inputGroup}>
-        <TextStyle size='sm' style={styles.label}>Social Security Number</TextStyle>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter social security number"
-          value={formik.values.socialSecurityNumber}
-          onChangeText={formik.handleChange('socialSecurityNumber')}
-          onBlur={formik.handleBlur('socialSecurityNumber')}
-          maxLength={MAX_CHAR_LENGTH}
-          keyboardType="number-pad"
+          <View style={styles.inputGroup}>
+            <TextStyle size='sm' style={styles.label}>Social Security Number</TextStyle>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter social security number"
+              value={formik.values.socialSecurityNumber}
+              onChangeText={formik.handleChange('socialSecurityNumber')}
+              onBlur={formik.handleBlur('socialSecurityNumber')}
+              maxLength={MAX_CHAR_LENGTH}
+              keyboardType="number-pad"
+            />
+            {formik.touched.socialSecurityNumber && formik.errors.socialSecurityNumber && (
+              <Text style={styles.errorText}>{formik.errors.socialSecurityNumber}</Text>
+            )}
+          </View>
+        </View>
+      </ScrollView>
+      <View style={styles.saveButton}>
+        <SaveButton
+          title="Save"
+          onPress={formik.handleSubmit}
         />
-        {formik.touched.socialSecurityNumber && formik.errors.socialSecurityNumber && (
-          <Text style={styles.errorText}>{formik.errors.socialSecurityNumber}</Text>
-        )}
       </View>
-
-      <TouchableOpacity style={styles.saveButton} onPress={formik.handleSubmit}>
-        <TextStyle style={styles.saveButtonText}>Save</TextStyle>
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 

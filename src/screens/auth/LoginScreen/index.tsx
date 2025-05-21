@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Image, SafeAreaView, ScrollView } from 'react-native';
 import { EmailInput } from '../../../components/common/EmailInput';
 import { PasswordInput } from '../../../components/common/PasswordInput';
@@ -22,21 +22,48 @@ import { useAuth } from '../../../context/AuthContext';
 import * as yup from 'yup';
 import Toast from 'react-native-toast-message';
 import { getAuthDetails } from '../../../utils/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import CryptoJS from 'crypto-js';
 
 export const LoginScreen = () => {
 
     const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
 
-    const { login } = useAuth(); // ✅ Destructured correctly
+    const { login } = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({ email: '', password: ''});
     const [rememberAccount, setRememberAccount] = useState(false);
 
+    useEffect(() => {
+        const loadRememberedCredentials = async () => {
+          try {
+            const remember = await AsyncStorage.getItem('@auth:rememberAccount');
+            if (remember === 'true') {
+              const encryptedEmail = await AsyncStorage.getItem('@auth:email');
+              const encryptedPassword = await AsyncStorage.getItem('@auth:password');
+      
+              if (encryptedEmail && encryptedPassword) {
+                const decryptedEmail = CryptoJS.AES.decrypt(encryptedEmail, 'your-secret-key').toString(CryptoJS.enc.Utf8);
+                const decryptedPassword = CryptoJS.AES.decrypt(encryptedPassword, 'your-secret-key').toString(CryptoJS.enc.Utf8);
+                setEmail(decryptedEmail); 
+                setPassword(decryptedPassword);
+                setRememberAccount(true);
+              }
+            }
+          } catch (error) {
+            console.error("Failed to load remembered credentials:", error);
+          }
+        };
+      
+        loadRememberedCredentials();
+    }, []);
+
     const handleLogin = async () => {
         try {
             await login(email, password, rememberAccount);
+            await getAuthDetails(); 
         } catch (error: any) {
             if (error.name === 'UserNotFoundException') {
                 Toast.show({

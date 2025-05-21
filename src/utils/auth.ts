@@ -7,12 +7,22 @@ import {
   
   export async function getAuthDetails() {
     try {
+      console.log('getAuthDetails: Attempting to fetch session...');
       const sessionResult = await fetchAuthSession();
       const idToken = sessionResult.tokens?.idToken?.toString() || null;
       const accessToken = sessionResult.tokens?.accessToken?.toString() || null;
       //   const refreshToken = sessionResult.tokens?.refreshToken?.toString();
 
-      console.log('Session Result:', sessionResult);
+      console.log('getAuthDetails: Session Result:', sessionResult);
+      console.log('getAuthDetails: Fetched ID Token:', idToken);
+      console.log('getAuthDetails: Fetched Access Token:', accessToken);
+
+      if (accessToken) {
+        await AsyncStorage.setItem('auth_token', accessToken);
+        console.log('getAuthDetails: auth_token successfully stored in AsyncStorage:', accessToken);
+      } else {
+        console.warn('getAuthDetails: Access token is null or undefined. Not storing in AsyncStorage.');
+      }
 
       const currentUser = await getCurrentUser();
       const userAttributes: Record<string, any> = await fetchUserAttributes();
@@ -22,21 +32,15 @@ import {
       let groups: string[] = [];
       if (currentUser) {
         try {
-          // In v6, groups are often part of the ID token or user attributes.
-          // You might need to inspect these to find the groups.
-          // The exact location depends on your Cognito setup.
-
-          // Option 1: Check ID Token claims (if groups are there)
           const parsedIdToken = idToken ? JSON.parse(atob(idToken.split('.')[1])) : null;
           if (parsedIdToken && parsedIdToken['cognito:groups']) {
             groups = parsedIdToken['cognito:groups'];
           }
 
-          // Option 2: Check user attributes (if groups are stored as an attribute)
           if (userAttributes && userAttributes['cognito:groups']) {
             groups = JSON.parse(userAttributes['cognito:groups'] as string);
           }
-          // You might have a custom attribute for groups instead of the default 'cognito:groups'
+          
           else if (userAttributes && userAttributes['custom:groups']) {
             groups = JSON.parse(userAttributes['custom:groups'] as string);
           }

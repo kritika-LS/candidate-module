@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Input } from '../../../components/common/Input';
@@ -11,10 +11,11 @@ import { DEFAULT_VALUES } from '../../../config/constants';
 import Toast from 'react-native-toast-message';
 import { useAppSelector } from '../../../hooks/useAppDispatch';
 import { Header } from './Header';
+import { ProfileScreenHeader } from '../../../components/features/ProfileScreenHeader';
 
 const BasicInformationScreen: React.FC = () => {
 
-  const candidatePersonalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload);
+  const candidatePersonalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload) || {};
 
     const validationSchema = Yup.object().shape({
         firstName: Yup.string().required('First Name is required'),
@@ -41,19 +42,19 @@ const BasicInformationScreen: React.FC = () => {
         alternateMobileNumber: candidatePersonalDetails?.alternatePhoneNumber || '',
         otherName: '',
         genderOpen: false,
-        genderItems: DEFAULT_VALUES.genderItems,
+        genderItems: DEFAULT_VALUES.genderItems || [],
         gender: candidatePersonalDetails?.gender || null,
         nationalityOpen: false,
-        nationalityItems: DEFAULT_VALUES.nationalityItems,
+        nationalityItems: DEFAULT_VALUES.nationalityItems || [],
         nationality: candidatePersonalDetails?.nationality || null,
         ethnicityOpen: false,
-        ethnicityItems: DEFAULT_VALUES.ethnicityItems,
+        ethnicityItems: DEFAULT_VALUES.ethnicityItems || [],
         ethnicity: candidatePersonalDetails?.ethnicity || null,
         militaryOpen: false,
-        militaryItems: DEFAULT_VALUES.militaryItems,
+        militaryItems: DEFAULT_VALUES.militaryItems || [],
         military: candidatePersonalDetails?.militaryStatus || null,
         workplacePreferenceOpen: false,
-        workplacePreferenceItems: DEFAULT_VALUES.workplacePreferenceItems,
+        workplacePreferenceItems: DEFAULT_VALUES.workplacePreferenceItems || [],
         workplacePreference: candidatePersonalDetails?.workplacePreference || null,
     };
 
@@ -77,11 +78,16 @@ const BasicInformationScreen: React.FC = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Header />
-        <KeyboardAvoidingView
-              style={{flex: 1}}
+        <ScrollView
+              style={styles.body}
               behavior={Platform.select({ ios: 'padding', android: undefined })}
             >
+            <ProfileScreenHeader
+                headerIcon='account-circle-outline'
+                headerTitle='Basic Information'
+                completedStatus={false}
+            />
+            <Header />
         <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -291,7 +297,7 @@ const BasicInformationScreen: React.FC = () => {
                 </>
             )}}
         </Formik>
-        </KeyboardAvoidingView>
+        </ScrollView>
         </SafeAreaView>
     );
 };
@@ -299,15 +305,21 @@ const BasicInformationScreen: React.FC = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingVertical: 16,
-        backgroundColor: '#fff',
-        paddingHorizontal: 16,
     },
     label: {
         marginTop: 16,
         marginBottom: 4,
         fontSize: 14,
         fontWeight: '500',
+    },
+    body: {
+        flex: 1,
+        margin: 16,
+        padding: 16,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        backgroundColor: '#fff',
     },
     dropdown: {
         backgroundColor: '#fff',

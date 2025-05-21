@@ -13,6 +13,7 @@ import {
 import * as DocumentPicker from '@react-native-documents/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import UploadFileModal from '../../../../components/features/UploadFileModal';
+import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 
 // Dummy data – Replace with data from Profession & Speciality Taxonomy.xlsx
 const professionOptions = [
@@ -105,7 +106,11 @@ const ProfessionalDetailsScreen: React.FC = () => {
       behavior={Platform.select({ ios: 'padding', android: undefined })}
     >
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>Professional Details</Text>
+        <ProfileScreenHeader
+          headerIcon='book-edit-outline'
+          headerTitle='Professional Details'
+          completedStatus={false}
+        />
 
         <TouchableOpacity onPress={handleResumeUpload} style={styles.uploadBtn}>
           <Text style={styles.uploadBtnText}>Upload Resume</Text>
@@ -200,10 +205,15 @@ export default ProfessionalDetailsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8F9FB',
   },
   scrollContent: {
+    flex: 1,
+    margin: 16,
     padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
     paddingBottom: 40,
   },
   title: {

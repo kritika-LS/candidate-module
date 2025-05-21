@@ -16,6 +16,8 @@ import {Formik} from 'formik';
 import Toast from 'react-native-toast-message';
 import { addressValidationSchema3 } from '../../../../validations/addressValidation';
 import { PhoneNumberInput } from '../../../../components/common/PhoneInput';
+import { SaveButton } from '../../../../components/features/SaveButton';
+import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 
 const EmergencyContactAddressScreen: React.FC = () => {
 
@@ -59,6 +61,7 @@ const EmergencyContactAddressScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
+        <View style={styles.body}>
         <Formik
           initialValues={initialValues}
           validationSchema={addressValidationSchema3}
@@ -68,9 +71,11 @@ const EmergencyContactAddressScreen: React.FC = () => {
             return (
             <>
               <View style={styles.formSection}>
-                <TextStyle variant="medium" size="lg" style={styles.sectionTitle}>
-                  Contact Details
-                </TextStyle>
+                <ProfileScreenHeader
+                  headerIcon='shield-alert-outline'
+                  headerTitle='Emergency Contact and Address'
+                  completedStatus={false}
+                />
                 <Input
                   label="First Name"
                   value={values.firstName}
@@ -205,14 +210,17 @@ const EmergencyContactAddressScreen: React.FC = () => {
                   value={values.notes}
                   onChangeText={handleChange('notes')}                />
               </View>
-
-             <TouchableOpacity style={styles.saveBtn} onPress={handleSubmit as any}>
-                <Text style={styles.saveBtnText}>{isSubmitting ? 'Saving...' : 'Save'}</Text>
-             </TouchableOpacity>
             </>
           )}}
         </Formik>
+        </View>
       </ScrollView>
+      <View style={styles.saveButton}>
+        <SaveButton
+          title="Save"
+          onPress={() => {}}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -226,7 +234,15 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: theme.spacing.md,
+  },
+  body: {
+    flex: 1,
+    margin: 16,
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
   },
   formSection: {
     marginBottom: theme.spacing.lg,
@@ -259,7 +275,9 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.lg,
   },
   saveButton: {
-    marginLeft: theme.spacing.md,
+    backgroundColor: '#fff', 
+    paddingHorizontal: 16, 
+    paddingBottom: 16
   },
   label: {
     marginTop: 16,
