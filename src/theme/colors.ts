@@ -29,7 +29,7 @@ export const colors = {
   },
   blue_light: '#E8F4FF',
   grey: {
-    40: '#DBCDDF',
+    40: '#DBDCDF',
     50: '#FAFAFA',
     100: '#F5F5F5',
     200: '#EEEEEE',
@@ -42,7 +42,9 @@ export const colors = {
     900: '#212121',
     cc: '#ccc',
     light: '#F8F9FA',
-    g100: '#F8F9FA'
+    g100: '#F8F9FA',
+    A5: '#A5A5A5',
+    EDEF: '#EDEDEF'
   },
   text: {
     primary: '#1F1F1F',

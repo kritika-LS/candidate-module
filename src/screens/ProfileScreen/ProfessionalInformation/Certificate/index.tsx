@@ -10,9 +10,9 @@ import {
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 import { Input } from '../../../../components/common/Input';
-import DocumentPicker from 'react-native-document-picker';
+// import DocumentPicker from 'react-native-document-picker';
 import { theme } from '../../../../theme';
 import { TextStyle } from '../../../../components/common/Text';
 import Icon from '../../../../components/common/Icon/Icon';
@@ -40,22 +40,22 @@ const Certificate = () => {
   const [certificate, setCertificate] = useState<{ name: string | null } | null>(null);
 
   const handleCertificateUpload = async () => {
-    try {
-      // Logic to pick a file (e.g., using react-native-document-picker or similar library)
-      const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.pdf, DocumentPicker.types.doc, DocumentPicker.types.docx],
-      });
+    // try {
+    //   // Logic to pick a file (e.g., using react-native-document-picker or similar library)
+    //   const result = await DocumentPicker.pick({
+    //     type: [DocumentPicker.types.pdf, DocumentPicker.types.doc, DocumentPicker.types.docx],
+    //   });
 
-      if (result && result[0]) {
-        setCertificate(result[0]);
-      }
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('User canceled the picker');
-      } else {
-        console.error('Error picking document:', err);
-      }
-    }
+    //   if (result && result[0]) {
+    //     setCertificate(result[0]);
+    //   }
+    // } catch (err) {
+    //   if (DocumentPicker.isCancel(err)) {
+    //     console.log('User canceled the picker');
+    //   } else {
+    //     console.error('Error picking document:', err);
+    //   }
+    // }
   };
 
   const handleDeleteUploadedFile = () => {
@@ -202,7 +202,7 @@ const Certificate = () => {
                 </View>
 
                 <TextStyle style={styles.label}>State</TextStyle>
-                <DropDownPicker
+                {/* <DropDownPicker
                   open={values.stateOpen}
                   setOpen={(open) => setFieldValue('stateOpen', open)}
                   items={[
@@ -218,7 +218,7 @@ const Certificate = () => {
                   listMode="MODAL"
                   modalProps={{ animationType: 'slide' }}
                   style={styles.dropdown}
-                />
+                /> */}
                 {touched.state && errors.state && (
                   <TextStyle style={styles.error}>{errors.state}</TextStyle>
                 )}

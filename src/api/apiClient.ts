@@ -27,9 +27,9 @@ class ApiClient {
     return ApiClient.instance;
   }
 
-   private async setupInterceptors() {
+   private setupInterceptors() {
     // Request interceptor
-     await this.axiosInstance.interceptors.request.use(
+     this.axiosInstance.interceptors.request.use(
        async config => {
 
         try {

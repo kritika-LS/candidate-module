@@ -62,8 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const session = await fetchAuthSession();
       if (session.tokens) {
-        await getCurrentUser();
-        setIsAuthenticated(true);
+        await getAuthDetails();
         return session;
       }
       return null;
@@ -77,7 +76,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const authState = await AsyncStorage.getItem('@auth:isAuthenticated');
       if (authState === 'true') {
-        setIsAuthenticated(true);
+        await getSession();
       }
 
       // Check if we have stored credentials and attempt silent sign-in
@@ -130,8 +129,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signIn({ username: email, password });
       await getAuthDetails();
-      setIsAuthenticated(true);
-      // await AsyncStorage.setItem('@auth:isAuthenticated', 'true');
 
       if (rememberAccount) {
         const encryptedEmail = CryptoJS.AES.encrypt(
@@ -197,7 +194,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.log("------- before save -------", accessToken)
       await AsyncStorage.setItem('auth_token', accessToken || '');
       console.log("-------- access token saved ------")
-
+      console.log("tag here",{sessionResult,currentUser});
       let groups: string[] = [];
       if (currentUser) {
         try {
@@ -218,6 +215,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // You might have a custom attribute for groups instead of the default 'cognito:groups'
           else if (userAttributes && userAttributes['custom:groups']) {
             groups = JSON.parse(userAttributes['custom:groups'] as string);
+          }
+          if(currentUser){
+            setIsAuthenticated(true);
           }
         } catch (error) {
           console.log('Error extracting user groups:', error);

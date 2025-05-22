@@ -25,7 +25,7 @@ const DrawerHeader = () => {
 				<Icon name='menu' color={theme.colors.text.light} style={{right: 8}} />
 			</TouchableOpacity>
 
-			<SearchBar placeholder="Search for jobs" />
+			<SearchBar placeholder="Search for jobs" showSearchIcon />
 
 			<TouchableOpacity>
 				<Icon name='chat-outline' color={theme.colors.text.light} />

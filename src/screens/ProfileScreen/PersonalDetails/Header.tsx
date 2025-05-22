@@ -4,25 +4,25 @@ import { styles } from "./styles";
 import Icon from "../../../components/common/Icon/Icon";
 import { TextStyle } from "../../../components/common/Text";
 import { theme } from "../../../theme";
-import DocumentPicker from 'react-native-document-picker';
+// import DocumentPicker from 'react-native-document-picker';
 
 export const Header = () => {
 
   	const [document, setDocument] = useState<any>(null);
 
 	const handleDocumentUpload = async () => {
-		try {
-		  const res = await DocumentPicker.pick({
-			type: [DocumentPicker.types.images],
-		  });
-		  setDocument(res[0]);
-		} catch (err) {
-		  if (DocumentPicker.isCancel(err)) {
-			// User cancelled the picker
-		  } else {
-			Alert.alert('Error', 'Failed to pick document');
-		  }
-		}
+		// try {
+		//   const res = await DocumentPicker.pick({
+		// 	type: [DocumentPicker.types.images],
+		//   });
+		//   setDocument(res[0]);
+		// } catch (err) {
+		//   if (DocumentPicker.isCancel(err)) {
+		// 	// User cancelled the picker
+		//   } else {
+		// 	Alert.alert('Error', 'Failed to pick document');
+		//   }
+		// }
 	};
 
 	return (

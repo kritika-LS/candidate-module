@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Input } from '../../../components/common/Input';
 import { PhoneNumberInput } from '../../../components/common/PhoneInput';
-import DropDownPicker from 'react-native-dropdown-picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 import { theme } from '../../../theme';
 import { Button } from '../../../components/common/Button';
 import { DEFAULT_VALUES } from '../../../config/constants';
@@ -182,7 +182,7 @@ const BasicInformationScreen: React.FC = () => {
                     />
 
                     <Text style={styles.label}>Gender</Text>
-                    <DropDownPicker
+                    {/* <DropDownPicker
                         open={values.genderOpen}
                         setOpen={(open) => setFieldValue('genderOpen', open)}
                         items={values.genderItems}
@@ -199,10 +199,10 @@ const BasicInformationScreen: React.FC = () => {
                             }
                         }}
                         style={styles.dropdown}
-                    />
+                    /> */}
 
                     <Text style={styles.label}>Nationality</Text>
-                    <DropDownPicker
+                    {/* <DropDownPicker
                         open={values.nationalityOpen}
                         setOpen={(open) => setFieldValue('nationalityOpen', open)}
                         items={values.nationalityItems}
@@ -219,10 +219,10 @@ const BasicInformationScreen: React.FC = () => {
                             }
                         }}
                         style={styles.dropdown}
-                    />
+                    /> */}
 
                     <Text style={styles.label}>Ethnicity</Text>
-                    <DropDownPicker
+                    {/* <DropDownPicker
                         open={values.ethnicityOpen}
                         setOpen={(open) => setFieldValue('ethnicityOpen', open)}
                         items={values.ethnicityItems}
@@ -239,10 +239,10 @@ const BasicInformationScreen: React.FC = () => {
                             }
                         }}
                         style={styles.dropdown}
-                    />
+                    /> */}
 
                     <Text style={styles.label}>Military Status</Text>
-                    <DropDownPicker
+                    {/* <DropDownPicker
                         open={values.militaryOpen}
                         setOpen={(open) => setFieldValue('militaryOpen', open)}
                         items={values.militaryItems}
@@ -259,10 +259,10 @@ const BasicInformationScreen: React.FC = () => {
                             }
                         }}
                         style={styles.dropdown}
-                    />
+                    /> */}
 
                     <Text style={styles.label}>Workplace Preference</Text>
-                    <DropDownPicker
+                    {/* <DropDownPicker
                         open={values.workplacePreferenceOpen}
                         setOpen={(open) => setFieldValue('workplacePreferenceOpen', open)}
                         items={values.workplacePreferenceItems}
@@ -279,7 +279,7 @@ const BasicInformationScreen: React.FC = () => {
                             }
                         }}
                         style={styles.dropdown}
-                    />
+                    /> */}
                      <Text style={styles.label}>Brief</Text>
                     <TextInput
                         style={[styles.input, { height: 100, textAlignVertical: 'top' }]}

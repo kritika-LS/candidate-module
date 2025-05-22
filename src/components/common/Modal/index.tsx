@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   GestureResponderEvent,
 } from 'react-native';
@@ -21,6 +20,7 @@ type Props = {
   onPrimaryPress?: (e: GestureResponderEvent) => void;
   onSecondaryPress?: (e: GestureResponderEvent) => void;
   style?: object;
+  primaryButtonDisabled?: boolean;
 };
 
 const CustomModal: React.FC<Props> = ({
@@ -33,13 +33,14 @@ const CustomModal: React.FC<Props> = ({
   onPrimaryPress,
   onSecondaryPress,
   style,
+  primaryButtonDisabled = false,
 }) => {
   return (
     <Modal isVisible={isVisible} onBackdropPress={onClose} backdropColor={"#00000066"}>
       <View style={[styles.modalContainer, style]}>
         {/* Header */}
         {title && <View style={styles.header}>
-          <TextStyle size='sm' style={styles.title}>{title}</TextStyle>
+          <TextStyle size='md' style={styles.title}>{title}</TextStyle>
           <TouchableOpacity onPress={onClose} style={styles.crossIcon}>
             <Icon name="close" size={16} color={theme.colors.grey[500]} />
           </TouchableOpacity>
@@ -64,10 +65,11 @@ const CustomModal: React.FC<Props> = ({
 
           {primaryButtonText && 
             <TouchableOpacity
-                style={[styles.button, styles.primaryButton]}
-                onPress={onPrimaryPress}
+                style={[styles.button, styles.primaryButton, primaryButtonDisabled && { backgroundColor: '#ccc' }]}
+                onPress={primaryButtonDisabled ? undefined : onPrimaryPress}
+                disabled={primaryButtonDisabled}
             >
-                <TextStyle style={styles.primaryText}>{primaryButtonText}</TextStyle>
+                <TextStyle style={[styles.primaryText, primaryButtonDisabled && { color: '#888' }]}>{primaryButtonText}</TextStyle>
             </TouchableOpacity>
           }
         </View>

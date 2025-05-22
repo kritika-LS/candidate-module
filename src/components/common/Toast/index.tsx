@@ -32,9 +32,10 @@ export { Toast, toastConfig };
 const styles = StyleSheet.create({
   toastContainer: {
     width: width * 0.80,
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 8,
-    borderWidth: 2,
+    borderWidth: 1,
     flexDirection: 'row', // Align icon and text in a row
     alignItems: 'center', // Keep them centered vertically
     alignSelf: 'flex-end',
@@ -56,7 +57,6 @@ const styles = StyleSheet.create({
   },
   toastTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
     color: '#333',
     textAlign: 'left',
   },

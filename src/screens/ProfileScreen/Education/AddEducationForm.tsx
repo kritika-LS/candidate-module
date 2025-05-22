@@ -13,11 +13,11 @@ import { theme } from '../../../theme';
 import { Input } from '../../../components/common/Input';
 import { Formik } from 'formik';
 import Toast from 'react-native-toast-message';
-import DropDownPicker from 'react-native-dropdown-picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Yup from 'yup';
 import { TextStyle } from '../../../components/common/Text';
-import DocumentPicker from 'react-native-document-picker';
+// import DocumentPicker from 'react-native-document-picker';
 
 interface EducationFormValues {
   levelOfEducation: string;
@@ -101,18 +101,18 @@ export const AddEducationForm = () => {
   });
 
   const handleDocumentUpload = async () => {
-    try {
-      const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images, DocumentPicker.types.pdf, DocumentPicker.types.doc, DocumentPicker.types.docx],
-      });
-      setDocument(res[0]);
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        // User cancelled the picker
-      } else {
-        Alert.alert('Error', 'Failed to pick document');
-      }
-    }
+    // try {
+    //   const res = await DocumentPicker.pick({
+    //     type: [DocumentPicker.types.images, DocumentPicker.types.pdf, DocumentPicker.types.doc, DocumentPicker.types.docx],
+    //   });
+    //   setDocument(res[0]);
+    // } catch (err) {
+    //   if (DocumentPicker.isCancel(err)) {
+    //     // User cancelled the picker
+    //   } else {
+    //     Alert.alert('Error', 'Failed to pick document');
+    //   }
+    // }
   };
 
   const handleRemoveDocument = () => {
@@ -158,7 +158,7 @@ export const AddEducationForm = () => {
                 
                 {/* Level of Education */}
                 <Text style={styles.label}>Level of Education *</Text>
-                <DropDownPicker
+                {/* <DropDownPicker
                   open={values.levelOfEducationOpen}
                   setOpen={(open) => setFieldValue('levelOfEducationOpen', open)}
                   items={[
@@ -172,14 +172,14 @@ export const AddEducationForm = () => {
                   setValue={(callback) => setFieldValue('levelOfEducation', callback(values.levelOfEducation))}
                   placeholder="Select level of education"
                   style={styles.dropdown}
-                />
+                /> */}
                 {touched.levelOfEducation && errors.levelOfEducation && (
                   <Text style={styles.error}>{errors.levelOfEducation}</Text>
                 )}
 
                 {/* Mode of Education */}
                 <Text style={styles.label}>Mode of Education *</Text>
-                <DropDownPicker
+                {/* <DropDownPicker
                   open={values.modeOfEducationOpen}
                   setOpen={(open) => setFieldValue('modeOfEducationOpen', open)}
                   items={[
@@ -192,7 +192,7 @@ export const AddEducationForm = () => {
                   placeholder="Select mode of education"
                   style={[styles.dropdown, { zIndex: values.modeOfEducationOpen ? 10 : 1 }]}
                   dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
-                />
+                /> */}
                 {touched.modeOfEducation && errors.modeOfEducation && (
                   <Text style={styles.error}>{errors.modeOfEducation}</Text>
                 )}
@@ -344,7 +344,7 @@ export const AddEducationForm = () => {
 
                 {/* Graduation Status */}
                 <Text style={styles.label}>Graduation Status</Text>
-                <DropDownPicker
+                {/* <DropDownPicker
                   open={values.graduationStatusOpen}
                   setOpen={(open) => setFieldValue('graduationStatusOpen', open)}
                   items={[
@@ -355,11 +355,11 @@ export const AddEducationForm = () => {
                   setValue={(callback) => setFieldValue('graduationStatus', callback(values.graduationStatus))}
                   placeholder="Select graduation status"
                   style={styles.dropdown}
-                />
+                /> */}
 
                 {/* Verification Status */}
                 <Text style={styles.label}>Verification Status</Text>
-                <DropDownPicker
+                {/* <DropDownPicker
                   open={values.verificationStatusOpen}
                   setOpen={(open) => setFieldValue('verificationStatusOpen', open)}
                   items={[
@@ -372,7 +372,7 @@ export const AddEducationForm = () => {
                   setValue={(callback) => setFieldValue('verificationStatus', callback(values.verificationStatus))}
                   placeholder="Select verification status"
                   style={styles.dropdown}
-                />
+                /> */}
 
                 {/* Location Fields */}
                 <Input

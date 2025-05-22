@@ -8,10 +8,12 @@ import candidateWorkHistoryReducer from './slices/candidateWorkHistory.slice';
 import candidateEducationReducer from './slices/candidateEducation.slice';
 import candidateProfessionalInfoReducer from './slices/candidateProfessionalInfo.slice';
 import candidateReferencesReducer from './slices/candidateReferences.slice';
-import candidateResumeReducer from './slices/candidateResume.slice'; 
+import candidateResumeReducer from './slices/candidateResume.slice';
+import authReducer from './slices/auth.slice';
 
 export const store = configureStore({
   reducer: {
+    auth: authReducer,
     jobs: jobsReducer,
     pendingActions: pendingActionsReducer,
     dashboardStats: dashboardStatsReducer,

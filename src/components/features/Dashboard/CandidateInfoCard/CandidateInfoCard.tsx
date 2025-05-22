@@ -7,6 +7,7 @@ import HorizontalProgressBar from '../../../common/ProgressBar/HorizontalProgres
 import { theme } from '../../../../theme';
 import { useNavigation } from '@react-navigation/native';
 import { useAppSelector } from '../../../../hooks/useAppDispatch';
+import apiClient from '../../../../api/apiClient';
 
 interface CandidateInfoCardProps {
   showCompleteButton?: boolean;
@@ -28,7 +29,8 @@ const CandidateInfoCard: React.FC<CandidateInfoCardProps> = ({
     const initials = firstName && lastName ? `${firstName[0].toUpperCase()}${lastName[0].toUpperCase()}` : '';
 
     const handleComplete = () => {
-        navigation.navigate('Profile', { initialTabIndex: 1 });
+        apiClient.logAllTokens();
+        // navigation.navigate('Profile', { initialTabIndex: 1 });
     }
 
     return (

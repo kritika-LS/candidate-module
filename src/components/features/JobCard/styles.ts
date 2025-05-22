@@ -11,31 +11,31 @@ export const styles = StyleSheet.create({
 		elevation: 2,
 	},
 	jobHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-    },
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between'
+	},
 	tag: {
 		color: '#8e24aa',
 		backgroundColor: '#f3e5f5',
 		paddingVertical: 2,
 		paddingHorizontal: 8,
 		borderRadius: 4,
-        marginLeft: 10,
+		marginLeft: 10,
 	},
-    flexRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    companyInfoSection: {
-        marginTop: theme.spacing.sm,
-    },
+	flexRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	companyInfoSection: {
+		marginTop: theme.spacing.sm,
+	},
 	iconSpacing: {
-        marginLeft: theme.spacing.xs
+		marginLeft: theme.spacing.xs
 	},
 	ref: {
 		marginVertical: theme.spacing.xs,
-        marginLeft: theme.spacing.xs
+		marginLeft: theme.spacing.xs
 	},
 	rate: {
 		marginVertical: 4,
@@ -62,8 +62,8 @@ export const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 		gap: 8,
 		marginTop: theme.spacing.sm,
-	  },
-	  
+	},
+
 	detailPill: {
 		backgroundColor: theme.colors.grey.light,
 		borderColor: theme.colors.grey.g100,
@@ -82,9 +82,9 @@ export const styles = StyleSheet.create({
 		borderColor: theme.colors.grey.g100,
 		marginHorizontal: 8
 	},
-    jobCardFooter: {
-        justifyContent: 'space-between',
-    },
+	jobCardFooter: {
+		justifyContent: 'space-between',
+	},
 	// posted: {
 	// 	fontSize: 11,
 	// 	color: '#999',
@@ -93,7 +93,7 @@ export const styles = StyleSheet.create({
 	applyButton: {
 		backgroundColor: theme.colors.primary.main,
 		paddingVertical: 6,
-        paddingHorizontal: theme.spacing.lg,
+		paddingHorizontal: theme.spacing.lg,
 		marginTop: 10,
 		borderRadius: theme.spacing.lg,
 	},

@@ -27,6 +27,7 @@ import License from '../screens/ProfileScreen/ProfessionalInformation/License';
 import ReferenceSection from '../screens/ProfileScreen/ProfessionalInformation/Reference';
 import ChartingSystem from '../screens/ProfileScreen/ProfessionalInformation/ChartingSystem';
 import BackgroundInformation from '../screens/ProfileScreen/ProfessionalInformation/BackgroundInformation';
+import JobPreviewScreen from '../screens/JobPreviewScreen';
 
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -59,6 +60,7 @@ const DrawerNavigator = () => (
     <Drawer.Screen name="ReferenceSectionScreen" component={ReferenceSection} />
     <Drawer.Screen name="ChartingSystemScreen" component={ChartingSystem} />
     <Drawer.Screen name="BackgroundInformationScreen" component={BackgroundInformation} />
+    <Drawer.Screen name="JobPreviewScreen" component={JobPreviewScreen} />
   </Drawer.Navigator>
 );
 

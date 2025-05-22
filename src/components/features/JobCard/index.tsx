@@ -6,11 +6,14 @@ import Icon from '../../common/Icon/Icon';
 import { styles } from './styles';
 import { theme } from '../../../theme';
 
-const JobCard: React.FC<{ job: Job }> = ({ job }) => {
+interface JobCardProps {
+	job: Job;
+	onPress?: () => void;
+}
 
-	return (
+const JobCard: React.FC<JobCardProps> = ({ job, onPress }) => {
+	const CardContent = (
 		<View style={styles.card}>
-
 			<View style={styles.jobHeader}>
 				<View style={[styles.flexRow]}>
 					<TextStyle size='sm' variant='bold'>
@@ -85,7 +88,16 @@ const JobCard: React.FC<{ job: Job }> = ({ job }) => {
 				</TouchableOpacity>
 			</View>
 		</View>
-	)
+	);
+
+	if (onPress) {
+		return (
+			<TouchableOpacity activeOpacity={0.85} onPress={onPress}>
+				{CardContent}
+			</TouchableOpacity>
+		);
+	}
+	return CardContent;
 };
 
 export default JobCard;

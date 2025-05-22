@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import * as DocumentPicker from '@react-native-documents/picker';
-import DropDownPicker from 'react-native-dropdown-picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 import UploadFileModal from '../../../../components/features/UploadFileModal';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 
@@ -131,7 +131,7 @@ const ProfessionalDetailsScreen: React.FC = () => {
         />
 
         <Text style={styles.label}>Profession *</Text>
-        <DropDownPicker
+        {/* <DropDownPicker
           open={professionOpen}
           setOpen={setProfessionOpen}
           items={professionItems}
@@ -148,10 +148,10 @@ const ProfessionalDetailsScreen: React.FC = () => {
             }
           }}
           style={styles.dropdown}
-        />
+        /> */}
 
         <Text style={styles.label}>Primary Specialty *</Text>
-        <DropDownPicker
+        {/* <DropDownPicker
           open={specialtyOpen}
           setOpen={setSpecialtyOpen}
           items={specialtyItems}
@@ -169,7 +169,7 @@ const ProfessionalDetailsScreen: React.FC = () => {
             }
           }}
           style={styles.dropdown}
-        />
+        /> */}
 
         <Text style={styles.label}>Professional Summary</Text>
         <TextInput

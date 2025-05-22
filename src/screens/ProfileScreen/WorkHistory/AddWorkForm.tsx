@@ -14,7 +14,7 @@ import { Input } from '../../../components/common/Input';
 import { Formik } from 'formik';
 import Toast from 'react-native-toast-message';
 import { PhoneNumberInput } from '../../../components/common/PhoneInput';
-import DropDownPicker from 'react-native-dropdown-picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Yup from 'yup';
 import { TextStyle } from '../../../components/common/Text';
@@ -164,7 +164,7 @@ const AddWorkHistory: React.FC = () => {
                     touched={touched.lastName}
                   />
                   <Text style={styles.label}>Type of Business/Facility</Text>
-                  <DropDownPicker
+                  {/* <DropDownPicker
                     open={values.typeofBusinessOpen} // Open only when someone clicks for options
                     setOpen={(open) => setFieldValue('typeofBusinessOpen', open)}
                     items={[
@@ -180,7 +180,7 @@ const AddWorkHistory: React.FC = () => {
                     listMode="MODAL"
                     modalProps={{ animationType: 'slide' }}
                     style={styles.dropdown}
-                  />
+                  /> */}
                   <View style={styles.inputGroup}>
                     <Text style={styles.label}>Start Date</Text>
                     <TouchableOpacity
@@ -358,7 +358,7 @@ const AddWorkHistory: React.FC = () => {
                     touched={touched.numberOfBedsInUnit}
                   />
                   <Text style={styles.label}>Employment type</Text>
-                  <DropDownPicker
+                  {/* <DropDownPicker
                     open={values.employmentTypeOpen} // Open only when someone clicks for options
                     setOpen={(open) => setFieldValue('employmentTypeOpen', open)}
                     items={[
@@ -374,7 +374,7 @@ const AddWorkHistory: React.FC = () => {
                     listMode="MODAL"
                     modalProps={{ animationType: 'slide' }}
                     style={styles.dropdown}
-                  />
+                  /> */}
                   <Input
                     label="Nurse to patient ratio"
                     value={values.nurseToPatientRatio}
@@ -386,7 +386,7 @@ const AddWorkHistory: React.FC = () => {
                     touched={touched.nurseToPatientRatio}
                   />
                   <Text style={styles.label}>Charting system</Text>
-                      <DropDownPicker
+                      {/* <DropDownPicker
                           open={values.ChartingsystemOpen}
                           setOpen={(open) => setFieldValue('ChartingsystemOpen', open)}
                           items={values.ChartingsystemItems}
@@ -403,9 +403,9 @@ const AddWorkHistory: React.FC = () => {
                               }
                           }}
                           style={styles.dropdown}
-                      />
+                      /> */}
                   <Text style={styles.label}>Shift</Text>
-                  <DropDownPicker
+                  {/* <DropDownPicker
                     open={values.shiftOpen} // Open only when someone clicks for options
                     setOpen={(open) => setFieldValue('shiftOpen', open)}
                     items={[
@@ -421,7 +421,7 @@ const AddWorkHistory: React.FC = () => {
                     listMode="MODAL"
                     modalProps={{ animationType: 'slide' }}
                     style={styles.dropdown}
-                  />
+                  /> */}
                   <View style={styles.chargeExperienceContainer}>
                     <Text style={styles.label}>Charge Experience</Text>
                     <View style={styles.checkboxGroup}>

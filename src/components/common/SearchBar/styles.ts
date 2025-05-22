@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { theme } from '../../../theme';
 
 export const styles = StyleSheet.create({
   searchBarContainer: {
@@ -21,6 +22,6 @@ export const styles = StyleSheet.create({
     color: '#333',
   },
   placeholderTextColor: {
-    color: '#777',
+    color: theme.colors.grey.A5,
   },
 });

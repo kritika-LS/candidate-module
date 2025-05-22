@@ -18,7 +18,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchPendingActions } from '../../store/thunk/pendingActions.thunk';
 import { fetchDashboardStatistics } from '../../store/thunk/dashboardStats.thunk';
 import { fetchCandidate } from '../../store/thunk/candidate.thunk';
-import DropDownPicker from 'react-native-dropdown-picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 import { fetchCandidatePersonalDetails } from '../../store/thunk/candidatePersonalDetails.thunk';
 import LottieView from 'lottie-react-native';
 
@@ -147,7 +147,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               <TextStyle size='sm' style={styles.sortByText}>
                 Sort by
               </TextStyle>
-              <DropDownPicker
+              {/* <DropDownPicker
                 open={open}
                 value={sortByOption}
                 items={items}
@@ -158,7 +158,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                 listItemLabelStyle={styles.dropdownLabel}
                 dropDownContainerStyle={styles.dropdownContainer}
                 textStyle={styles.dropdownLabel}  // Add this for consistent text styling
-              />
+              /> */}
             </View>
           </View>
 

@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import DropDownPicker from 'react-native-dropdown-picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from './styles';
 import { SaveButton } from '../../../../components/features/SaveButton';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
@@ -73,7 +73,7 @@ const JobPreferencesScreen = () => {
             return (
             <View style={styles.container}>
               <Text style={styles.label}>Employment Type</Text>
-              <DropDownPicker
+              {/* <DropDownPicker
                 open={values.employmentTypeOpen}
                 setOpen={(open) => setFieldValue('employmentTypeOpen', open)}
                 items={[
@@ -91,10 +91,10 @@ const JobPreferencesScreen = () => {
                 listMode="MODAL"
                 modalProps={{ animationType: 'slide' }}
                 style={styles.dropdown}
-              />
+              /> */}
 
               <Text style={styles.label}>Shift</Text>
-              <DropDownPicker
+              {/* <DropDownPicker
                 open={values.shiftOpen}
                 setOpen={(open) => setFieldValue('shiftOpen', open)}
                 items={values.shiftItems}
@@ -106,7 +106,7 @@ const JobPreferencesScreen = () => {
                 listMode="MODAL"
                 modalProps={{ animationType: 'slide' }}
                 style={styles.dropdown}
-              />
+              /> */}
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Availability Date</Text>
@@ -135,7 +135,7 @@ const JobPreferencesScreen = () => {
               </View>
 
               <Text style={styles.label}>Wage Expectation Category</Text>
-              <DropDownPicker
+              {/* <DropDownPicker
                 open={values.wageExpectationOpen}
                 setOpen={(open) => setFieldValue('wageExpectationOpen', open)}
                 items={values.wageExpectationItems}
@@ -147,7 +147,7 @@ const JobPreferencesScreen = () => {
                 listMode="MODAL"
                 modalProps={{ animationType: 'slide' }}
                 style={styles.dropdown}
-              />
+              /> */}
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Shift Start Time</Text>
@@ -201,7 +201,7 @@ const JobPreferencesScreen = () => {
                 )}
               </View>
               <Text style={styles.label}>Time Zone</Text>
-              <DropDownPicker
+              {/* <DropDownPicker
                 open={values.timeZoneOpen}
                 setOpen={(open) => setFieldValue('timeZoneOpen', open)}
                 items={[
@@ -239,7 +239,7 @@ const JobPreferencesScreen = () => {
                 listMode="MODAL"
                 modalProps={{ animationType: 'slide' }}
                 style={styles.dropdown}
-              />
+              /> */}
             </View>
           )}}
         </Formik>

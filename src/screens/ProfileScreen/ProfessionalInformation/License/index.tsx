@@ -11,10 +11,10 @@ import {
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
+// import DropDownPicker from 'react-native-dropdown-picker';
 import { Input } from '../../../../components/common/Input';
 import Icon from 'react-native-vector-icons/Ionicons';
-import DocumentPicker from 'react-native-document-picker';
+// import DocumentPicker from 'react-native-document-picker';
 import { SaveButton } from '../../../../components/features/SaveButton';
 import styles from './styles';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
@@ -39,21 +39,21 @@ const License = () => {
   const [licenseDocument, setLicenseDocument] = useState(null);
 
   const handleLicenseUpload = async () => {
-    try {
-      const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.pdf, DocumentPicker.types.doc, DocumentPicker.types.docx],
-      });
+    // try {
+    //   const result = await DocumentPicker.pick({
+    //     type: [DocumentPicker.types.pdf, DocumentPicker.types.doc, DocumentPicker.types.docx],
+    //   });
 
-      if (result && result[0]) {
-        setLicenseDocument(result[0]);
-      }
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('User canceled the picker');
-      } else {
-        console.error('Error picking document:', err);
-      }
-    }
+    //   if (result && result[0]) {
+    //     setLicenseDocument(result[0]);
+    //   }
+    // } catch (err) {
+    //   if (DocumentPicker.isCancel(err)) {
+    //     console.log('User canceled the picker');
+    //   } else {
+    //     console.error('Error picking document:', err);
+    //   }
+    // }
   };
 
   const initialValues: LicenseFormValues = {
@@ -195,7 +195,7 @@ const License = () => {
                 </View>
 
                 <Text style={styles.label}>State</Text>
-                <DropDownPicker
+                {/* <DropDownPicker
                   open={values.stateOpen}
                   setOpen={(open) => setFieldValue('stateOpen', open)}
                   items={[
@@ -211,7 +211,7 @@ const License = () => {
                   listMode="MODAL"
                   modalProps={{ animationType: 'slide' }}
                   style={styles.dropdown}
-                />
+                /> */}
                 {touched.state && errors.state && (
                   <Text style={styles.error}>{errors.state}</Text>
                 )}
