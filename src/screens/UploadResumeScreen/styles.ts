@@ -71,6 +71,7 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 99999,
+      overflow: 'hidden',
     },
     cancelBtn: {
       marginTop: 20,
@@ -85,7 +86,9 @@ export const styles = StyleSheet.create({
       fontWeight: '600',
     },
     lottie: {
-      width: '100%',
-      height: '100%',
+      width: 70,
+      height: 70,
+      alignSelf: 'center',
+      justifyContent: 'center',
     },
 })

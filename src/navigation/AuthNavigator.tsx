@@ -16,7 +16,7 @@ const AppNavigator = () => (
   <Stack.Navigator
     // initialRouteName={"Splash"}
     screenOptions={{
-        headerShown: false,
+        headerShown: true,
         contentStyle: {
         backgroundColor: theme.colors.background.default,
         },
@@ -25,10 +25,10 @@ const AppNavigator = () => (
         headerStyle: {
         backgroundColor: theme.colors.primary.main,
         },
-        headerTintColor: theme.colors.text.light,
+        headerTintColor: theme.colors.primary.main,
         headerTitleStyle: {
         fontFamily: theme.typography.fontFamily.medium,
-        color: theme.colors.text.light,
+        color: theme.colors.primary.main,
         },
   }}>
     <Stack.Screen name="LoginScreen" component={LoginScreen} />

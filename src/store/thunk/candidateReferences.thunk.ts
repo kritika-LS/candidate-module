@@ -1,13 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
- import {
+import { CandidateReferencesService } from '../../api/services/candidateReferences.service';
+import {
   fetchCandidateReferencesStart,
   fetchCandidateReferencesSuccess,
   fetchCandidateReferencesFailure,
- } from '../slices/candidateReferences.slice';
- import { ApiError } from '../../models/types/common';
-import { CandidateReferencesService } from '../../api/services/candidateReferences.service';
+  updateCandidateReferencesStart,
+  updateCandidateReferencesSuccess,
+  updateCandidateReferencesFailure,
+} from '../slices/candidateReferences.slice';
+import { ApiError } from '../../models/types/common';
 
- export const fetchCandidateReferences = createAsyncThunk(
+export const fetchCandidateReferences = createAsyncThunk(
   'candidateReferences/fetchCandidateReferences',
   async (_, { dispatch }) => {
     try {
@@ -25,4 +28,24 @@ import { CandidateReferencesService } from '../../api/services/candidateReferenc
       throw error;
     }
   },
- );
+);
+
+export const updateCandidateReferences = createAsyncThunk(
+  'candidateReferences/updateCandidateReferences',
+  async (payload: any, { dispatch }) => {
+    try {
+      dispatch(updateCandidateReferencesStart());
+      const response = await CandidateReferencesService.updateCandidateReferences(payload);
+      dispatch(updateCandidateReferencesSuccess(response));
+      return response;
+    } catch (error) {
+      const apiError = error as ApiError;
+      dispatch(
+        updateCandidateReferencesFailure(
+          apiError.message || 'Failed to update candidate references',
+        ),
+      );
+      throw error;
+    }
+  },
+);

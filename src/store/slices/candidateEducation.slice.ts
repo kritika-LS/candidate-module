@@ -34,6 +34,21 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
       state.loading = false;
       state.error = action.payload;
     },
+    updateCandidateEducationsStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    updateCandidateEducationsSuccess: (
+      state,
+      action: PayloadAction<CandidateEducation>,
+    ) => {
+      state.loading = false;
+      state.educations = action.payload;
+    },
+    updateCandidateEducationsFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
     clearCandidateEducationsError: (state) => {
       state.error = null;
     },
@@ -44,6 +59,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
   fetchCandidateEducationsStart,
   fetchCandidateEducationsSuccess,
   fetchCandidateEducationsFailure,
+  updateCandidateEducationsStart,
+  updateCandidateEducationsSuccess,
+  updateCandidateEducationsFailure,
   clearCandidateEducationsError,
  } = candidateEducationSlice.actions;
 

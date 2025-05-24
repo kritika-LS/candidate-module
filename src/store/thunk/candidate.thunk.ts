@@ -1,20 +1,16 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
- import { CandidateService } from '../../api/services/candidate.service'; // Adjust path
- import { ApiError } from '../../models/types/common';
-import { fetchCandidateFailure, fetchCandidateStart, fetchCandidateSuccess } from '../slices/candidate.slice';
+import { CandidateService } from '../../api/services/candidate.service'; // Adjust the path
+import { ApiError } from '../../models/types/common';
 
- export const fetchCandidate = createAsyncThunk(
+export const fetchCandidate = createAsyncThunk(
   'candidate/fetchCandidate',
-  async (_, { dispatch }) => { // No input needed
+  async (_, { rejectWithValue }) => {
     try {
-      dispatch(fetchCandidateStart());
       const response = await CandidateService.getCandidate();
-      dispatch(fetchCandidateSuccess(response));
-      return response;
+      return response; // This will be action.payload in .fulfilled
     } catch (error) {
       const apiError = error as ApiError;
-      dispatch(fetchCandidateFailure(apiError.message || 'Failed to fetch candidate data'));
-      throw error;
+      return rejectWithValue(apiError?.data || 'Failed to fetch candidate data');
     }
   }
- );
+);

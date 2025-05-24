@@ -29,7 +29,9 @@ const CandidateInfoCard: React.FC<CandidateInfoCardProps> = ({
     const initials = firstName && lastName ? `${firstName[0].toUpperCase()}${lastName[0].toUpperCase()}` : '';
 
     const handleComplete = () => {
-        apiClient.logAllTokens();
+        console.log("heyyyy")
+        apiClient.get<any>("/api/v1/candidate/educations");
+        // apiClient.logAllTokens();
         // navigation.navigate('Profile', { initialTabIndex: 1 });
     }
 

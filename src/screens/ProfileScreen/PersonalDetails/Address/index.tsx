@@ -17,21 +17,26 @@ import {Button} from '../../../../components/common/Button';
 import {Formik} from 'formik';
 import Toast from 'react-native-toast-message';
 import { addressValidationSchema2 } from '../../../../validations/addressValidation';
-import { useAppSelector } from '../../../../hooks/useAppDispatch';
+import { useAppSelector, useAppDispatch } from '../../../../hooks/useAppDispatch';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
+import { SaveButton } from '../../../../components/features/SaveButton';
+import { updateCandidatePersonalDetails } from '../../../../store/thunk/candidatePersonalDetails.thunk';
+import { CandidatePersonalDetailsPayload } from '../../../../types/personalDetails';
 
 const AddressDetailsScreen: React.FC = () => {
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+  const candidatePersonalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload) || {};
 
-  const candidateAddressDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload?.address);
+  const candidateAddressDetails = candidatePersonalDetails?.address?.[0] || {};
 
   const candidateAddress = {
-    address1: candidateAddressDetails?.[0]?.address1 || '',
-    address2: candidateAddressDetails?.[0]?.address2 || '',
-    city: candidateAddressDetails?.[0]?.city || '',
-    zipCode: candidateAddressDetails?.[0]?.zipCode || '',
-    stateCode: candidateAddressDetails?.[0]?.stateCode || '',
-    countryCode: candidateAddressDetails?.[0]?.countryCode || '',
+    address1: candidateAddressDetails?.address1 || '',
+    address2: candidateAddressDetails?.address2 || '',
+    city: candidateAddressDetails?.city || '',
+    zipCode: candidateAddressDetails?.zipCode || '',
+    stateCode: candidateAddressDetails?.stateCode || '',
+    countryCode: candidateAddressDetails?.countryCode || '',
   };
 
   const defaultAddress = {
@@ -48,18 +53,41 @@ const AddressDetailsScreen: React.FC = () => {
     currentAddress: {...candidateAddress},
     isSamePermanent: false,
     notes: '',
-    permanentNotes: '', // Add a separate field for permanent address notes
+    permanentNotes: '',
   };
 console.log('Initial values:', initialValues);
   const handleSave = async (values: typeof initialValues) => {
-    console.log('Saving address details:', values);
     try {
-      // Simulate API call (replace with your actual save logic)
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
-      console.log('Saved values:', values);
+      const payload: CandidatePersonalDetailsPayload = {
+        ...candidatePersonalDetails,
+        address: [
+          {
+            addressType: 'CURRENT',
+            address: values.currentAddress.address1,
+            address2: values.currentAddress.address2,
+            city: values.currentAddress.city,
+            zipCode: values.currentAddress.zipCode,
+            state: values.currentAddress.stateCode,
+            country: values.currentAddress.countryCode,
+            addressNotes: values.notes,
+          },
+          {
+            addressType: 'PERMANENT',
+            address: values.permanentAddress.address1,
+            address2: values.permanentAddress.address2,
+            city: values.permanentAddress.city,
+            zipCode: values.permanentAddress.zipCode,
+            state: values.permanentAddress.stateCode,
+            country: values.permanentAddress.countryCode,
+            addressNotes: values.permanentNotes,
+          },
+        ],
+      };
+
+      await dispatch(updateCandidatePersonalDetails(payload)).unwrap();
       Toast.show({
         type: 'success',
-        text1: 'Addresses saved successfully',
+        text1: 'Address details saved successfully',
       });
       navigation.goBack();
     } catch (error) {
@@ -74,6 +102,7 @@ console.log('Initial values:', initialValues);
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
 
+        <View style={styles.body}>
         <ProfileScreenHeader
             headerIcon='home-outline'
             headerTitle='Address Details'
@@ -83,7 +112,7 @@ console.log('Initial values:', initialValues);
           initialValues={initialValues}
           validationSchema={addressValidationSchema2}
           onSubmit={handleSave}>
-          {({values, errors, touched, handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting}) => (
+          {({values, errors, touched, handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting, isValid, dirty}) => (
             <>
             
               <View style={styles.formSection}>
@@ -250,19 +279,23 @@ console.log('Initial values:', initialValues);
                     placeholder="Enter address notes"
                     multiline
                     maxLength={1024}
-                    value={values.permanentNotes} // Use a separate field for permanent address notes
-                    onChangeText={handleChange('permanentNotes')} // Handle change for permanent address notes
+                    value={values.permanentNotes}
+                    onChangeText={handleChange('permanentNotes')}
                   />
                 </View>
               )}
-
-                <TouchableOpacity style={styles.saveBtn} onPress={handleSubmit as any}>
-                  <Text style={styles.saveBtnText}>{isSubmitting ? 'Saving...' : 'Save'}</Text>
-                </TouchableOpacity>
             </>
           )}
         </Formik>
+        </View>
       </ScrollView>
+                    <View style={styles.saveButton}>
+                      <SaveButton
+                        title="Save"
+                        onPress={handleSubmit}
+                        disabled={!isValid || !dirty}
+                      />
+                    </View>
     </SafeAreaView>
   );
 };
@@ -272,10 +305,11 @@ export default AddressDetailsScreen;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.background.main,
   },
   container: {
     flex: 1,
+  },
+  body: {
     margin: 16,
     padding: 16,
     borderRadius: 8,
@@ -285,7 +319,6 @@ const styles = StyleSheet.create({
   },
   formSection: {
     marginBottom: theme.spacing.lg,
-    paddingBottom: theme.spacing.md,
   },
   sectionTitle: {
     marginBottom: theme.spacing.md,
@@ -309,7 +342,9 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
   },
   saveButton: {
-    marginLeft: theme.spacing.md,
+    backgroundColor: '#fff', 
+    paddingHorizontal: 16, 
+    paddingBottom: 16
   },
   label: {
     marginTop: 16,

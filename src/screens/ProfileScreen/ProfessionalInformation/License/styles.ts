@@ -13,23 +13,26 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     inputGroup: {
-        marginBottom: 10,
-        marginTop: 10,
+        marginBottom: 16,
     },
     label: {
-        marginBottom: 5,
+        marginTop: 16,
+        marginBottom: 4,
+        fontSize: 14,
+        fontWeight: '500',
     },
     input: {
-        backgroundColor: '#fff',
+        fontSize: 16,
+        color: '#000',
     },
     datePickerButton: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 10,
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: '#ddd',
         borderRadius: 8,
-        padding: 12,
         backgroundColor: '#fff',
     },
     saveButton: {
@@ -48,15 +51,24 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
     dropdown: {
-        backgroundColor: '#fff',
+        borderWidth: 1,
         borderColor: '#ddd',
         borderRadius: 8,
-        marginTop: 4,
+        backgroundColor: '#fff',
+    },
+    dropdownContainer: {
+        maxHeight: 200,
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 8,
+        backgroundColor: '#fff',
     },
     saveBtn: {
-        backgroundColor: '#fff',
-        paddingHorizontal: 16,
-        paddingBottom: 16
+        marginTop: 24,
+        backgroundColor: '#0A47E9',
+        borderRadius: 8,
+        paddingVertical: 14,
+        alignItems: 'center',
     },
     saveBtnText: {
         color: '#fff',
@@ -65,37 +77,33 @@ const styles = StyleSheet.create({
     },
     error: {
         color: 'red',
-        fontSize: 14,
+        fontSize: 12,
         marginTop: 4,
     },
     safeArea: {
         flex: 1,
     },
     uploadGroup: {
-        alignItems: 'center',
+        marginTop: 16,
     },
     uploadBtn: {
-        borderWidth: 1,
-        borderColor: '#007bff',
-        paddingVertical: 5,
-        borderRadius: 15,
+        backgroundColor: '#f0f0f0',
+        padding: 12,
+        borderRadius: 8,
         alignItems: 'center',
-        marginTop: 10,
-        width: '70%',
     },
     uploadBtnText: {
-        color: '#007bff',
-        fontSize: 18,
-        fontWeight: 'bold',
+        color: '#0A47E9',
+        fontWeight: '500',
     },
     fileName: {
-        marginTop: 10,
-        fontSize: 16,
+        marginTop: 8,
+        fontSize: 14,
     },
     note: {
-        fontSize: 14,
-        color: '#555',
-        marginTop: 5,
+        fontSize: 12,
+        color: '#666',
+        marginTop: 4,
     },
 })
 

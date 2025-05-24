@@ -11,9 +11,12 @@ import {
   Platform,
 } from 'react-native';
 import * as DocumentPicker from '@react-native-documents/picker';
-// import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import UploadFileModal from '../../../../components/features/UploadFileModal';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
+import { useAppDispatch } from '../../../../hooks/useAppDispatch';
+import { updateCandidateProfessionalInfo } from '../../../../store/thunk/candidateProfessionalInfo.thunk';
+import Toast from 'react-native-toast-message';
 
 // Dummy data – Replace with data from Profession & Speciality Taxonomy.xlsx
 const professionOptions = [
@@ -38,7 +41,8 @@ const specialtyOptionsMap: Record<string, { label: string; value: string }[]> = 
 };
 
 const ProfessionalDetailsScreen: React.FC = () => {
-  const [resume, setResume] = useState<DocumentPicker.DocumentPickerResponse | null>(null);
+  const dispatch = useAppDispatch();
+  const [resume, setResume] = useState<File | null>(null);
   const [experience, setExperience] = useState('');
   const [profession, setProfession] = useState<string | null>(null);
   const [specialty, setSpecialty] = useState<string | null>(null);
@@ -60,44 +64,72 @@ const ProfessionalDetailsScreen: React.FC = () => {
     }
   }, [profession]);
 
-  const handleResumeUpload = async () => {
-    try {
-      setModalVisible(true);
-      // const res = await DocumentPicker.pick({
-      //   type: [DocumentPicker.types.pdf, DocumentPicker.types.doc, DocumentPicker.types.docx],
-      // });
+  const handleResumeUpload = () => {
+    setModalVisible(true);
+  };
 
-      // if (res && res.size && res.name) {
-      //   const fileSizeInMB = res.size / (1024 * 1024);
-      //   if (fileSizeInMB > 10) {
-      //     Alert.alert('File too large', 'Maximum file size is 10 MB.');
-      //     return;
-      //   }
+  const validateExperience = (exp: string) => {
+    const num = parseFloat(exp);
+    return !isNaN(num) && num >= 0 && num <= 100;
+  };
 
-      //   setResume(res);
-      // }
-    } catch (err) {
-      // if (!DocumentPicker.isCancel(err)) {
-      //   Alert.alert('Error', 'Unknown error occurred while picking the document.');
-      // }
+  const handleSave = async () => {
+    if (!resume) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please upload your resume',
+      });
+      return;
     }
-  };
-
-  const validateExperience = (value: string) => {
-    const regex = /^\d{0,2}(\.\d{0,2})?$/;
-    return regex.test(value);
-  };
-
-  const handleSave = () => {
-    if (!resume) return Alert.alert('Missing', 'Please upload your resume.');
     if (!experience || !validateExperience(experience)) {
-      return Alert.alert('Invalid', 'Enter a valid experience (e.g., 5.5)');
+      Toast.show({
+        type: 'error',
+        text1: 'Enter a valid experience (e.g., 5.5)',
+      });
+      return;
     }
-    if (!profession) return Alert.alert('Missing', 'Please select a profession.');
-    if (!specialty) return Alert.alert('Missing', 'Please select a primary specialty.');
-    if (summary.length > 1024) return Alert.alert('Too Long', 'Professional summary must be under 1024 characters.');
+    if (!profession) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please select a profession',
+      });
+      return;
+    }
+    if (!specialty) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please select a primary specialty',
+      });
+      return;
+    }
+    if (summary.length > 1024) {
+      Toast.show({
+        type: 'error',
+        text1: 'Professional summary must be under 1024 characters',
+      });
+      return;
+    }
 
-    Alert.alert('Success', 'Professional details saved successfully!');
+    try {
+      const payload = {
+        resume,
+        overallYearsOfExperience: parseFloat(experience),
+        profession,
+        specialty,
+        professionalSummary: summary,
+      };
+
+      await dispatch(updateCandidateProfessionalInfo(payload)).unwrap();
+      Toast.show({
+        type: 'success',
+        text1: 'Professional details saved successfully',
+      });
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to save professional details',
+      });
+    }
   };
 
   return (
@@ -131,7 +163,7 @@ const ProfessionalDetailsScreen: React.FC = () => {
         />
 
         <Text style={styles.label}>Profession *</Text>
-        {/* <DropDownPicker
+        <DropDownPicker
           open={professionOpen}
           setOpen={setProfessionOpen}
           items={professionItems}
@@ -148,10 +180,10 @@ const ProfessionalDetailsScreen: React.FC = () => {
             }
           }}
           style={styles.dropdown}
-        /> */}
+        />
 
         <Text style={styles.label}>Primary Specialty *</Text>
-        {/* <DropDownPicker
+        <DropDownPicker
           open={specialtyOpen}
           setOpen={setSpecialtyOpen}
           items={specialtyItems}
@@ -169,7 +201,7 @@ const ProfessionalDetailsScreen: React.FC = () => {
             }
           }}
           style={styles.dropdown}
-        /> */}
+        />
 
         <Text style={styles.label}>Professional Summary</Text>
         <TextInput

@@ -17,10 +17,10 @@ export const PhoneNumberInput = (props: any) => {
         labelStyle,
         containerStyle2 = {},
         setIsValid = () => {},
-        disableArrowIcon = false,
+        // disableArrowIcon = false, // Keep this as false or remove to show arrow
         countryPickerProps = {},
         variant = "",
-        onBlur = () => {}, // Added onBlur prop
+        onBlur = () => {},
     } = props;
 
     const errorState = error && touched;
@@ -51,14 +51,27 @@ export const PhoneNumberInput = (props: any) => {
                 textContainerStyle={[
                     styles.inputContainer,
                     errorState && styles.errorTextContainer,
+                    { borderLeftWidth: 0, paddingHorizontal: 0 } // Ensure no left border and minimal horizontal padding
                 ]}
                 placeholder={placeholder}
                 textInputStyle={styles.textStyle}
                 layout="first"
-                disableArrowIcon={disableArrowIcon}
+                disableArrowIcon={false} // Ensure the arrow icon is enabled if you want it
                 countryPickerProps={countryPickerProps}
-                onBlur={onBlur} // Added onBlur handler
-                {...props}
+                onBlur={onBlur}
+                onChangeText={props.onChangeText}
+                onChangeFormattedText={props.onChangeFormattedText}
+                onChangeCountry={props.onChangeCountry}
+                value={props.value}
+                defaultCode={props.defaultCode || "US"}
+                // Add countryPickerButtonStyle to reduce the gap
+                countryPickerButtonStyle={{
+                    // Adjust padding or width here to reduce the gap
+                    paddingHorizontal: 5, // Reduce horizontal padding
+                    // You might need to experiment with width or flex property based on your exact layout
+                    // width: 80, // Example: setting a fixed width
+                    // flex: 0, // Example: let content determine width
+                }}
             />
             {errorState && (
                 <TextStyle variant="regular" size="xs" style={styles.errorText}>

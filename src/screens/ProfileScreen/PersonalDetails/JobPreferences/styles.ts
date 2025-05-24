@@ -47,12 +47,16 @@ export const styles = StyleSheet.create({
     marginTop: 4,
   },
   dropdown: {
-    backgroundColor: '#fff',
+    borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
-    marginTop: 4,
-},
-saveBtn: {
+    backgroundColor: '#fff',
+  },
+  dropdownContainer: {
+    maxHeight: 200,
+    zIndex: 1000,
+  },
+  saveBtn: {
     marginTop: 24,
     backgroundColor: '#0A47E9',
     borderRadius: 8,

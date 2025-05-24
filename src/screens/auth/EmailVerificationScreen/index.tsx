@@ -6,16 +6,20 @@ import { styles } from "./styles";
 import { TermsPolicies } from "../../../components/common/TermsPolicies";
 import { OtpVerification } from "../../../components/features/OtpVerification";
 import { EmailVerified } from "../../../components/features/EmailVerified";
-import { useRoute, RouteProp } from "@react-navigation/native";
+import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 
 // Define route param types for safety (optional but recommended)
 type EmailVerificationRouteParams = {
   email?: string;
+  password?: any
 };
 
 export const EmailVerificationScreen = () => {
+
+  const navigation = useNavigation();
   const route = useRoute<RouteProp<Record<string, EmailVerificationRouteParams>, string>>();
   const email = route.params?.email;
+  const password = route.params?.password;
 
   const [otpSent, setOtpSent] = useState(true);
 
@@ -31,11 +35,12 @@ export const EmailVerificationScreen = () => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <Header title="Email Address Verification" showBackButton />
+      <Header title="Email Address Verification" showBackButton onBackPress={() => navigation.navigate("SignUpScreen")} />
       <View style={styles.body}>
         {otpSent ? (
           <OtpVerification
             email={email}
+            password={password}
             onCodeChange={handleCodeChange}
             onResend={handleResend}
 			setOtpSent={setOtpSent}

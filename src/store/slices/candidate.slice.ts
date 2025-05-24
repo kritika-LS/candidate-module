@@ -1,47 +1,45 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit'; // Adjust path as needed
+import { fetchCandidate } from '../thunk/candidate.thunk';
 
- // *** REPLACE THIS with the actual type of your candidate data! ***
- type Candidate = any;
+// TODO: Replace with the real type
+type Candidate = any;
 
- interface CandidateState {
+interface CandidateState {
   candidate: Candidate | null;
   loading: boolean;
   error: string | null;
- }
+}
 
- const initialState: CandidateState = {
+const initialState: CandidateState = {
   candidate: null,
   loading: false,
   error: null,
- };
+};
 
- const candidateSlice = createSlice({
+const candidateSlice = createSlice({
   name: 'candidate',
   initialState,
   reducers: {
-    fetchCandidateStart: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    fetchCandidateSuccess: (state, action: PayloadAction<Candidate>) => {
-      state.loading = false;
-      state.candidate = action.payload;
-    },
-    fetchCandidateFailure: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
     clearCandidateError: (state) => {
       state.error = null;
     },
   },
- });
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCandidate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCandidate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.candidate = action.payload;
+      })
+      .addCase(fetchCandidate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Unexpected error occurred';
+      });
+  },
+});
 
- export const {
-  fetchCandidateStart,
-  fetchCandidateSuccess,
-  fetchCandidateFailure,
-  clearCandidateError,
- } = candidateSlice.actions;
-
- export default candidateSlice.reducer;
+export const { clearCandidateError } = candidateSlice.actions;
+export default candidateSlice.reducer;

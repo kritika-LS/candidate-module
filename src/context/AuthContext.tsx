@@ -127,6 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string, rememberAccount: boolean = false) => {
     try {
+      await signOut();
       await signIn({ username: email, password });
       await getAuthDetails();
 
@@ -191,16 +192,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const currentUser = await getCurrentUser();
       const userAttributes: Record<string, any> = await fetchUserAttributes();
 
-      console.log("------- before save -------", accessToken)
       await AsyncStorage.setItem('auth_token', accessToken || '');
-      console.log("-------- access token saved ------")
-      console.log("tag here",{sessionResult,currentUser});
       let groups: string[] = [];
       if (currentUser) {
         try {
-          // In v6, groups are often part of the ID token or user attributes.
-          // You might need to inspect these to find the groups.
-          // The exact location depends on your Cognito setup.
 
           // Option 1: Check ID Token claims (if groups are there)
           const parsedIdToken = idToken ? JSON.parse(atob(idToken.split('.')[1])) : null;

@@ -24,10 +24,13 @@ import Toast from 'react-native-toast-message';
 import { getAuthDetails } from '../../../utils/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CryptoJS from 'crypto-js';
+import { useAppDispatch } from '../../../hooks/useAppDispatch';
+import { fetchCandidate } from '../../../store/thunk/candidate.thunk';
 
 export const LoginScreen = () => {
 
     const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+    const dispatch = useAppDispatch();
 
     const { login } = useAuth();
 
@@ -63,8 +66,28 @@ export const LoginScreen = () => {
     const handleLogin = async () => {
         try {
             await login(email, password, rememberAccount);
-            await getAuthDetails(); 
+            await getAuthDetails();
+            
+            // Check candidate status after successful login
+            try {
+                const response = await dispatch(fetchCandidate()).unwrap();
+                console.log({response})
+                // If we get here, the candidate is authorized
+                navigation.navigate(ScreenNames.HomeScreen);
+            } catch (error: any) {
+                // If unauthorized, navigate to upload resume screen
+      console.log({error})
+                if (error.status === 401 || error.status === 'UNAUTHORIZED') {
+                    navigation.navigate(ScreenNames.UploadResumeScreen);
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Failed to verify candidate status'
+                    });
+                }
+            }
         } catch (error: any) {
+          console.log({errorerror: error})
             if (error.name === 'UserNotFoundException') {
                 Toast.show({
                     type: 'error',

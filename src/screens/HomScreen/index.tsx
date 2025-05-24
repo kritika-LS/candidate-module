@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, Button, ScrollView, ActivityIndicator } from 'react-native';
 import { DrawerScreenProps } from '@react-navigation/drawer';
 import { DrawerParamList } from '../../types/navigation';
@@ -18,7 +18,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchPendingActions } from '../../store/thunk/pendingActions.thunk';
 import { fetchDashboardStatistics } from '../../store/thunk/dashboardStats.thunk';
 import { fetchCandidate } from '../../store/thunk/candidate.thunk';
-// import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { fetchCandidatePersonalDetails } from '../../store/thunk/candidatePersonalDetails.thunk';
 import LottieView from 'lottie-react-native';
 
@@ -33,6 +33,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   //@ts-ignore
   const jobData: Job[] = jobs?.responsePayload || [];
 
+  console.log({jobData})
+
   const [open, setOpen] = useState(false);
   const [sortByOption, setSortByOption] = useState('Relevance');
   const [items, setItems] = useState([
@@ -41,7 +43,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     { label: 'Highest Pay', value: 'PayRate' },
   ]);
 
-  const [loading, setLoading] = useState(true); // Add a loading state
+  const [loading, setLoading] = useState(true);
 
   const pendingActions = Object.entries(pendingActionsData?.responsePayload || {})
     .filter(([, value]) => (value as { pending: boolean; messages: string[] }).pending && (value as { pending: boolean; messages: string[] }).messages.length > 0)
@@ -50,55 +52,46 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const pendingActionsCount = pendingActions.length;
 
-  useEffect(() => {
-    const fetchData = async () => {
-
-      console.log('HomeScreen: Adding a short delay before fetching data...');
-      await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
-      console.log('HomeScreen: Delay finished, proceeding with data fetch.');
-
-      setLoading(true); // Set loading to true before starting API calls
-      let sortOrder: 'Asc' | 'Desc' = 'Desc';
-      let sortBy: 'RELEVANCE' | 'POSTED_DATE' | 'PAYRATE' = 'RELEVANCE';
-
-      switch (sortByOption) {
-        case 'Newest':
-          //@ts-ignore
-          sortBy = 'NEWEST';
-          sortOrder = 'Desc';
-          break;
-        case 'Pay Rate':
-          sortBy = 'PAYRATE';
-          sortOrder = 'Desc';
-          break;
-        default:
-          sortBy = 'RELEVANCE';
-          sortOrder = 'Desc';
-          break;
-      }
-
-      try {
-        await Promise.all([
-          dispatch(fetchRecommendedJobs({ page: 0, pageSize: 10, sortOrder: 'Desc', sortBy: sortByOption.toUpperCase() })),
-          dispatch(fetchPendingActions()),
-          dispatch(fetchDashboardStatistics()),
-          dispatch(fetchCandidate()),
-          dispatch(fetchCandidatePersonalDetails()),
-        ]);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        // Optionally handle the error, e.g., display an error message to the user
-      } finally {
-        setLoading(false); // Set loading to false after all API calls complete (or fail)
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      dispatch(clearJobsError()); // Cleanup on unmount
-    };
+  const fetchJobs = useCallback(async () => {
+    const sortBy = sortByOption === 'Newest' ? 'NEWEST' : 
+                  sortByOption === 'Highest Pay' ? 'PAYRATE' : 'RELEVANCE';
+    
+    await dispatch(fetchRecommendedJobs({ 
+      page: 0, 
+      pageSize: 10, 
+      sortOrder: 'Desc', 
+      sortBy,
+      jobCategory: 'Healthcare'
+    }));
   }, [dispatch, sortByOption]);
+
+  const fetchInitialData = useCallback(async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        fetchJobs(),
+        dispatch(fetchPendingActions()),
+        dispatch(fetchDashboardStatistics()),
+        dispatch(fetchCandidate()),
+        dispatch(fetchCandidatePersonalDetails()),
+      ]);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [dispatch, fetchJobs]);
+
+  useEffect(() => {
+    fetchInitialData();
+    return () => {
+      dispatch(clearJobsError());
+    };
+  }, [fetchInitialData]);
+
+  useEffect(() => {
+    fetchJobs();
+  }, [fetchJobs]);
 
   if (loading) {
     return (
@@ -127,18 +120,20 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           <CandidateInfoCard />
         </View>
 
-        <View style={styles.pendingActionSection}>
-          <View style={styles.pendingActionHeader}>
-            <Icon name='alert-circle' size={12} color={theme.colors.status.error} />
-            <TextStyle size='xs' color={theme.colors.status.error} style={{marginLeft: 6}}>Pending Actions</TextStyle>
-            <View style={styles.pendingTasks}>
-              <TextStyle size='xs' color={theme.colors.secondary.dark}>{pendingActionsCount < 10 ? `0${pendingActionsCount}` : pendingActionsCount}</TextStyle>
+        {pendingActions.length > 0 && (
+          <View style={styles.pendingActionSection}>
+            <View style={styles.pendingActionHeader}>
+              <Icon name='alert-circle' size={12} color={theme.colors.status.error} />
+              <TextStyle size='xs' color={theme.colors.status.error} style={{marginLeft: 6}}>Pending Actions</TextStyle>
+              <View style={styles.pendingTasks}>
+                <TextStyle size='xs' color={theme.colors.secondary.dark}>{pendingActionsCount < 10 ? `0${pendingActionsCount}` : pendingActionsCount}</TextStyle>
+              </View>
             </View>
+            {pendingActions.map((item) => (
+              <PendingActionItem key={item.id} text={item.text} />
+            ))}
           </View>
-          {pendingActions.map((item) => (
-            <PendingActionItem key={item.id} text={item.text} />
-          ))}
-        </View>
+        )}
 
         <View style={styles.section}>
           <View style={styles.jobHeader}>
@@ -147,7 +142,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               <TextStyle size='sm' style={styles.sortByText}>
                 Sort by
               </TextStyle>
-              {/* <DropDownPicker
+              <DropDownPicker
                 open={open}
                 value={sortByOption}
                 items={items}
@@ -157,8 +152,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                 style={styles.dropdown}
                 listItemLabelStyle={styles.dropdownLabel}
                 dropDownContainerStyle={styles.dropdownContainer}
-                textStyle={styles.dropdownLabel}  // Add this for consistent text styling
-              /> */}
+                textStyle={styles.dropdownLabel}
+              />
             </View>
           </View>
 

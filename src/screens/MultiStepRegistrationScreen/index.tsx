@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useMemo, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useImperativeHandle, useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import {
   View,
   TextInput,
@@ -6,7 +6,8 @@ import {
   Alert,
   Text,
   SafeAreaView,
-  Pressable
+  Pressable,
+  StyleSheet
 } from 'react-native';
 import { TabView } from 'react-native-tab-view';
 import { styles } from './styles';
@@ -24,180 +25,265 @@ import { personalDetailsSchema } from '../../validations/personalDetailValidatio
 import { professionalDetailsSchema } from '../../validations/professionalDetailValidation';
 import { jobPreferenceSchema } from '../../validations/jobPreferenceValidation';
 import { addressValidationSchema } from '../../validations/addressValidation';
+import { fetchCandidatePersonalDetails } from '../../store/thunk/candidatePersonalDetails.thunk';
+import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
+import { submitOnboarding } from '../../store/slices/onboarding.slice';
+import { ScreenNames } from '../../utils/ScreenConstants';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { AuthStackParamList } from '../../types/navigation';
+import { RootState } from '../../store/store';
 
-export interface ParentScreenRef {
+// Types
+interface ParentScreenRef {
   submitPersonalDetails: () => void;
 }
 
-
-const screenWidth = Dimensions.get('window').width;
-
-// ----- Type Definitions -----
-type Route = {
+interface Route {
   key: string;
   title: string;
   icon: string;
-};
+  hasError: boolean;
+}
 
-type FormData = {
-  personal: { firstName?: string; lastName?: string, alternateEmail?:string,mobileNumber?: string };
+interface FormData {
+  personal: {
+    firstName: string;
+    lastName: string;
+    alternateEmail: string;
+    mobileNumber: string;
+  };
   address: {
     physicalAddress: {
-      address?: string;
-      city?: string;
+      address: string;
+      zipCode: string;
+      country: string;
+      state: string;
+      city: string;
       stateCode?: string;
-      zipCode?: string;
       countryCode?: string;
     };
     mailingAddress: {
-      address?: string;
-      city?: string;
+      address: string;
+      zipCode: string;
+      country: string;
+      state: string;
+      city: string;
       stateCode?: string;
-      zipCode?: string;
       countryCode?: string;
     };
-    isSamePhysical?: boolean;
+    isSamePhysical: boolean;
+    addressType?: string;
   };
-  professional: { experience?:string, profession?: string, specialty?:string };
-  jobPref: { employmentType?: string; availabilityDate?: string, shift?: string, selectedStates?:string };
-};
+  professional: {
+    experience: number;
+    profession: string;
+    specialty: string[];
+  };
+  jobPref: {
+    employmentType: string;
+    availabilityDate: string;
+    shift: string;
+    selectedStates: string;
+  };
+}
 
+interface FormErrors {
+  personal: Record<string, string>;
+  address: Record<string, any>;
+  professional: Record<string, string>;
+  jobPref: Record<string, string>;
+}
+
+interface FormTouch {
+  personal: Record<string, boolean>;
+  address: Record<string, boolean>;
+  professional: Record<string, boolean>;
+  jobPref: Record<string, boolean>;
+}
+
+interface OnboardingState {
+  loading: boolean;
+  error: string | null;
+  success: boolean;
+}
+
+// Constants
+const screenWidth = Dimensions.get('window').width;
 const professionsList = ['Software Engineer', 'Designer'];
 const specialtiesMap = {
   'Software Engineer': ['Frontend', 'Backend'],
   'Designer': ['UI', 'UX']
 };
 
-// ----- Step Components -----
+// Component Props
 interface PersonalDetailsProps {
   data: FormData['personal'];
-  onChange: (data: FormData['personal']) => void;
+  onChange: (field: string, value: any) => void;
+  errors: Record<string, string>;
+  touched: Record<string, boolean>;
+  setTouched: (data: Record<string, boolean>) => void;
+  onSubmit: () => void;
+}
+
+interface AddressDetailsProps {
+  data: FormData['address'];
+  onChange: (data: FormData['address']) => void;
+  errors: Record<string, any>;
+  touched: Record<string, boolean>;
+  setTouched: (data: Record<string, boolean>) => void;
+}
+
+interface ProfessionalDetailsProps {
+  data: FormData['professional'];
+  onChange: (field: string, value: any) => void;
   errors: Record<string, string>;
   touched: Record<string, boolean>;
   setTouched: (data: Record<string, boolean>) => void;
 }
 
-const PersonalDetails : React.FC<PersonalDetailsProps> = ({
+interface JobPreferencesProps {
+  data: FormData['jobPref'];
+  onChange: (field: string, value: any) => void;
+  errors: Record<string, string>;
+  touched: Record<string, boolean>;
+  setTouched: (data: Record<string, boolean>) => void;
+}
+
+// Step Components
+const PersonalDetails: React.FC<PersonalDetailsProps> = ({
+  data,
+  onChange,
+  errors,
+  touched,
+  setTouched,
+  onSubmit
+}) => (
+  <PersonalDetailsSection
+    data={data}
+    onChange={onChange}
+    errors={errors}
+    touched={touched}
+    setTouched={setTouched}
+    onSubmit={onSubmit}
+  />
+);
+
+const AddressDetails: React.FC<AddressDetailsProps> = ({
   data,
   onChange,
   errors,
   touched,
   setTouched
-  }: {
-    data: FormData['personal'];
-    onChange: (data: FormData['personal']) => void;
-    errors: Record<string, string>;
-    touched: Record<string, boolean>;
-    setTouched: (data: Record<string, boolean>) => void;
-  }) => { 
-    return(
-    <PersonalDetailsSection data={data} onChange={onChange} errors={errors} touched={touched} setTouched={setTouched}/>
-)};
+}) => (
+  <AddressInfoScreen
+    data={data}
+    onChange={onChange}
+    errors={errors}
+    touched={touched}
+    setTouched={setTouched}
+  />
+);
 
-const AddressDetails = ({
+const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
   data,
   onChange,
   errors,
   touched,
   setTouched
-  }: {
-    data: FormData['address'];
-    onChange: (data: FormData['address']) => void;
-    errors: any;
-    touched: any;
-    setTouched: (data: any) => void;
-  }) => (
-    <AddressInfoScreen data={data} onChange={onChange} errors={errors} touched={touched} setTouched={setTouched} />
+}) => (
+  <ProfessionalDetailsForm
+    data={data}
+    onChange={onChange}
+    errors={errors}
+    professionsList={professionsList}
+    specialtiesMap={specialtiesMap}
+    touched={touched}
+    setTouched={setTouched}
+  />
 );
 
-const ProfessionalDetails = ({
-    data,
-    onChange,
-    errors,
-    touched,
-    setTouched
-  }: {
-    data: FormData['professional'];
-    onChange: (data: FormData['professional']) => void;
-    errors:any;
-    touched: any;
-    setTouched: (data: any) => void;
-  }) => (
-    
-    <ProfessionalDetailsForm 
-       data={data}
-       onChange={onChange}
-       errors={errors}
-       professionsList={professionsList}
-       specialtiesMap={specialtiesMap}
-       touched={touched} 
-       setTouched={setTouched}
-    />
+const JobPreferences: React.FC<JobPreferencesProps> = ({
+  data,
+  onChange,
+  errors,
+  touched,
+  setTouched
+}) => (
+  <JobPreferenceForm
+    data={data}
+    onChange={onChange}
+    errors={errors}
+    touched={touched}
+    setTouched={setTouched}
+  />
 );
 
-const JobPreferences = ({
-    data,
-    onChange,
-    errors,
-    touched,
-    setTouched
-  }: {
-    data: FormData['jobPref'];
-    onChange: (data: FormData['jobPref']) => void;
-    errors:any;
-    touched: any;
-    setTouched: (data: any) => void;
-  }) => (
-    <JobPreferenceForm
-      data={data}
-      onChange={onChange}
-      errors={errors}
-      touched={touched} 
-      setTouched={setTouched}
-     />
-);
+// Main Component
+export const MultiStepRegistrationScreen = () => {
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+  // const { loading } = useAppSelector((state: any) => state?.onboarding as OnboardingState);
 
-// ----- Main Component -----
+  const route = useRoute();
+  const resumeData = (route?.params as any)?.responseData || {};
 
-const MultiStepRegistrationScreen = () => {
+  console.log({route})
+
+  // State
+  const [activeTab, setActiveTab] = useState(0);
   const [formData, setFormData] = useState<FormData>({
-    personal: {},
+    personal: {
+      firstName: resumeData?.firstName || '',
+      lastName: resumeData?.lastName || '',
+      alternateEmail: resumeData?.alternateEmailAddress || '',
+      mobileNumber: resumeData?.mobileNumber || '',
+    },
     address: {
       physicalAddress: {
-        address: '',
-        city: '',
-        stateCode: '',
-        zipCode: '',
-        countryCode: ''
+        address: resumeData?.address?.[0]?.address || '',
+        zipCode: resumeData?.address?.[0]?.zipCode || '',
+        country: resumeData?.address?.[0]?.country || '',
+        state: resumeData?.address?.[0]?.state || '',
+        city: resumeData?.address?.[0]?.city || '',
       },
       mailingAddress: {
         address: '',
-        city: '',
-        stateCode: '',
         zipCode: '',
-        countryCode: ''
+        country: '',
+        state: '',
+        city: '',
       },
-      isSamePhysical: false
+      isSamePhysical: true, // or false depending on your logic
     },
-    professional: {},
-    jobPref: {}
-  });
-  const [formErrors, setFormErrors] = useState({
-    personal: {},
-    address: {
+    professional: {
+      experience: resumeData?.resumes?.[0]?.overallYearsOfExperience || 0,
+      profession: resumeData?.resumes?.[0]?.professionalTitle || '',
+      specialty: resumeData?.resumes?.[0]?.specialties || [],
     },
-    professional: {},
-    jobPref: {}
+    jobPref: {
+      employmentType: resumeData?.workTypePreference || '',
+      availabilityDate: resumeData?.firstName || '',
+      shift: '',
+      selectedStates: '',
+    },
   });
-  const [formTouch, setFormTouch] = useState({
+
+  const [formErrors, setFormErrors] = useState<FormErrors>({
     personal: {},
     address: {},
     professional: {},
     jobPref: {}
   });
-  const [index, setIndex] = useState(0);
-  const [isAllValid, setIsAllValid] = useState(false);
 
+  const [formTouch, setFormTouch] = useState<FormTouch>({
+    personal: {},
+    address: {},
+    professional: {},
+    jobPref: {}
+  });
+
+  // Memoized Routes
   const routes = useMemo(() => [
     {
       key: 'personal',
@@ -225,8 +311,9 @@ const MultiStepRegistrationScreen = () => {
     }
   ], [formErrors]);
 
-  const validatePersonalDetails = async () => {
-    try { 
+  // Validation Functions
+  const validatePersonalDetails = useCallback(async () => {
+    try {
       await personalDetailsSchema.validate(formData.personal, { abortEarly: false });
       setFormErrors(prev => ({ ...prev, personal: {} }));
       return true;
@@ -238,9 +325,9 @@ const MultiStepRegistrationScreen = () => {
       setFormErrors(prev => ({ ...prev, personal: errorObj }));
       return false;
     }
-  };
+  }, [formData.personal]);
 
-  const validateProfessionalDetails = async () => {
+  const validateProfessionalDetails = useCallback(async () => {
     try {
       await professionalDetailsSchema.validate(formData.professional, { abortEarly: false });
       setFormErrors(prev => ({ ...prev, professional: {} }));
@@ -253,38 +340,35 @@ const MultiStepRegistrationScreen = () => {
       setFormErrors(prev => ({ ...prev, professional: errorObj }));
       return false;
     }
-  };
+  }, [formData.professional]);
 
-  const validateJobPreference = async () => {
+  const validateJobPreference = useCallback(async () => {
     try {
       await jobPreferenceSchema.validate(formData.jobPref, { abortEarly: false });
-      setFormErrors((prev: any) => ({ ...prev, jobPreference: {} }));
+      setFormErrors(prev => ({ ...prev, jobPref: {} }));
       return true;
     } catch (err: any) {
       const errorObj: Record<string, string> = {};
       err.inner.forEach((e: any) => {
         errorObj[e.path] = e.message;
       });
-      setFormErrors((prev: any) => ({ ...prev, jobPref: errorObj }));
+      setFormErrors(prev => ({ ...prev, jobPref: errorObj }));
       return false;
     }
-  };
+  }, [formData.jobPref]);
 
-  const validateAddressInfo = async () => {
+  const validateAddressInfo = useCallback(async () => {
     try {
       await addressValidationSchema.validate(formData.address, { abortEarly: false });
-      setFormErrors((prev) => ({ ...prev, address: {} }));
+      setFormErrors(prev => ({ ...prev, address: {} }));
       return true;
     } catch (err: any) {
       const errorObj: Record<string, any> = {};
-  
       if (err.inner && Array.isArray(err.inner)) {
         err.inner.forEach((e: any) => {
           if (!e.path) return;
-  
-          const pathParts = e.path.split('.'); // e.g., ['physicalAddress', 'city']
+          const pathParts = e.path.split('.');
           let current = errorObj;
-  
           pathParts.forEach((part: string, index: number) => {
             if (index === pathParts.length - 1) {
               current[part] = e.message;
@@ -295,85 +379,112 @@ const MultiStepRegistrationScreen = () => {
           });
         });
       }
-  
-      console.error('Address validation errors:', errorObj);
-      setFormErrors((prev) => ({ ...prev, address: errorObj }));
+      setFormErrors(prev => ({ ...prev, address: errorObj }));
       return false;
     }
-  };
-  
-  const validateAll = async () => {
-    const isPersonalValid = await validatePersonalDetails();
-    const isProfessionalValid = await validateProfessionalDetails();
-    const isAddressValid = await validateAddressInfo();
-    const isJobPrefValid = await validateJobPreference();
+  }, [formData.address]);
 
-    setIsAllValid(isPersonalValid && isProfessionalValid && isAddressValid && isJobPrefValid);
-  };
+  // Form Validation
+  const validateAll = useCallback(async () => {
+    const [isPersonalValid, isProfessionalValid, isAddressValid, isJobPrefValid] = await Promise.all([
+      validatePersonalDetails(),
+      validateProfessionalDetails(),
+      validateAddressInfo(),
+      validateJobPreference()
+    ]);
+    return isPersonalValid && isProfessionalValid && isAddressValid && isJobPrefValid;
+  }, [validatePersonalDetails, validateProfessionalDetails, validateAddressInfo, validateJobPreference]);
 
+  // Effects
   useEffect(() => {
     validateAll();
-  }, [formData]);
-  
-  console.log("tag errore",formErrors)
-  // const handleSubmit = async() => {
-  //   // if (validateForm()) {
-  //   //   console.log('Submitted Data:', formData);
-  //   //   Alert.alert('Success', 'Registration complete!');
-  //   // }
-  //   console.log('Valid data:', formData.professional);
+  }, [formData, validateAll]);
 
-  //     let isValid = await validatePersonalDetails();
-  //     console.log(7,isValid)
-  //     if (isValid) {
-  //       // proceed
-  //       console.log('Valid data:', formData.personal);
-  //       Alert.alert('Success', 'Registration Personal complete!');
-  //     }
-  //     isValid = await validateProfessionalDetails();
-  //     if (isValid) {
-  //       // proceed
-  //       console.log('Valid data:', formData.professional);
-  //       Alert.alert('Success', 'Registration Professional complete!');
-  //     }
-  // };
-  console.log("formData",formData,formTouch)
-  const handleSubmit = async () => {
-    console.log('Submitted Data:', formData);
+  useEffect(() => {
+    dispatch(fetchCandidatePersonalDetails());
+  }, [dispatch]);
 
-    const isPersonalValid = await validatePersonalDetails();  
-    const isProfessionalValid = await validateProfessionalDetails();
-    const isAddressValid = await validateAddressInfo();
-    const isJobPrefValid = await validateJobPreference();
-
-    if (isPersonalValid && isProfessionalValid && isJobPrefValid && isAddressValid) {
-      Alert.alert('Success', 'Registration complete!');
-    } else {
-      console.log('Validation failed');
+  // Form Submission
+  const handleRegister = useCallback(async () => {
+    const isValid = await validateAll();
+    if (!isValid) {
+      Alert.alert('Validation Error', 'Please fill all mandatory fields');
+      return;
     }
-  };
 
-  const renderScene = ({ route }: { route: any }) => {
+    try {
+      const onboardingFormData = new FormData();
+      const onboardingDetails = {
+        firstName: formData.personal.firstName,
+        lastName: formData.personal.lastName,
+        alternateEmailAddress: formData.personal.alternateEmail,
+        mobileNumber: formData.personal.mobileNumber,
+        address: [
+          {
+            addressType: 'permanent',
+            address: formData.address.physicalAddress.address,
+            zipCode: formData.address.physicalAddress.zipCode,
+            country: formData.address.physicalAddress.country,
+            state: formData.address.physicalAddress.state,
+            city: formData.address.physicalAddress.city,
+            latitude: 0,
+            longitude: 0
+          }
+        ],
+        overallYearsOfExperience: formData.professional.experience,
+        profileTitle: formData.professional.profession,
+        workTypePreference: formData.jobPref.employmentType,
+        availableFrom: formData.jobPref.availabilityDate,
+        preferredShift: formData.jobPref.shift,
+        preferredLocation: formData.jobPref.selectedStates,
+        resumes: [
+          {
+            professionalTitle: formData.professional.profession,
+            specialties: formData.professional.specialty.join(', '),
+            parsedData: JSON.stringify(formData.professional),
+            overallYearsOfExperience: formData.professional.experience
+          }
+        ],
+        skillData: formData.professional.specialty.map(skill => ({
+          keyword: skill,
+          lastUsed: null
+        }))
+      };
+
+      onboardingFormData.append('onboardingDetails', JSON.stringify(onboardingDetails));
+      await dispatch(submitOnboarding(onboardingFormData)).unwrap();
+      navigation.navigate(ScreenNames.RegistrationASuccessScreen);
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to submit registration');
+    }
+  }, [formData, validateAll, dispatch, navigation]);
+
+  // Render Functions
+  const renderScene = useCallback(({ route }: { route: Route }) => {
     switch (route.key) {
       case 'personal':
         return (
           <PersonalDetails
-          data={formData.personal}
-          onChange={data => {
-            setFormData(prev => ({ ...prev, personal: data }));
-            validatePersonalDetails();
-          }}
-          errors={formErrors.personal}
-          touched={formTouch.personal}
-          setTouched={data => setFormTouch(prev => ({ ...prev, personal: data }))}
+            data={formData.personal}
+            onChange={(field: string, value: any) => {
+              setFormData(prev => ({
+                ...prev,
+                personal: { ...prev.personal, [field]: value }
+              }));
+              validatePersonalDetails();
+            }}
+            errors={formErrors.personal}
+            touched={formTouch.personal}
+            setTouched={data => setFormTouch(prev => ({ ...prev, personal: data }))}
+            onSubmit={validatePersonalDetails}
           />
         );
       case 'address':
         return (
           <AddressDetails
             data={formData.address}
-            onChange={data => {
-              setFormData(prev => ({ ...prev, address: data }));
+            onChange={(updatedAddress: FormData['address']) => {
+              setFormData(prev => ({ ...prev, address: updatedAddress }));
               validateAddressInfo();
             }}
             errors={formErrors.address}
@@ -385,8 +496,11 @@ const MultiStepRegistrationScreen = () => {
         return (
           <ProfessionalDetails
             data={formData.professional}
-            onChange={data => {
-              setFormData(prev => ({ ...prev, professional: data }));
+            onChange={(field: string, value: any) => {
+              setFormData(prev => ({
+                ...prev,
+                professional: { ...prev.professional, [field]: value }
+              }));
               validateProfessionalDetails();
             }}
             errors={formErrors.professional}
@@ -398,8 +512,11 @@ const MultiStepRegistrationScreen = () => {
         return (
           <JobPreferences
             data={formData.jobPref}
-            onChange={data => {
-              setFormData(prev => ({ ...prev, jobPref: data }));
+            onChange={(field: string, value: any) => {
+              setFormData(prev => ({
+                ...prev,
+                jobPref: { ...prev.jobPref, [field]: value }
+              }));
               validateJobPreference();
             }}
             errors={formErrors.jobPref}
@@ -410,56 +527,61 @@ const MultiStepRegistrationScreen = () => {
       default:
         return null;
     }
-  };
+  }, [formData, formErrors, formTouch, validatePersonalDetails, validateAddressInfo, validateProfessionalDetails, validateJobPreference]);
 
-const renderScrollableTabBar = (props:any) => {
-  const { navigationState, jumpTo } = props;
+  const renderTabBar = useCallback((props: any) => {
+    const { navigationState, jumpTo } = props;
+
+    return (
+      <View style={styles.tabBarContainer}>
+        {navigationState.routes.map((route: Route, index: number) => {
+          const focused = navigationState.index === index;
+          const color = focused ? theme.colors.primary.main : theme.colors.text.light;
+
+          return (
+            <Pressable
+              key={route.key}
+              onPress={() => jumpTo(route.key)}
+              style={styles.tabItem}
+            >
+              <Icon name={route.icon} size={20} color={color} style={styles.icon} />
+              <Text style={[styles.tabText, { color }]}>
+                {route.title}
+                {route.hasError && <Icon name="alert-circle" size={12} color="red" />}
+              </Text>
+              {focused && <View style={styles.activeIndicator} />}
+            </Pressable>
+          );
+        })}
+      </View>
+    );
+  }, []);
 
   return (
-    <View style={styles.tabBarContainer}>
-      {navigationState.routes.map((route:any, index: number) => {
-        const focused = navigationState.index === index;
-        const color = focused ? theme.colors.primary.main : theme.colors.text.light;
-
-        return (
-          <Pressable
-            key={route.key}
-            onPress={() => jumpTo(route.key)}
-            style={styles.tabItem}
-          >
-            <Icon name={route.icon} size={20} color={color} style={styles.icon} />
-            <Text style={[styles.tabText, { color }]}>
-              {route.title}
-              {route.hasError && <Icon name={'alert-circle'} size={10} color={'red'} />}
-              </Text>
-            {focused && <View style={styles.activeIndicator} />}
-          </Pressable>
-        );
-      })}
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Header title="Registration" showBackButton />
+      <View style={{ flex: 1 }}>
+        <TabView
+          navigationState={{ index: activeTab, routes }}
+          renderScene={renderScene}
+          onIndexChange={setActiveTab}
+          initialLayout={{ width: screenWidth }}
+          renderTabBar={renderTabBar}
+        />
+        <View style={styles.footer}>
+          <Button
+            title="Register"
+            onPress={handleRegister}
+            disabled={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0)}
+            style={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0) ? styles.disabledButton : styles.registerButton}
+            textStyle={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0) && {color: '#fff'}}
+          />
+        </View>
+        <TermsPolicies />
+        <CopyrightFooter />
+      </View>
+    </SafeAreaView>
   );
-};
-
-return (
-  <SafeAreaView style={{ flex: 1 }}>
-  <Header title="Registration" showBackButton />
-  <View style={{ flex: 1 }}>
-    <TabView
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: screenWidth }}
-      renderTabBar={renderScrollableTabBar}
-    />
-
-    <View style={{ padding: 16 }}>
-        <Button title="Register" style={styles.registerBtn} onPress={handleSubmit} disabled={!isAllValid} />
-    </View>
-      <TermsPolicies />
-      <CopyrightFooter />
-  </View>
-</SafeAreaView>
-)
 };
 
 export default MultiStepRegistrationScreen;

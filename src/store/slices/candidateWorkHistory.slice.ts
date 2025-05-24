@@ -34,6 +34,21 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
       state.loading = false;
       state.error = action.payload;
     },
+    updateCandidateWorkHistoryStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    updateCandidateWorkHistorySuccess: (
+      state,
+      action: PayloadAction<CandidateWorkHistory>,
+    ) => {
+      state.loading = false;
+      state.workHistory = action.payload;
+    },
+    updateCandidateWorkHistoryFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
     clearCandidateWorkHistoryError: (state) => {
       state.error = null;
     },
@@ -44,6 +59,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
   fetchCandidateWorkHistoryStart,
   fetchCandidateWorkHistorySuccess,
   fetchCandidateWorkHistoryFailure,
+  updateCandidateWorkHistoryStart,
+  updateCandidateWorkHistorySuccess,
+  updateCandidateWorkHistoryFailure,
   clearCandidateWorkHistoryError,
  } = candidateWorkHistorySlice.actions;
 

@@ -33,12 +33,28 @@ export const ProfileScreenHeader: React.FC<ProfileScreenHeaderProps> = ({
       </View>
 
       <View style={styles.flexRow}>
-        {!completedStatus && (
-          <Icon
-            name="file-alert-outline"
-            size={18}
-            color={theme.colors.status.error}
-          />
+        {completedStatus ? (
+          <View style={styles.flexRow}>
+            <Icon
+              name="checkmark-circle"
+              size={18}
+              color={theme.colors.status.success}
+            />
+            <TextStyle size="xs" color={theme.colors.status.success} style={styles.iconSpacing}>
+              Completed
+            </TextStyle>
+          </View>
+        ) : (
+          <View style={styles.flexRow}>
+            <Icon
+              name="file-alert-outline"
+              size={18}
+              color={theme.colors.status.error}
+            />
+            <TextStyle size="xs" color={theme.colors.status.error} style={styles.iconSpacing}>
+              Incomplete
+            </TextStyle>
+          </View>
         )}
         <Icon
           name="chevron-up"

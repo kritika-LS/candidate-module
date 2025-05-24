@@ -18,6 +18,7 @@ class ApiClient {
     });
     console.log('This is bond -007')
     this.setupInterceptors();
+    this.GetToken(); 
   }
 
   public static getInstance(): ApiClient {
@@ -27,21 +28,27 @@ class ApiClient {
     return ApiClient.instance;
   }
 
+  public async GetToken(): Promise<void> {
+    try {
+      const token = await AsyncStorage.getItem('auth_token');
+      if (token) {
+        this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        console.log('✅ Token set in axios headers:', {
+          token: token.substring(0, 20) + '...', // Log only first 20 chars for security
+          headers: this.axiosInstance.defaults.headers.common
+        });
+      } else {
+        console.warn('⚠️ No token found in AsyncStorage');
+      }
+    } catch (error) {
+      console.error('❌ Error fetching token from AsyncStorage:', error);
+    }
+  }
+
    private setupInterceptors() {
     // Request interceptor
      this.axiosInstance.interceptors.request.use(
-       async config => {
-
-        try {
-          const token = await AsyncStorage.getItem('auth_token');
-          console.log('This is James-007')
-          console.log('🌐 Token:', token);
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
-        } catch (error) {
-          console.error('Error fetching auth token:', error);
-        }
+       config => {
         console.log('🌐 Request:', {
           method: config.method?.toUpperCase(),
           url: config.url,
@@ -79,13 +86,14 @@ class ApiClient {
           method: error.config?.method?.toUpperCase(),
           timestamp: new Date().toISOString(),
         });
+        
 
         const apiError: ApiError = {
           message: error.message,
           status: error.response?.status || 500,
           code: error.code,
         };
-        return Promise.reject(apiError);
+        return Promise.reject({...error?.response,apiError});
       },
     );
   }
@@ -96,7 +104,6 @@ class ApiClient {
       config,
       timestamp: new Date().toISOString(),
     });
-    this.setupInterceptors();
     return this.axiosInstance.get(url, config).then(response => {
       console.log('📥 GET Response:', {
         url,
@@ -118,6 +125,27 @@ class ApiClient {
       config,
       timestamp: new Date().toISOString(),
     });
+
+    // If data is FormData, set the correct Content-Type and other headers
+    if (data instanceof FormData) {
+      // Remove Content-Type header to let the browser set it with the boundary
+      if (config?.headers) {
+        delete config.headers['Content-Type'];
+      }
+      
+      // Ensure we're using the latest token
+      const token = this.axiosInstance.defaults.headers.common['Authorization'];
+      if (token) {
+        config = {
+          ...config,
+          headers: {
+            ...config?.headers,
+            'Authorization': token,
+          },
+        };
+      }
+    }
+
     return this.axiosInstance.post(url, data, config).then(response => {
       console.log('📥 POST Response:', {
         url,

@@ -1,20 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
- type CandidateProfessionalInformation = any;
+type CandidateProfessionalInformation = any;
 
- interface CandidateProfessionalInfoState {
+interface CandidateProfessionalInfoState {
   professionalInformation: CandidateProfessionalInformation | null;
   loading: boolean;
   error: string | null;
- }
+}
 
- const initialState: CandidateProfessionalInfoState = {
+const initialState: CandidateProfessionalInfoState = {
   professionalInformation: null,
   loading: false,
   error: null,
- };
+};
 
- const candidateProfessionalInfoSlice = createSlice({
+const candidateProfessionalInfoSlice = createSlice({
   name: 'candidateProfessionalInfo',
   initialState,
   reducers: {
@@ -33,17 +33,35 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
       state.loading = false;
       state.error = action.payload;
     },
+    updateCandidateProfessionalInfoStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    updateCandidateProfessionalInfoSuccess: (
+      state,
+      action: PayloadAction<CandidateProfessionalInformation>,
+    ) => {
+      state.loading = false;
+      state.professionalInformation = action.payload;
+    },
+    updateCandidateProfessionalInfoFailure: (state, action: PayloadAction<string>) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
     clearCandidateProfessionalInfoError: (state) => {
       state.error = null;
     },
   },
- });
+});
 
- export const {
+export const {
   fetchCandidateProfessionalInfoStart,
   fetchCandidateProfessionalInfoSuccess,
   fetchCandidateProfessionalInfoFailure,
+  updateCandidateProfessionalInfoStart,
+  updateCandidateProfessionalInfoSuccess,
+  updateCandidateProfessionalInfoFailure,
   clearCandidateProfessionalInfoError,
- } = candidateProfessionalInfoSlice.actions;
+} = candidateProfessionalInfoSlice.actions;
 
- export default candidateProfessionalInfoSlice.reducer;
+export default candidateProfessionalInfoSlice.reducer;

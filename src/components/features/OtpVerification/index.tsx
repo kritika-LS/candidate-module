@@ -9,6 +9,11 @@ import { AuthStackParamList } from "../../../types/navigation";
 import { OTPInput } from "../../common/OtpInput";
 import { confirmSignUp, resendSignUpCode } from "aws-amplify/auth";
 import { SaveButton } from "../SaveButton";
+import { useAuth } from "../../../context/AuthContext";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { fetchCandidate } from "../../../store/thunk/candidate.thunk";
+import { ScreenNames } from "../../../utils/ScreenConstants";
+import Toast from "react-native-toast-message";
 
 const RESEND_INTERVAL = 180; // seconds
 
@@ -17,13 +22,15 @@ interface OtpVerificationProps {
 	onCodeChange?: (code: string) => void;
 	onResend?: () => void;
 	setOtpSent?: any;
+	password: any
 }
 
 const OTP_LENGTH = 6;
 
-export const OtpVerification = ({ email, onCodeChange, setOtpSent }: OtpVerificationProps) => {
-
+export const OtpVerification = ({ email, onCodeChange, setOtpSent, password }: OtpVerificationProps) => {
 	const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+	const { login } = useAuth();
+	const dispatch = useAppDispatch();
 
 	const [timer, setTimer] = useState(RESEND_INTERVAL);
 	const [isResendActive, setIsResendActive] = useState(false);
@@ -47,27 +54,47 @@ export const OtpVerification = ({ email, onCodeChange, setOtpSent }: OtpVerifica
 				console.error('Email is undefined. Cannot verify sign up.');
 				return;
 			}
-			let confirmationCodeString:any = otpCode;
-      if (Array.isArray(otpCode)) {
-        confirmationCodeString = otpCode.join('');
-      } else if (typeof otpCode !== 'string') {
-        // If it's not an array or a string, try to convert it to a string.
-        // This handles cases where otpCode might be a number, for example.
-        confirmationCodeString = String(otpCode);
-      }
-			const { nextStep: confirmSignUpNextStep } = await confirmSignUp({
+			let confirmationCodeString: any = otpCode;
+			if (Array.isArray(otpCode)) {
+				confirmationCodeString = otpCode.join('');
+			} else if (typeof otpCode !== 'string') {
+				confirmationCodeString = String(otpCode);
+			}
+			const response = await confirmSignUp({
 				username: email,
 				confirmationCode: confirmationCodeString,
 			});
-			if (confirmSignUpNextStep.signUpStep === 'DONE') {
-				navigation.navigate('UploadResumeScreen');
+			if (response?.nextStep?.signUpStep === "DONE" && password) {
+				await login(email, password);
+				
+				// Check candidate authorization
+				try {
+					const candidateResponse = await dispatch(fetchCandidate()).unwrap();
+					// Check if the response has a status key and it's not 401
+					if (candidateResponse?.status && candidateResponse.status !== 401) {
+						navigation.navigate(ScreenNames.HomeScreen);
+					} else {
+						navigation.navigate(ScreenNames.UploadResumeScreen);
+					}
+				} catch (error: any) {
+					// If API call fails or returns 401, navigate to upload resume screen
+					navigation.navigate(ScreenNames.UploadResumeScreen);
+					Toast.show({
+						type: 'error',
+						text1: 'Please complete your profile by uploading your resume'
+					});
+				}
 			}
 		} catch (error) {
 			console.error('Confirmation error:', error);
+			Toast.show({
+				type: 'error',
+				text1: 'Failed to verify OTP. Please try again.'
+			});
 		}
 	};
 
-	const handleResend = async() => {
+	const handleResend = async () => {
 		try {
 			if (!isResendActive) return;
 			if (!email) {
@@ -76,8 +103,16 @@ export const OtpVerification = ({ email, onCodeChange, setOtpSent }: OtpVerifica
 			}
 			await resendSignUpCode({ username: email });
 			setTimer(RESEND_INTERVAL);
+			Toast.show({
+				type: 'success',
+				text1: 'OTP resent successfully'
+			});
 		} catch (error) {
 			console.error('Resend code error:', error);
+			Toast.show({
+				type: 'error',
+				text1: 'Failed to resend OTP'
+			});
 		}
 	};
 
@@ -129,10 +164,9 @@ export const OtpVerification = ({ email, onCodeChange, setOtpSent }: OtpVerifica
 			}
 
 			<SaveButton onPress={verifySignUp} title="Verify" />
-
 		</View>
-	)
-}
+	);
+};
 
 const styles = StyleSheet.create({
 	resendStatement: {
@@ -143,4 +177,4 @@ const styles = StyleSheet.create({
 		color: theme.colors.primary.main,
 		fontWeight: '700'
 	},
-})
+});

@@ -14,7 +14,7 @@ import { Input } from '../../../components/common/Input';
 import { Formik } from 'formik';
 import Toast from 'react-native-toast-message';
 import { PhoneNumberInput } from '../../../components/common/PhoneInput';
-// import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Yup from 'yup';
 import { TextStyle } from '../../../components/common/Text';
@@ -164,8 +164,8 @@ const AddWorkHistory: React.FC = () => {
                     touched={touched.lastName}
                   />
                   <Text style={styles.label}>Type of Business/Facility</Text>
-                  {/* <DropDownPicker
-                    open={values.typeofBusinessOpen} // Open only when someone clicks for options
+                  <DropDownPicker
+                    open={values.typeofBusinessOpen}
                     setOpen={(open) => setFieldValue('typeofBusinessOpen', open)}
                     items={[
                       { label: 'Hospital', value: 'hospital' },
@@ -175,12 +175,11 @@ const AddWorkHistory: React.FC = () => {
                     value={values.typeofBusiness}
                     setValue={(callback) => setFieldValue('typeofBusiness', callback(values.typeofBusiness))}
                     placeholder="Select type of business"
-                    searchable={true}
-                    searchPlaceholder="Search type of business/facility"
-                    listMode="MODAL"
-                    modalProps={{ animationType: 'slide' }}
-                    style={styles.dropdown}
-                  /> */}
+                    searchable={false}
+                    listMode="SCROLLVIEW"
+                    style={[styles.dropdown, { zIndex: values.typeofBusinessOpen ? 10 : 1 }]}
+                    dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+                  />
                   <View style={styles.inputGroup}>
                     <Text style={styles.label}>Start Date</Text>
                     <TouchableOpacity
@@ -358,8 +357,8 @@ const AddWorkHistory: React.FC = () => {
                     touched={touched.numberOfBedsInUnit}
                   />
                   <Text style={styles.label}>Employment type</Text>
-                  {/* <DropDownPicker
-                    open={values.employmentTypeOpen} // Open only when someone clicks for options
+                  <DropDownPicker
+                    open={values.employmentTypeOpen}
                     setOpen={(open) => setFieldValue('employmentTypeOpen', open)}
                     items={[
                       { label: 'Full-time', value: 'full-time' },
@@ -369,12 +368,11 @@ const AddWorkHistory: React.FC = () => {
                     value={values.employmentType}
                     setValue={(callback) => setFieldValue('employmentType', callback(values.employmentType))}
                     placeholder="Select employment type"
-                    searchable={true}
-                    searchPlaceholder="Search employment type"
-                    listMode="MODAL"
-                    modalProps={{ animationType: 'slide' }}
-                    style={styles.dropdown}
-                  /> */}
+                    searchable={false}
+                    listMode="SCROLLVIEW"
+                    style={[styles.dropdown, { zIndex: values.employmentTypeOpen ? 10 : 1 }]}
+                    dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+                  />
                   <Input
                     label="Nurse to patient ratio"
                     value={values.nurseToPatientRatio}
@@ -386,27 +384,20 @@ const AddWorkHistory: React.FC = () => {
                     touched={touched.nurseToPatientRatio}
                   />
                   <Text style={styles.label}>Charting system</Text>
-                      {/* <DropDownPicker
+                      <DropDownPicker
                           open={values.ChartingsystemOpen}
                           setOpen={(open) => setFieldValue('ChartingsystemOpen', open)}
                           items={values.ChartingsystemItems}
                           value={values.Chartingsystem}
                           setValue={(callback) => setFieldValue('Chartingsystem', callback(values.Chartingsystem))}
                           placeholder="Select charting system"
-                          searchable={true}
-                          searchPlaceholder="Search charting system"
-                          listMode="MODAL"
-                          modalProps={{ animationType: 'slide' }}
-                          onChangeSearchText={(text) => {
-                              if (!values.ChartingsystemItems.find(p => p.label.toLowerCase().includes(text.toLowerCase()))) {
-                                  Alert.alert('Info', 'Please choose from the list');
-                              }
-                          }}
+                          searchable={false}
+                          listMode="SCROLLVIEW"
                           style={styles.dropdown}
-                      /> */}
+                      />
                   <Text style={styles.label}>Shift</Text>
-                  {/* <DropDownPicker
-                    open={values.shiftOpen} // Open only when someone clicks for options
+                  <DropDownPicker
+                    open={values.shiftOpen}
                     setOpen={(open) => setFieldValue('shiftOpen', open)}
                     items={[
                       { label: 'Day', value: 'day' },
@@ -416,12 +407,11 @@ const AddWorkHistory: React.FC = () => {
                     value={values.shift}
                     setValue={(callback) => setFieldValue('shift', callback(values.shift))}
                     placeholder="Select shift"
-                    searchable={true}
-                    searchPlaceholder="Search shift"
-                    listMode="MODAL"
-                    modalProps={{ animationType: 'slide' }}
-                    style={styles.dropdown}
-                  /> */}
+                    searchable={false}
+                    listMode="SCROLLVIEW"
+                    style={[styles.dropdown, { zIndex: values.shiftOpen ? 10 : 1 }]}
+                    dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+                  />
                   <View style={styles.chargeExperienceContainer}>
                     <Text style={styles.label}>Charge Experience</Text>
                     <View style={styles.checkboxGroup}>
@@ -586,5 +576,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', 
     paddingHorizontal: 16, 
     paddingBottom: 16
+  },
+  dropdownContainer: {
+    maxHeight: 200,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 8,
+    backgroundColor: '#fff',
   },
 });

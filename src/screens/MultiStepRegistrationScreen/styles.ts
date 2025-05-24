@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { theme } from "../../theme";
 
 export const styles = StyleSheet.create({
     scene: {
@@ -41,5 +42,18 @@ export const styles = StyleSheet.create({
     registerBtn: {
       borderRadius: 24,
       height: 52,
-    }
+    },
+    footer: {
+      padding: 16,
+      // borderTopWidth: 1,
+      // borderTopColor: theme.colors.border,
+      // backgroundColor: theme.colors.background,
+    },
+    registerButton: {
+      backgroundColor: theme.colors.primary.main,
+      borderRadius: 24,
+    },
+    disabledButton: {
+      borderRadius: 24,
+    },
 });

@@ -13,7 +13,7 @@ import { theme } from '../../../theme';
 import { Input } from '../../../components/common/Input';
 import { Formik } from 'formik';
 import Toast from 'react-native-toast-message';
-// import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Yup from 'yup';
 import { TextStyle } from '../../../components/common/Text';
@@ -158,7 +158,7 @@ export const AddEducationForm = () => {
                 
                 {/* Level of Education */}
                 <Text style={styles.label}>Level of Education *</Text>
-                {/* <DropDownPicker
+                <DropDownPicker
                   open={values.levelOfEducationOpen}
                   setOpen={(open) => setFieldValue('levelOfEducationOpen', open)}
                   items={[
@@ -171,15 +171,18 @@ export const AddEducationForm = () => {
                   value={values.levelOfEducation}
                   setValue={(callback) => setFieldValue('levelOfEducation', callback(values.levelOfEducation))}
                   placeholder="Select level of education"
-                  style={styles.dropdown}
-                /> */}
+                  searchable={false}
+                  listMode="SCROLLVIEW"
+                  style={[styles.dropdown, { zIndex: values.levelOfEducationOpen ? 10 : 1 }]}
+                  dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+                />
                 {touched.levelOfEducation && errors.levelOfEducation && (
                   <Text style={styles.error}>{errors.levelOfEducation}</Text>
                 )}
 
                 {/* Mode of Education */}
                 <Text style={styles.label}>Mode of Education *</Text>
-                {/* <DropDownPicker
+                <DropDownPicker
                   open={values.modeOfEducationOpen}
                   setOpen={(open) => setFieldValue('modeOfEducationOpen', open)}
                   items={[
@@ -190,9 +193,11 @@ export const AddEducationForm = () => {
                   value={values.modeOfEducation}
                   setValue={(callback) => setFieldValue('modeOfEducation', callback(values.modeOfEducation))}
                   placeholder="Select mode of education"
+                  searchable={false}
+                  listMode="SCROLLVIEW"
                   style={[styles.dropdown, { zIndex: values.modeOfEducationOpen ? 10 : 1 }]}
                   dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
-                /> */}
+                />
                 {touched.modeOfEducation && errors.modeOfEducation && (
                   <Text style={styles.error}>{errors.modeOfEducation}</Text>
                 )}
@@ -517,7 +522,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
     backgroundColor: '#fff',
-    marginTop: 2, // Add small margin to separate from the input
+    marginTop: 2,
   },
   inputGroup: {
     marginBottom: 16,

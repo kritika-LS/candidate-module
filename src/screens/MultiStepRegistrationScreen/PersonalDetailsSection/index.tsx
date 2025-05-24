@@ -37,46 +37,48 @@ const PersonalDetailsSection: React.FC<PersonalDetailsProps> = ({ data, onChange
           label="First Name"
           required
           value={data.firstName}
-          onChangeText={(value) => onChange({...data, firstName: value})}
+          onChangeText={(value: string) => onChange('firstName', value)}
           error={errors?.firstName}
           touched={touched?.firstName}
           placeholder="Enter First Name"
-          onBlur={() => setTouched({ ...touched, firstName: true })}
+          onBlur={() => setTouched({ firstName: true })}
         />
 
         <Input
           label="Last Name"
           required
           value={data.lastName}
-          onChangeText={(value) => onChange({...data, lastName: value})}
+          onChangeText={(value: string) => onChange('lastName', value)}
           error={errors?.lastName}
           touched={touched?.lastName}
           placeholder="Enter Last Name"
-          onBlur={() => setTouched({ ...touched, lastName: true })}
+          onBlur={() => setTouched({ lastName: true })}
         />
 
         <Input
           label="Alternate Email Address"
           value={data.alternateEmail}
-          onChangeText={(value) => onChange({...data, alternateEmail: value})}
+          onChangeText={(value: string) => onChange('alternateEmail', value)}
           error={errors?.alternateEmail}
           touched={touched?.alternateEmail}
           placeholder="Enter alternate Email Address"
-          onBlur={() => setTouched({ ...touched, alternateEmail: true })}
+          onBlur={() => setTouched({ alternateEmail: true })}
         />
       </View>
 
       <View style={styles.section}>
         <PhoneNumberInput
           label="Mobile Number"
+          required
           name="mobileNumber"
           value={data.mobileNumber}
-          onChangeCountry={(country) => onChange('countryCode', `+${country?.callingCode[0]}`)}
-          onChangeText={(value) => onChange({...data, mobileNumber: value})}
+          onChangeCountry={(country: { callingCode: string[] }) => onChange('countryCode', `+${country?.callingCode[0]}`)}
+          onChangeText={(value: string) => onChange('mobileNumber', value)}
           error={errors?.mobileNumber}
-          touched={errors?.mobileNumber}
+          touched={touched?.mobileNumber}
           defaultCode="US"
-          onBlur={() => setTouched({ ...touched, mobileNumber: true })}
+          placeholder="Enter mobile number"
+          onBlur={() => setTouched({ mobileNumber: true })}
         />
       </View>
     </ScrollView>

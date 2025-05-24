@@ -1,15 +1,20 @@
 import apiClient from "../apiClient";
 import { ENDPOINTS } from "../endPoints";
 
-
- export class JobsService {
+export class JobsService {
   static async getRecommendedJobs(
     page: number,
     pageSize: number,
     sortOrder: 'Asc' | 'Desc',
-    sortBy: 'RELEVANCE'
+    sortBy: 'RELEVANCE' | 'NEWEST' | 'PAYRATE',
+    jobCategory?: string
   ): Promise<any[]> {
-    return apiClient.get<any[]>(
-        `${ENDPOINTS.DASHBOARD.recommendedJobs}/${page}/${pageSize}?sortOrder=${sortOrder}&sortBy=${sortBy}`,);
+    const endpoint = `${ENDPOINTS.DASHBOARD.recommendedJobs}/${page}/${pageSize}`;
+    const params = {
+      sortOrder,
+      sortBy,
+      ...(jobCategory && { job_category: jobCategory })
+    };
+    return apiClient.post<any[]>(endpoint, params);
   }
- }
+}

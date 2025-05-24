@@ -14,12 +14,13 @@ import React, { useState } from "react";
  import LottieView from "lottie-react-native";
  import { uploadCandidateResume } from "../../store/thunk/candidateResume.thunk";
  import { useDispatch } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // import axios from "axios";
 
  const uploadResume = async (pdfUri) => {
+  console.log("------------ upload resume called ------------")
   const url = 'https://dev-onboarding-service.thehummingbird.solutions/api/v1/candidate/resume';
-  // const token = await AsyncStorage.getItem('auth_token');
-  const token ='eyJraWQiOiJNMFRRVnJHS1BIVHYyYUpoNGZWbFY5MTUzVEQrRnp2M1dIcnJnck1uQlgwPSIsImFsZyI6IlJTMjU2In0.eyJ1c2VyX3N0YXR1cyI6IkNPTkZJUk1FRCIsInN1YiI6IjE0MzhmNDg4LTEwNTEtNzBkZS0zZTUzLWEyMmYwZGVkZGUzZSIsImVtYWlsX3ZlcmlmaWVkIjoidHJ1ZSIsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX1JWaUpaYUY2MSIsImNsaWVudF9pZCI6IjRva2g2MGNtbWRvNDhpb2VtNDF0Z28zcXJoIiwib3JpZ2luX2p0aSI6IjhlNWZmYjE5LTAyNGEtNGQ4Ny05ZmIxLWQzNmIyMjYyZTlkYiIsImV2ZW50X2lkIjoiNWIzNDhhZjMtYjcwYi00OTkzLTg0ZjktMDUyYzRiMWY1YzhhIiwidG9rZW5fdXNlIjoiYWNjZXNzIiwic2NvcGUiOiJhd3MuY29nbml0by5zaWduaW4udXNlci5hZG1pbiIsImF1dGhfdGltZSI6MTc0Nzc3MjQ0NywiY3VzdG9tOmlzX3JlZ2lzdGVyZWQiOmZhbHNlLCJleHAiOjE3NDc3NzQyNDcsImlhdCI6MTc0Nzc3MjQ0NywiZW1haWwiOiJLcml0aWthLkpAbGFuY2Vzb2Z0LmNvbSIsImp0aSI6ImVlZTE3M2Y0LTMwNzQtNGEyMC04MzFlLTY3MTRkODI4NzY0OCIsInVzZXJuYW1lIjoiMTQzOGY0ODgtMTA1MS03MGRlLTNlNTMtYTIyZjBkZWRkZTNlIn0.KR7dL4kDEh8elFIIJro77K8CL_sbUqDrPHan6vSo4L4xeJn_Ie72jlBgvJ_fXiVPLCfc2hkLV0UyDr9XjdVEbQwXAPMaSV5eDY0VhP74W5REb8DoRklvWCyEsetveBX5p2_-F9E4V2kjQvJnbkzj7FWp6jIE59otHTgrz4a9KhumpvI0ZbNepCgtM6s4La6kgfwKDX9_BiyWXYlkBrwo0xWmC2wSbsLBpR5h_tFAoyQpXmmaeGeu7MCodWE1N-L3J97pZW3zy-zJpiNHRXUck7ZoGj01rsX5LmItAmPN-btLZSTgIT-fHPGFjEYGbsEh17wDBowHj0h07cQ_WA1gZQ';
+  const token = await AsyncStorage.getItem('auth_token');
 console.log("tag here token",token)
   const formData = new FormData();
   formData.append('resume', {
@@ -38,7 +39,9 @@ console.log("tag here token",token)
     });
 
     const data = await response.json();
+
     console.log('Upload response:', data);
+    return data;
   } catch (error) {
     console.error('Upload failed:', error);
   }
@@ -73,7 +76,8 @@ console.log("tag here token",token)
 
       setFileName(result.name);
       setIsUploading(true);
-      await uploadResume(result);
+      const response = await uploadResume(result);
+      console.log({response})
       // Create FormData object
       // const formData = new FormData();
       // formData.append('resume', {
@@ -85,8 +89,7 @@ console.log("tag here token",token)
       // await dispatch(uploadCandidateResume(formData)).unwrap();
       
       setIsUploading(false);
-      Alert.alert('Success', 'Resume uploaded successfully!');
-      navigation.navigate(ScreenNames.MultiStepRegistrationScreen); // Navigate after successful upload
+      navigation.navigate(ScreenNames.MultiStepRegistrationScreen, {responseData: response?.responsePayload}); // Navigate after successful upload
 
     } catch (err: any) {
       setFileName(null);
@@ -114,7 +117,7 @@ console.log("tag here token",token)
   return(
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={{flex: 1}}>
-        <Header title="Upload Resume" showBackButton />
+        <Header title="Upload Resume" showBackButton onBackPress={() => navigation.navigate("LoginScreen")} />
         <View style={styles.body}>
           {(isUploading && fileName) ? (
             <View style={styles.uploadBox}>

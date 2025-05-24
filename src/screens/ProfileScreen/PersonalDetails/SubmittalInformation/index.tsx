@@ -19,26 +19,63 @@ import { theme } from '../../../../theme';
 import { TextStyle } from '../../../../components/common/Text';
 import { SaveButton } from '../../../../components/features/SaveButton';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/useAppDispatch';
+import { updateCandidatePersonalDetails } from '../../../../store/thunk/candidatePersonalDetails.thunk';
+import { CandidatePersonalDetailsPayload } from '../../../../types/personalDetails';
+import Toast from 'react-native-toast-message';
 
 const SubmittalInformationScreen: React.FC = () => {
-  const MAX_CHAR_LENGTH = 256;
+  const dispatch = useAppDispatch();
+  const candidatePersonalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload) || {};
+  const [isCompleted, setIsCompleted] = React.useState(false);
+
+  const MAX_CHAR_LENGTH = 11;
 
   const validationSchema = Yup.object({
     dateOfBirth: Yup.date().required('Date of Birth is required'),
     socialSecurityNumber: Yup.string()
-      .max(MAX_CHAR_LENGTH, `Cannot exceed ${MAX_CHAR_LENGTH} characters`)
+      .matches(/^\d{3}-\d{2}-\d{4}$/, 'Invalid SSN format. Expected format is XXX-XX-XXXX')
       .required('Social Security Number is required'),
   });
 
+  const formatSSN = (value: string) => {
+    const digits = value.replace(/\D/g, '');
+    
+    if (digits.length <= 3) {
+      return digits;
+    } else if (digits.length <= 5) {
+      return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+    } else {
+      return `${digits.slice(0, 3)}-${digits.slice(3, 5)}-${digits.slice(5, 9)}`;
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
-      dateOfBirth: '',
-      socialSecurityNumber: '',
+      dateOfBirth: candidatePersonalDetails?.dateOfBirth || '',
+      socialSecurityNumber: candidatePersonalDetails?.ssn || '',
     },
     validationSchema,
-    onSubmit: (values) => {
-      console.log('Submittal Information saved:', values);
-      Alert.alert('Success', 'Submittal information saved!');
+    onSubmit: async (values) => {
+      try {
+        const payload: CandidatePersonalDetailsPayload = {
+          ...candidatePersonalDetails,
+          dateOfBirth: values.dateOfBirth,
+          ssn: values.socialSecurityNumber,
+        };
+
+        await dispatch(updateCandidatePersonalDetails(payload)).unwrap();
+        setIsCompleted(true);
+        Toast.show({
+          type: 'success',
+          text1: 'Submittal information saved successfully',
+        });
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: 'Failed to save submittal information',
+        });
+      }
     },
   });
 
@@ -74,7 +111,7 @@ const SubmittalInformationScreen: React.FC = () => {
           <ProfileScreenHeader
             headerIcon='clipboard-text-outline'
             headerTitle='Submittal Information'
-            completedStatus={false}
+            completedStatus={isCompleted}
           />
           <View style={styles.inputGroup}>
             <TextStyle size='sm' style={styles.label}>Date of Birth</TextStyle>
@@ -96,7 +133,7 @@ const SubmittalInformationScreen: React.FC = () => {
               />
             )}
             {formik.touched.dateOfBirth && formik.errors.dateOfBirth && (
-              <Text style={styles.errorText}>{formik.errors.dateOfBirth}</Text>
+              <Text style={styles.errorText}>{formik.errors.dateOfBirth as string}</Text>
             )}
           </View>
 
@@ -104,15 +141,18 @@ const SubmittalInformationScreen: React.FC = () => {
             <TextStyle size='sm' style={styles.label}>Social Security Number</TextStyle>
             <TextInput
               style={styles.input}
-              placeholder="Enter social security number"
+              placeholder="XXX-XX-XXXX"
               value={formik.values.socialSecurityNumber}
-              onChangeText={formik.handleChange('socialSecurityNumber')}
+              onChangeText={(text) => {
+                const formattedSSN = formatSSN(text);
+                formik.setFieldValue('socialSecurityNumber', formattedSSN);
+              }}
               onBlur={formik.handleBlur('socialSecurityNumber')}
               maxLength={MAX_CHAR_LENGTH}
               keyboardType="number-pad"
             />
             {formik.touched.socialSecurityNumber && formik.errors.socialSecurityNumber && (
-              <Text style={styles.errorText}>{formik.errors.socialSecurityNumber}</Text>
+              <Text style={styles.errorText}>{formik.errors.socialSecurityNumber as string}</Text>
             )}
           </View>
         </View>
@@ -121,6 +161,7 @@ const SubmittalInformationScreen: React.FC = () => {
         <SaveButton
           title="Save"
           onPress={formik.handleSubmit}
+          disabled={!formik.isValid || !formik.dirty}
         />
       </View>
     </SafeAreaView>

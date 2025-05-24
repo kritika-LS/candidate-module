@@ -10,7 +10,7 @@ import {
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import DateTimePicker from '@react-native-community/datetimepicker';
-// import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { Input } from '../../../../components/common/Input';
 // import DocumentPicker from 'react-native-document-picker';
 import { theme } from '../../../../theme';
@@ -107,51 +107,53 @@ const Certificate = () => {
               setFieldValue,
               errors,
               touched,
+              isValid,
+              dirty,
             }) => (
-              <View style={styles.container}>
-                <Input
-                  label="Certificate Name"
-                  required
-                  value={values.certificateName}
-                  onChangeText={handleChange('certificateName')}
-                  onBlur={handleBlur('certificateName')}
-                  error={errors.certificateName}
-                  touched={touched.certificateName}
-                  placeholder="Search certificate name"
+              <>
+                <View style={styles.container}>
+                  <TextStyle style={styles.label}>Certificate Name</TextStyle>
+                  <TextInput
+                    style={styles.input}
+                    value={values.certificateName}
+                    onChangeText={handleChange('certificateName')}
+                    onBlur={handleBlur('certificateName')}
+                    placeholder="Enter certificate name"
                   />
+                  {touched.certificateName && errors.certificateName && (
+                    <TextStyle style={styles.error}>{errors.certificateName}</TextStyle>
+                  )}
 
-                <Input
-                  label="Certification Number"
-                  required
-                  value={values.certificationNumber}
-                  onChangeText={handleChange('certificationNumber')}
-                  onBlur={handleBlur('certificationNumber')}
-                  error={errors.certificationNumber}
-                  touched={touched.certificationNumber}
-                  placeholder="Enter certification number"
+                  <TextStyle style={styles.label}>Certification Number</TextStyle>
+                  <TextInput
+                    style={styles.input}
+                    value={values.certificationNumber}
+                    onChangeText={handleChange('certificationNumber')}
+                    onBlur={handleBlur('certificationNumber')}
+                    placeholder="Enter certification number"
                   />
+                  {touched.certificationNumber && errors.certificationNumber && (
+                    <TextStyle style={styles.error}>{errors.certificationNumber}</TextStyle>
+                  )}
 
-                <Input
-                  label="Issued By"
-                  required
-                  value={values.issuedBy}
-                  onChangeText={handleChange('issuedBy')}
-                  onBlur={handleBlur('issuedBy')}
-                  error={errors.issuedBy}
-                  touched={touched.issuedBy}
-                  placeholder="Enter issued by"
+                  <TextStyle style={styles.label}>Issued By</TextStyle>
+                  <TextInput
+                    style={styles.input}
+                    value={values.issuedBy}
+                    onChangeText={handleChange('issuedBy')}
+                    onBlur={handleBlur('issuedBy')}
+                    placeholder="Enter issued by"
                   />
+                  {touched.issuedBy && errors.issuedBy && (
+                    <TextStyle style={styles.error}>{errors.issuedBy}</TextStyle>
+                  )}
 
-                <View style={styles.inputGroup}>
-                  <TextStyle style={styles.label}>
-                    Issued Date <TextStyle style={{ color: 'red' }}>*</TextStyle>
-                  </TextStyle>
+                  <TextStyle style={styles.label}>Issue Date</TextStyle>
                   <TouchableOpacity
                     style={styles.datePickerButton}
-                    onPress={() => setShowDatePicker({ ...showDatePicker, issuedDate: true })}
-                  >
+                    onPress={() => setShowDatePicker({ ...showDatePicker, issuedDate: true })}>
                     <TextStyle style={styles.input}>
-                      {values.issuedDate ? values.issuedDate.toString() : 'Select issued date'}
+                      {values.issuedDate ? values.issuedDate.toString() : 'Select issue date'}
                     </TextStyle>
                     <Icon name="calendar-outline" size={20} color="#ccc" />
                   </TouchableOpacity>
@@ -169,16 +171,11 @@ const Certificate = () => {
                   {touched.issuedDate && errors.issuedDate && (
                     <TextStyle style={styles.error}>{errors.issuedDate}</TextStyle>
                   )}
-                </View>
 
-                <View style={styles.inputGroup}>
-                  <TextStyle style={styles.label}>
-                    Expiry Date <TextStyle style={{ color: 'red' }}>*</TextStyle>
-                  </TextStyle>
+                  <TextStyle style={styles.label}>Expiry Date</TextStyle>
                   <TouchableOpacity
                     style={styles.datePickerButton}
-                    onPress={() => setShowDatePicker({ ...showDatePicker, expiryDate: true })}
-                  >
+                    onPress={() => setShowDatePicker({ ...showDatePicker, expiryDate: true })}>
                     <TextStyle style={styles.input}>
                       {values.expiryDate ? values.expiryDate.toString() : 'Select expiry date'}
                     </TextStyle>
@@ -198,49 +195,49 @@ const Certificate = () => {
                   {touched.expiryDate && errors.expiryDate && (
                     <TextStyle style={styles.error}>{errors.expiryDate}</TextStyle>
                   )}
-    
+
+                  <TextStyle style={styles.label}>State</TextStyle>
+                  <DropDownPicker
+                    open={values.stateOpen}
+                    setOpen={(open) => setFieldValue('stateOpen', open)}
+                    items={[
+                      { label: 'California', value: 'california' },
+                      { label: 'Texas', value: 'texas' },
+                      { label: 'New York', value: 'new-york' },
+                    ]}
+                    value={values.state}
+                    setValue={(callback) => setFieldValue('state', callback(values.state))}
+                    placeholder="Search state"
+                    searchable={true}
+                    searchPlaceholder="Search state"
+                    listMode="MODAL"
+                    modalProps={{ animationType: 'slide' }}
+                    style={styles.dropdown}
+                  />
+                  {touched.state && errors.state && (
+                    <TextStyle style={styles.error}>{errors.state}</TextStyle>
+                  )}
+
+                  <UploadButton 
+                    handleUpload={handleCertificateUpload} 
+                    buttonTitle='Upload Certificate' 
+                    subText='Accepted file formats: PNG, JPEG, JPG up to 10 MB'
+                    fileName={certificate ? certificate?.name : ''}
+                    handleDelete={handleDeleteUploadedFile}
+                  />
                 </View>
-
-                <TextStyle style={styles.label}>State</TextStyle>
-                {/* <DropDownPicker
-                  open={values.stateOpen}
-                  setOpen={(open) => setFieldValue('stateOpen', open)}
-                  items={[
-                    { label: 'California', value: 'california' },
-                    { label: 'Texas', value: 'texas' },
-                    { label: 'New York', value: 'new-york' },
-                  ]}
-                  value={values.state}
-                  setValue={(callback) => setFieldValue('state', callback(values.state))}
-                  placeholder="Search state"
-                  searchable={true}
-                  searchPlaceholder="Search state"
-                  listMode="MODAL"
-                  modalProps={{ animationType: 'slide' }}
-                  style={styles.dropdown}
-                /> */}
-                {touched.state && errors.state && (
-                  <TextStyle style={styles.error}>{errors.state}</TextStyle>
-                )}
-
-                <UploadButton 
-                  handleUpload={handleCertificateUpload} 
-                  buttonTitle='Upload Certificate' 
-                  subText='Accepted file formats: PNG, JPEG, JPG up to 10 MB'
-                  fileName={certificate ? certificate?.name : ''}
-                  handleDelete={handleDeleteUploadedFile}
-                />
-              </View>
+                <View style={styles.saveButton}>
+                  <SaveButton
+                    title="Save"
+                    onPress={handleSubmit}
+                    disabled={!isValid || !dirty}
+                  />
+                </View>
+              </>
             )}
           </Formik>
         </View>
       </ScrollView>
-      <View style={styles.saveButton}>
-        <SaveButton
-          title="Save"
-          onPress={handleSave}
-        />
-      </View>
     </SafeAreaView>
   );
 };

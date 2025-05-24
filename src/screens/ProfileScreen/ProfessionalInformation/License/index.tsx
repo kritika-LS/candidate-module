@@ -6,12 +6,11 @@ import {
   TextInput,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
 } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import DateTimePicker from '@react-native-community/datetimepicker';
-// import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { Input } from '../../../../components/common/Input';
 import Icon from 'react-native-vector-icons/Ionicons';
 // import DocumentPicker from 'react-native-document-picker';
@@ -30,13 +29,19 @@ interface LicenseFormValues {
   stateOpen: boolean;
 }
 
+interface LicenseDocument {
+  name: string;
+  uri: string;
+  type: string;
+}
+
 const License = () => {
   const [showDatePicker, setShowDatePicker] = useState({
     issuedDate: false,
     expiryDate: false,
   });
 
-  const [licenseDocument, setLicenseDocument] = useState(null);
+  const [licenseDocument, setLicenseDocument] = useState<LicenseDocument | null>(null);
 
   const handleLicenseUpload = async () => {
     // try {
@@ -75,8 +80,8 @@ const License = () => {
     state: Yup.string().required('State is required'),
   });
 
-  const handleSave = (values: LicenseFormValues) => {
-    console.log('License details:', values);
+  const handleSave = () => {
+    // Form submission will be handled by Formik
   };
 
   return (
@@ -195,7 +200,7 @@ const License = () => {
                 </View>
 
                 <Text style={styles.label}>State</Text>
-                {/* <DropDownPicker
+                <DropDownPicker
                   open={values.stateOpen}
                   setOpen={(open) => setFieldValue('stateOpen', open)}
                   items={[
@@ -206,12 +211,11 @@ const License = () => {
                   value={values.state}
                   setValue={(callback) => setFieldValue('state', callback(values.state))}
                   placeholder="Search state"
-                  searchable={true}
-                  searchPlaceholder="Search state"
-                  listMode="MODAL"
-                  modalProps={{ animationType: 'slide' }}
-                  style={styles.dropdown}
-                /> */}
+                  searchable={false}
+                  listMode="SCROLLVIEW"
+                  style={[styles.dropdown, { zIndex: values.stateOpen ? 10 : 1 }]}
+                  dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+                />
                 {touched.state && errors.state && (
                   <Text style={styles.error}>{errors.state}</Text>
                 )}
@@ -224,13 +228,6 @@ const License = () => {
                   <Text style={styles.note}>Accepted file formats: PDF, DOC, DOCX</Text>
                   <Text style={styles.note}>Max file size: 10 MB</Text>
                 </View>
-
-                <TouchableOpacity
-                  style={styles.saveBtn}
-                  onPress={() => handleSubmit()}
-                >
-                  <Text style={styles.saveBtnText}>Save</Text>
-                </TouchableOpacity>
               </View>
             )}
           </Formik>

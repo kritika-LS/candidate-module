@@ -6,17 +6,19 @@ import { theme } from '../../../theme';
 interface SaveButtonProps {
   onPress: () => void;
   title?: string;
+  disabled?: boolean;
 }
 
-export const SaveButton: React.FC<SaveButtonProps> = ({ onPress, title='Save' }) => {
+export const SaveButton: React.FC<SaveButtonProps> = ({ onPress, title='Save', disabled = false }) => {
   return (
     <TouchableOpacity
-      style={styles.saveBtn}
+      style={[styles.saveBtn, disabled && styles.saveBtnDisabled]}
       onPress={onPress}
       accessibilityRole="button"
       activeOpacity={0.7}
+      disabled={disabled}
     >
-      <TextStyle style={styles.saveBtnTextStyle}>{title}</TextStyle>
+      <TextStyle style={[styles.saveBtnTextStyle, disabled && styles.saveBtnTextDisabled]}>{title}</TextStyle>
     </TouchableOpacity>
   );
 };
@@ -31,9 +33,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
 		marginVertical: 16,
   },
+  saveBtnDisabled: {
+    backgroundColor: theme.colors.grey[300],
+  },
   saveBtnTextStyle: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  saveBtnTextDisabled: {
+    color: theme.colors.grey[600],
   },
 });
