@@ -43,7 +43,7 @@ interface EmergencyContactFormValues {
 const EmergencyContactAddressScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
-  const candidatePersonalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload) || {};
+  const candidatePersonalDetails = useAppSelector((state) => state?.candidatePersonalDetails?.personalDetails?.responsePayload) || {};
   const [isCompleted, setIsCompleted] = React.useState(false);
 
   const emergencyContactDetails = candidatePersonalDetails?.emergencyContactDetails?.[0] || {};

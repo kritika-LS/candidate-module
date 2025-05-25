@@ -104,14 +104,24 @@ class ApiClient {
       config,
       timestamp: new Date().toISOString(),
     });
-    return this.axiosInstance.get(url, config).then(response => {
+    try{
+      return this.axiosInstance.get(url, config).then(response => {
+        console.log('📥 GET Response:', {
+          url,
+          data: response.data,
+          timestamp: new Date().toISOString(),
+        });
+        return response.data;
+      });
+
+    }catch(error) {
       console.log('📥 GET Response:', {
         url,
-        data: response.data,
+        data: error,
         timestamp: new Date().toISOString(),
-      });
-      return response.data;
-    });
+      })
+      throw Error(error);
+    }
   }
 
   public post<T>(
@@ -146,14 +156,23 @@ class ApiClient {
       }
     }
 
-    return this.axiosInstance.post(url, data, config).then(response => {
+    try{
+      return this.axiosInstance.post(url, data, config).then(response => {
+        console.log('📥 POST Response:', {
+          url,
+          data: response.data,
+          timestamp: new Date().toISOString(),
+        });
+        return response.data;
+      });
+    }catch(error) {
       console.log('📥 POST Response:', {
         url,
-        data: response.data,
+        data: error,
         timestamp: new Date().toISOString(),
-      });
-      return response.data;
-    });
+      })
+      throw Error(error);
+    }
   }
 
   public put<T>(

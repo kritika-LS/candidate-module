@@ -20,7 +20,6 @@ export const jobPreferenceSchema = yup.object().shape({
     .nullable(),
 
   selectedStates: yup
-    .array()
-    .of(yup.string())
+    .string()
     .min(1, 'Please select at least one state'),
 });

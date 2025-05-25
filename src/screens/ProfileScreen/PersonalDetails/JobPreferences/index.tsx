@@ -28,7 +28,7 @@ const JobPreferencesScreen = () => {
   });
   const [isCompleted, setIsCompleted] = useState(false);
   const dispatch = useAppDispatch();
-  const candidatePersonalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload) || {};
+  const candidatePersonalDetails = useAppSelector((state) => state?.candidatePersonalDetails?.personalDetails?.responsePayload) || {};
 
   const defaultShiftItems = [
     { label: 'Morning', value: 'morning' },

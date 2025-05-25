@@ -15,6 +15,7 @@ import React, { useState } from "react";
  import { uploadCandidateResume } from "../../store/thunk/candidateResume.thunk";
  import { useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 // import axios from "axios";
 
  const uploadResume = async (pdfUri) => {
@@ -70,7 +71,11 @@ console.log("tag here token",token)
       }
 
       if (result.size != null && result.size > 10 * 1024 * 1024) {
-        Alert.alert('File size exceeds 10MB limit');
+        // Alert.alert('File size exceeds 10MB limit');
+        Toast.show({
+          type: 'error',
+          text1: 'File size exceeds 10MB limit',
+        })
         return;
       }
 
@@ -78,15 +83,6 @@ console.log("tag here token",token)
       setIsUploading(true);
       const response = await uploadResume(result);
       console.log({response})
-      // Create FormData object
-      // const formData = new FormData();
-      // formData.append('resume', {
-      //   uri: result.uri,
-      //   name: result.name || 'resume_file',
-      //   type: result.type || 'application/octet-stream',
-      // } as any);
-      // formData.append('resume',result);
-      // await dispatch(uploadCandidateResume(formData)).unwrap();
       
       setIsUploading(false);
       navigation.navigate(ScreenNames.MultiStepRegistrationScreen, {responseData: response?.responsePayload}); // Navigate after successful upload
@@ -126,6 +122,7 @@ console.log("tag here token",token)
                   source={require('../../../assets/animations/Uploading - 1747736694658.json')}
                   autoPlay
                   loop={true}
+                  speed={0.2}
                   style={styles.lottie}
                 />
               </View>

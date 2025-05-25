@@ -35,6 +35,7 @@ const candidateSlice = createSlice({
         state.candidate = action.payload;
       })
       .addCase(fetchCandidate.rejected, (state, action) => {
+        console.log('action.payload', action);
         state.loading = false;
         state.error = action.payload || 'Unexpected error occurred';
       });

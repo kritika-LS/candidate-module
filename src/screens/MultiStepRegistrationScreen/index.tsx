@@ -33,6 +33,8 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../types/navigation';
 import { RootState } from '../../store/store';
+import Toast from 'react-native-toast-message';
+import moment from 'moment';
 
 // Types
 interface ParentScreenRef {
@@ -54,7 +56,7 @@ interface FormData {
     mobileNumber: string;
   };
   address: {
-    physicalAddress: {
+    addressDetails: {
       address: string;
       zipCode: string;
       country: string;
@@ -63,16 +65,9 @@ interface FormData {
       stateCode?: string;
       countryCode?: string;
     };
-    mailingAddress: {
-      address: string;
-      zipCode: string;
-      country: string;
-      state: string;
-      city: string;
-      stateCode?: string;
-      countryCode?: string;
-    };
-    isSamePhysical: boolean;
+    isCurrent: boolean;
+    isPermanent: boolean;
+    isBothSame: boolean;
     addressType?: string;
   };
   professional: {
@@ -110,11 +105,6 @@ interface OnboardingState {
 
 // Constants
 const screenWidth = Dimensions.get('window').width;
-const professionsList = ['Software Engineer', 'Designer'];
-const specialtiesMap = {
-  'Software Engineer': ['Frontend', 'Backend'],
-  'Designer': ['UI', 'UX']
-};
 
 // Component Props
 interface PersonalDetailsProps {
@@ -196,8 +186,6 @@ const ProfessionalDetails: React.FC<ProfessionalDetailsProps> = ({
     data={data}
     onChange={onChange}
     errors={errors}
-    professionsList={professionsList}
-    specialtiesMap={specialtiesMap}
     touched={touched}
     setTouched={setTouched}
   />
@@ -240,21 +228,16 @@ export const MultiStepRegistrationScreen = () => {
       mobileNumber: resumeData?.mobileNumber || '',
     },
     address: {
-      physicalAddress: {
+      addressDetails: {
         address: resumeData?.address?.[0]?.address || '',
         zipCode: resumeData?.address?.[0]?.zipCode || '',
         country: resumeData?.address?.[0]?.country || '',
         state: resumeData?.address?.[0]?.state || '',
         city: resumeData?.address?.[0]?.city || '',
       },
-      mailingAddress: {
-        address: '',
-        zipCode: '',
-        country: '',
-        state: '',
-        city: '',
-      },
-      isSamePhysical: true, // or false depending on your logic
+      isCurrent: true,
+      isPermanent:false,
+      isBothSame:false,
     },
     professional: {
       experience: resumeData?.resumes?.[0]?.overallYearsOfExperience || 0,
@@ -268,6 +251,7 @@ export const MultiStepRegistrationScreen = () => {
       selectedStates: '',
     },
   });
+  console.log({formData})
 
   const [formErrors, setFormErrors] = useState<FormErrors>({
     personal: {},
@@ -352,6 +336,7 @@ export const MultiStepRegistrationScreen = () => {
       err.inner.forEach((e: any) => {
         errorObj[e.path] = e.message;
       });
+      console.log({errorObj})
       setFormErrors(prev => ({ ...prev, jobPref: errorObj }));
       return false;
     }
@@ -407,26 +392,29 @@ export const MultiStepRegistrationScreen = () => {
   // Form Submission
   const handleRegister = useCallback(async () => {
     const isValid = await validateAll();
-    if (!isValid) {
-      Alert.alert('Validation Error', 'Please fill all mandatory fields');
-      return;
-    }
+    // if (!isValid) {
+    //   Alert.alert('Validation Error', 'Please fill all mandatory fields');
+    //   return;
+    // }
 
     try {
+      console.log("-------------")
       const onboardingFormData = new FormData();
+      console.log({formData});
       const onboardingDetails = {
         firstName: formData.personal.firstName,
         lastName: formData.personal.lastName,
         alternateEmailAddress: formData.personal.alternateEmail,
-        mobileNumber: formData.personal.mobileNumber,
+        mobileNumber: formData.personal.mobileNumber.slice(2),
         address: [
           {
-            addressType: 'permanent',
-            address: formData.address.physicalAddress.address,
-            zipCode: formData.address.physicalAddress.zipCode,
-            country: formData.address.physicalAddress.country,
-            state: formData.address.physicalAddress.state,
-            city: formData.address.physicalAddress.city,
+            addressType: formData.address.isPermanent ? 'permanent' : formData.address.isCurrent ? 'current' : 'both',
+            address: formData.address.addressDetails.address,
+            addressNotes: "",
+            zipCode: formData.address.addressDetails.zipCode,
+            country: formData.address.addressDetails.country,
+            state: formData.address.addressDetails.state,
+            city: formData.address.addressDetails.city,
             latitude: 0,
             longitude: 0
           }
@@ -434,28 +422,232 @@ export const MultiStepRegistrationScreen = () => {
         overallYearsOfExperience: formData.professional.experience,
         profileTitle: formData.professional.profession,
         workTypePreference: formData.jobPref.employmentType,
-        availableFrom: formData.jobPref.availabilityDate,
+        availableFrom: moment(formData.jobPref.availabilityDate, "YYYY-MM-DD").format("YYYY-MM-DD"),
         preferredShift: formData.jobPref.shift,
         preferredLocation: formData.jobPref.selectedStates,
+        skillData: [],
         resumes: [
           {
             professionalTitle: formData.professional.profession,
-            specialties: formData.professional.specialty.join(', '),
+            specialties: formData.professional.specialty,
             parsedData: JSON.stringify(formData.professional),
-            overallYearsOfExperience: formData.professional.experience
+            overallYearsOfExperience: formData.professional.experience,
           }
         ],
-        skillData: formData.professional.specialty.map(skill => ({
-          keyword: skill,
-          lastUsed: null
-        }))
       };
-
+      // const onboardingDetails = {
+      //   "firstName": "Kritika",
+      //   "lastName": "Jamdagni",
+      //   "alternateEmailAddress": "kritikajamdagni0O98@gmail.com",
+      //   "mobileNumber": "+1,917838246822",
+      //   "address": [
+      //     {
+      //       "addressType": "permanent",
+      //       "addressNotes": "",
+      //       "address": "delhi",
+      //       "zipCode": "110039",
+      //       "country": "India",
+      //       "state": "Delhi",
+      //       "city": "New Delhi",
+      //       "latitude": 0,
+      //       "longitude": 0
+      //     }
+      //   ],
+      //   "overallYearsOfExperience": 1,
+      //   "profileTitle": "RN",
+      //   "workTypePreference": "Travel",
+      //   "availableFrom": "2025-05-25",
+      //   "preferredShift": "day",
+      //   "preferredLocation": "Delhi Division",
+      //   "resumes": [
+      //     {
+      //       "professionalTitle": "RN",
+      //       "specialties": "Ambulatory",
+      //       "parsedData": {
+      //         "service_name": "CV Information Extractor",
+      //         "model_name": "Gemini 1.5 Flash",
+      //         "result": {
+      //           "first_name": "Kritika",
+      //           "last_name": "Jamdagni",
+      //           "email_address": "kritikajamdagni0O98@gmail.com",
+      //           "mobile_number": "+917838246828",
+      //           "profile_title": "React Native Developer",
+      //           "ssn": null,
+      //           "specialty": "React Native mobile app development",
+      //           "address": {
+      //             "address": null,
+      //             "city": null,
+      //             "zip_code": null,
+      //             "country": null,
+      //             "state": null,
+      //             "address_type": null,
+      //             "address_notes": null
+      //           },
+      //           "overall_years_of_experience": 3,
+      //           "brief": "Experienced React Native Developer with expertise in JavaScript, TypeScript, UI/UX design, scalable architecture, API integration, and seamless deployment.  Focuses on building user-centric applications.",
+      //           "skills": [
+      //             "React Native",
+      //             "JavaScript",
+      //             "TypeScript",
+      //             "UI/UX Design",
+      //             "Agile",
+      //             "Android",
+      //             "Android Studio",
+      //             "Debugging",
+      //             "Firebase",
+      //             "Git",
+      //             "Github",
+      //             "iOS",
+      //             "JIRA",
+      //             "PDM",
+      //             "Performance Monitoring",
+      //             "Postman",
+      //             "React",
+      //             "ReactJS",
+      //             "Redux",
+      //             "REST",
+      //             "REST APIs",
+      //             "Strapi",
+      //             "Unit Testing",
+      //             "Xcode"
+      //           ],
+      //           "wage_expectation_category": null,
+      //           "educations": [
+      //             {
+      //               "level_of_education": "Bachelors",
+      //               "university_name": "PDM College of Engineering",
+      //               "name_of_degree": "B.Tech in Computer Science Engineering",
+      //               "completed_when": "20200900",
+      //               "certified_when": null,
+      //               "expiring_on": null,
+      //               "specialty": null,
+      //               "graduation_status": null,
+      //               "mode_of_education": null,
+      //               "grade": null,
+      //               "joined_when": "20160800",
+      //               "city": null,
+      //               "country": null,
+      //               "state": null
+      //             }
+      //           ],
+      //           "certifications": [],
+      //           "licensures": [],
+      //           "references": [],
+      //           "work_history": [
+      //             {
+      //               "title": "Mobile Development PDM Software Engineer",
+      //               "worked_with": "Dresma AI",
+      //               "skills_worked": "React Native, ReactJS, Redux, REST APIs, Strapi, TypeScript, UI/UX Design, Performance Monitoring",
+      //               "worked_from": "20220700",
+      //               "worked_till": "Present",
+      //               "summary_of_work": "Led a major app upgrade improving performance by 30%, refactored and optimized codebase, integrated third-party APIs, collaborated with teams, implemented performance monitoring tools.",
+      //               "type_of_business": "AI solutions",
+      //               "address": null,
+      //               "city": null,
+      //               "country": null,
+      //               "state": null,
+      //               "zip_code": null,
+      //               "employer_phone_number": null,
+      //               "hourly_rate": null,
+      //               "reason_for_leaving": null
+      //             },
+      //             {
+      //               "title": "React Native Developer",
+      //               "worked_with": "System Corporation Incorporated",
+      //               "skills_worked": "React Native, UI/UX Design, Debugging",
+      //               "worked_from": "20211000",
+      //               "worked_till": "20220500",
+      //               "summary_of_work": "Designed and developed user-friendly UI components, converted customer requirements into scalable features, optimized debugging workflows, addressed UI/UX accessibility issues.",
+      //               "type_of_business": "tech solutions",
+      //               "address": null,
+      //               "city": null,
+      //               "country": null,
+      //               "state": null,
+      //               "zip_code": null,
+      //               "employer_phone_number": null,
+      //               "hourly_rate": null,
+      //               "reason_for_leaving": null
+      //             },
+      //             {
+      //               "title": "Web Designer Developer Intern",
+      //               "worked_with": "Ank Digital Media",
+      //               "skills_worked": "UI, web development",
+      //               "worked_from": "20210100",
+      //               "worked_till": "20211200",
+      //               "summary_of_work": "Developed interactive UI components, translated client requirements into intuitive website designs, built customizable templates, built a pet product e-commerce platform.",
+      //               "type_of_business": "digital media company",
+      //               "address": null,
+      //               "city": null,
+      //               "country": null,
+      //               "state": null,
+      //               "zip_code": null,
+      //               "employer_phone_number": null,
+      //               "hourly_rate": null,
+      //               "reason_for_leaving": null
+      //             }
+      //           ],
+      //           "alternate_phone_number": null,
+      //           "alternate_email_address": null,
+      //           "other_phone_number": null,
+      //           "middle_name": null,
+      //           "other_previously_used_name": null,
+      //           "known_as": null,
+      //           "nationality": null,
+      //           "ethnicity": null,
+      //           "date_of_birth": null,
+      //           "gender": null,
+      //           "workplace_preference": null,
+      //           "work_type_preference": null,
+      //           "rate_per_hour": null,
+      //           "portfolio_url_1": "linkedin.com/in/kritika-jamdagni",
+      //           "portfolio_url_2": null,
+      //           "portfolio_url_3": null,
+      //           "portfolio_url_4": null,
+      //           "military_status": null
+      //         },
+      //         "processing_time": 0.0
+      //       },
+      //       "overallYearsOfExperience": 1
+      //     }
+      //   ],
+      //   "skillData": [
+      //     { "keyword": "React Native", "lastUsed": null },
+      //     { "keyword": "JavaScript", "lastUsed": null },
+      //     { "keyword": "TypeScript", "lastUsed": null },
+      //     { "keyword": "UI/UX Design", "lastUsed": null },
+      //     { "keyword": "Agile", "lastUsed": null },
+      //     { "keyword": "Android", "lastUsed": null },
+      //     { "keyword": "Android Studio", "lastUsed": null },
+      //     { "keyword": "Debugging", "lastUsed": null },
+      //     { "keyword": "Firebase", "lastUsed": null },
+      //     { "keyword": "Git", "lastUsed": null },
+      //     { "keyword": "Github", "lastUsed": null },
+      //     { "keyword": "iOS", "lastUsed": null },
+      //     { "keyword": "JIRA", "lastUsed": null },
+      //     { "keyword": "PDM", "lastUsed": null },
+      //     { "keyword": "Performance Monitoring", "lastUsed": null },
+      //     { "keyword": "Postman", "lastUsed": null },
+      //     { "keyword": "React", "lastUsed": null },
+      //     { "keyword": "ReactJS", "lastUsed": null },
+      //     { "keyword": "Redux", "lastUsed": null },
+      //     { "keyword": "REST", "lastUsed": null },
+      //     { "keyword": "REST APIs", "lastUsed": null },
+      //     { "keyword": "Strapi", "lastUsed": null },
+      //     { "keyword": "Unit Testing", "lastUsed": null },
+      //     { "keyword": "Xcode", "lastUsed": null }
+      //   ]
+      // }
+      ;
+      console.log({onboardingDetails})
       onboardingFormData.append('onboardingDetails', JSON.stringify(onboardingDetails));
       await dispatch(submitOnboarding(onboardingFormData)).unwrap();
       navigation.navigate(ScreenNames.RegistrationASuccessScreen);
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to submit registration');
+      console.error('Error', error.message || 'Failed to submit registration');
+      Toast.show({
+        type: 'error',
+        text1: error.message || 'Failed to submit registration'
+      })
     }
   }, [formData, validateAll, dispatch, navigation]);
 
@@ -496,10 +688,10 @@ export const MultiStepRegistrationScreen = () => {
         return (
           <ProfessionalDetails
             data={formData.professional}
-            onChange={(field: string, value: any) => {
+            onChange={(data: any) => {
               setFormData(prev => ({
                 ...prev,
-                professional: { ...prev.professional, [field]: value }
+                professional: data
               }));
               validateProfessionalDetails();
             }}
@@ -512,10 +704,11 @@ export const MultiStepRegistrationScreen = () => {
         return (
           <JobPreferences
             data={formData.jobPref}
-            onChange={(field: string, value: any) => {
+            onChange={(data: any) => {
+              console.log("tag here 12345",data);
               setFormData(prev => ({
                 ...prev,
-                jobPref: { ...prev.jobPref, [field]: value }
+                jobPref: data
               }));
               validateJobPreference();
             }}
@@ -572,7 +765,7 @@ export const MultiStepRegistrationScreen = () => {
           <Button
             title="Register"
             onPress={handleRegister}
-            disabled={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0)}
+            // disabled={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0)}
             style={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0) ? styles.disabledButton : styles.registerButton}
             textStyle={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0) && {color: '#fff'}}
           />

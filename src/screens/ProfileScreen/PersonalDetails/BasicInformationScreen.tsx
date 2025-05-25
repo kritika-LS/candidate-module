@@ -49,7 +49,7 @@ interface FormValues {
 
 const BasicInformationScreen: React.FC = () => {
   const dispatch = useAppDispatch();
-  const candidatePersonalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload) || {};
+  const candidatePersonalDetails = useAppSelector((state) => state?.candidatePersonalDetails?.personalDetails?.responsePayload) || {};
   const [isCompleted, setIsCompleted] = React.useState(false);
 
   const validationSchema = Yup.object().shape({

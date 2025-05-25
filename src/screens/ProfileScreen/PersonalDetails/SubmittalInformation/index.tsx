@@ -26,7 +26,7 @@ import Toast from 'react-native-toast-message';
 
 const SubmittalInformationScreen: React.FC = () => {
   const dispatch = useAppDispatch();
-  const candidatePersonalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload) || {};
+  const candidatePersonalDetails = useAppSelector((state) => state?.candidatePersonalDetails?.personalDetails?.responsePayload) || {};
   const [isCompleted, setIsCompleted] = React.useState(false);
 
   const MAX_CHAR_LENGTH = 11;

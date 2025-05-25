@@ -53,7 +53,7 @@ export const styles = StyleSheet.create({
       left: 6
     },
     uploadText: {
-      marginTop: 20,
+      marginTop: 32,
       fontWeight: '500',
     },
     subText: {
@@ -61,8 +61,8 @@ export const styles = StyleSheet.create({
       marginTop: 10,
     },
     loader: {
-      height: 75,
-      width: 75,
+      height: 50,
+      width: 50,
       borderRadius: 50,
       padding: 2,
       borderWidth: 1,
@@ -86,8 +86,8 @@ export const styles = StyleSheet.create({
       fontWeight: '600',
     },
     lottie: {
-      width: 70,
-      height: 70,
+      width: 100,
+      height: 100,
       alignSelf: 'center',
       justifyContent: 'center',
     },

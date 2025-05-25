@@ -1,8 +1,10 @@
 import * as yup from 'yup';
 
 export const addressValidationSchema = yup.object().shape({
-  isSamePhysical: yup.boolean(),
-  physicalAddress: yup.object().shape({
+  isPermanent: yup.boolean(),
+  isCurrent: yup.boolean(),
+  isSameBoth: yup.boolean(),
+  addressDetails: yup.object().shape({
     address: yup
       .string()
       .required('Physical address is required'),
@@ -15,25 +17,7 @@ export const addressValidationSchema = yup.object().shape({
     zipCode: yup
       .string()
       .required('ZIP code is required')
-      .matches(/^\d{5}$/, 'ZIP code must be 5 digits'),
-    countryCode: yup
-      .string()
-      .nullable(),
-  }),
-  mailingAddress: yup.object().shape({
-    address: yup
-      .string()
-      .required('Mailing address is required'),
-    city: yup
-      .string()
-      .required('City is required'),
-    stateCode: yup
-      .string()
-      .nullable(),
-    zipCode: yup
-      .string()
-      .required('ZIP code is required')
-      .matches(/^\d{5}$/, 'ZIP code must be 5 digits'),
+      .matches(/^\d{6}$/, 'ZIP code must be 6 digits'),
     countryCode: yup
       .string()
       .nullable(),
