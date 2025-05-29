@@ -14,7 +14,6 @@ interface SearchSectionProps {
   onRemoveChip: (chip: string) => void;
   onClearAll: () => void;
   onFilterPress: () => void;
-  openSaveSearchModal: (searchName?: string) => void;
 }
 
 export const SearchSection: React.FC<SearchSectionProps> = ({
@@ -25,7 +24,6 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
   onRemoveChip,
   onClearAll,
   onFilterPress,
-  openSaveSearchModal,
 }) => {
   // Handle Enter key in TextInput
   const handleSubmitEditing = () => {
@@ -61,18 +59,21 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
             <TouchableOpacity style={styles.searchButton} onPress={handleSubmitEditing}>
               <Icon name='magnify' color='#fff' />
             </TouchableOpacity>
+          <TouchableOpacity style={styles.filterButton} onPress={onFilterPress}>
+            <Icon name="filter-outline" color={'#fff'} />
+          </TouchableOpacity>
           </View>
 
           {chips.length > 0 && (
             <View style={styles.chipRowWrapper}>
               <View style={styles.chipList}>
                 {chips.map((chip, idx) => (
-                  <View key={idx} style={styles.chip}>
+                  <TouchableOpacity onPress={onSearch} key={idx} style={styles.chip}>
                     <TextStyle variant="regular" size='sm'>{chip}</TextStyle>
                     <TouchableOpacity style={styles.crossIcon} onPress={() => onRemoveChip(chip)}>
                       <Icon name="close" size={16} color="#1976D2" />
                     </TouchableOpacity>
-                  </View>
+                  </TouchableOpacity>
                 ))}
               </View>
               <TouchableOpacity onPress={onClearAll} style={styles.clearAllBtn}>
@@ -81,15 +82,13 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
             </View>
           )}
           {/* Divider */}
-          <View style={styles.divider} />
-          {/* Filter Button */}
+          {/* <View style={styles.divider} />
           <TouchableOpacity style={styles.filterButton} onPress={onFilterPress}>
             <Icon name="filter-variant" size={20} color={theme.colors.primary.main} />
             <Text style={styles.filterButtonText}>Filter</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </ImageBackground>
   );
 };
-

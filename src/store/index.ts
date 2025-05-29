@@ -10,6 +10,16 @@ import candidateProfessionalInfoReducer from './slices/candidateProfessionalInfo
 import candidateReferencesReducer from './slices/candidateReferences.slice';
 import candidateResumeReducer from './slices/candidateResume.slice';
 import authReducer from './slices/auth.slice';
+import saveJobReducer from './slices/saveJob.slice';
+import jobDetailsReducer from './slices/jobDetails.slice';
+import applyJobReducer from './slices/applyJob.slice';
+import candidateSearchCriteriaReducer from './slices/candidateSearchCriteria.slice';
+import candidatePoolJobsReducer from './slices/candidatePoolJobs.slice';
+import unsaveJobReducer from './slices/unsaveJob.slice';
+import withdrawApplicationReducer from './slices/withdrawApplication.slice';
+import parseJobSearchQueryReducer from './slices/parseJobSearchQuery.slice';
+import jobsMatchingReducer from './slices/jobsMatching.slice';
+import recommendedJobsWithFiltersReducer from './slices/recommendedJobsWithFilters.slice';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +34,16 @@ export const store = configureStore({
     candidateProfessionalInfo: candidateProfessionalInfoReducer,
     candidateReferences: candidateReferencesReducer,
     candidateResume: candidateResumeReducer,
+    saveJob: saveJobReducer,
+    jobDetails: jobDetailsReducer,
+    applyJob: applyJobReducer,
+    candidateSearchCriteria: candidateSearchCriteriaReducer,
+    candidatePoolJobs: candidatePoolJobsReducer,
+    unsaveJob: unsaveJobReducer,
+    withdrawApplication: withdrawApplicationReducer,
+    parseJobSearchQuery: parseJobSearchQueryReducer,
+    jobsMatching: jobsMatchingReducer,
+    recommendedJobsWithFilters: recommendedJobsWithFiltersReducer,
     
   },
 });

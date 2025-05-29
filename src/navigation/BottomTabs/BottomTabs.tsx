@@ -13,7 +13,7 @@ import { MyJobs } from '../../screens/MyJobs';
 const Tab = createBottomTabNavigator();
 
 const tabScreens: {
-  name: keyof BottomTabsParamsList;
+  name: any;
   component: React.ComponentType<any>;
 }[] = [
   {

@@ -8,7 +8,6 @@ export type Route = {
 export type AccordionItem = {
     title: string;
     completed: boolean;
-    content: React.ReactNode;
     icon: string;
     handlePress?: () => void;
     ScreenName: string;

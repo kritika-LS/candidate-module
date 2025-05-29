@@ -58,4 +58,11 @@ export const styles = StyleSheet.create({
   skillsChipText: {
     color: theme.colors.text.light,
   },
+  flexRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconSpacing: {
+    marginLeft: 8,
+  },
 }); 

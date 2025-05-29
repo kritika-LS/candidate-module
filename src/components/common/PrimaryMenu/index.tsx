@@ -26,7 +26,9 @@ export const PrimaryMenu: React.FC<PrimaryMenuProps> = ({ menuItems }) => {
     <View style={styles.accordionItem}>
       {menuItems.map((item, index) => {
         const handlePress = () => {
-          navigation.navigate(item.ScreenName);
+          navigation.navigate(item.ScreenName, {
+            section: item.ScreenName, // pass section to scroll
+          });
         };
 
         return (

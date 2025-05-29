@@ -13,6 +13,7 @@ import React, { createContext, useContext, useState, ReactNode, useEffect, useRe
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CryptoJS from 'crypto-js';
 import { Buffer } from 'buffer';
+import apiClient from '../api/apiClient';
 global.Buffer = Buffer;
 
 class TokenRefreshManager {
@@ -34,6 +35,7 @@ class TokenRefreshManager {
 
 type AuthContextType = {
   isAuthenticated: boolean;
+  isRegistered: boolean;
   isLoading: boolean;
   login: (email: string, password: string, rememberAccount?: boolean) => Promise<void>;
   logout: () => Promise<void>;
@@ -55,15 +57,17 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const refreshManager = useRef<TokenRefreshManager>(new TokenRefreshManager());
 
-  const getSession = async (): Promise<AuthSession | null> => {
+  const getSession = async (): Promise<AuthSession | null | any> => {
     try {
+      console.log("tag here getSession");
       const session = await fetchAuthSession();
       if (session.tokens) {
-        await getAuthDetails();
-        return session;
+        const response = await getAuthDetails();
+        return response;
       }
       return null;
     } catch (error) {
@@ -129,8 +133,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut();
       await signIn({ username: email, password });
-      await getAuthDetails();
-
       if (rememberAccount) {
         const encryptedEmail = CryptoJS.AES.encrypt(
           email,
@@ -146,6 +148,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await AsyncStorage.setItem('@auth:email', encryptedEmail);
         await AsyncStorage.setItem('@auth:password', encryptedPassword);
       }
+      return await getSession();
 
       // Schedule token refresh
       // refreshManager.current.scheduleRefresh(async () => {
@@ -189,44 +192,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const accessToken = sessionResult.tokens?.accessToken?.toString() || null;
       //   const refreshToken = sessionResult.tokens?.refreshToken?.toString();
 
-      const currentUser = await getCurrentUser();
-      const userAttributes: Record<string, any> = await fetchUserAttributes();
-
+      // const currentUser = await getCurrentUser();
       await AsyncStorage.setItem('auth_token', accessToken || '');
-      let groups: string[] = [];
-      if (currentUser) {
-        try {
-
-          // Option 1: Check ID Token claims (if groups are there)
-          const parsedIdToken = idToken ? JSON.parse(atob(idToken.split('.')[1])) : null;
-          if (parsedIdToken && parsedIdToken['cognito:groups']) {
-            groups = parsedIdToken['cognito:groups'];
-          }
-
-          // Option 2: Check user attributes (if groups are stored as an attribute)
-          if (userAttributes && userAttributes['cognito:groups']) {
-            groups = JSON.parse(userAttributes['cognito:groups'] as string);
-          }
-          // You might have a custom attribute for groups instead of the default 'cognito:groups'
-          else if (userAttributes && userAttributes['custom:groups']) {
-            groups = JSON.parse(userAttributes['custom:groups'] as string);
-          }
-          if(currentUser){
-            setIsAuthenticated(true);
-          }
-        } catch (error) {
-          console.log('Error extracting user groups:', error);
-        }
+      await apiClient.setToken(accessToken);
+      const userAttributes: Record<string, any> = await fetchUserAttributes();
+      let userRegistered = false;
+      if (userAttributes && userAttributes['custom:is_registered']) {
+              userRegistered = JSON.parse(userAttributes['custom:is_registered'] as string);
       }
+      setIsAuthenticated(true);
+      setIsRegistered(userRegistered);
 
       return {
         idToken,
         accessToken,
         // refreshToken,
         userAttributes,
-        userId: currentUser?.userId || null,
-        username: currentUser?.username || null,
-        groups,
+        userRegistered,
       };
     } catch (error) {
       console.log('Error getting authentication details:', error);
@@ -279,6 +261,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AuthContext.Provider value={{
       isAuthenticated,
+      isRegistered,
       isLoading,
       login,
       logout,

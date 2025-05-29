@@ -10,13 +10,12 @@ class ApiClient {
 
   private constructor() {
     this.axiosInstance = axios.create({
-      baseURL: ENV.API_URL,
+      baseURL: ENV.DEV_API_URL,
       timeout: APP_CONSTANTS.API_TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    console.log('This is bond -007')
     this.setupInterceptors();
     this.GetToken(); 
   }
@@ -31,6 +30,22 @@ class ApiClient {
   public async GetToken(): Promise<void> {
     try {
       const token = await AsyncStorage.getItem('auth_token');
+      if (token) {
+        this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        console.log('✅ Token set in axios headers:', {
+          token: token.substring(0, 20) + '...', // Log only first 20 chars for security
+          headers: this.axiosInstance.defaults.headers.common
+        });
+      } else {
+        console.warn('⚠️ No token found in AsyncStorage');
+      }
+    } catch (error) {
+      console.error('❌ Error fetching token from AsyncStorage:', error);
+    }
+  }
+
+  public async setToken(token: string): Promise<void> {
+    try {
       if (token) {
         this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         console.log('✅ Token set in axios headers:', {
@@ -120,7 +135,7 @@ class ApiClient {
         data: error,
         timestamp: new Date().toISOString(),
       })
-      throw Error(error);
+      throw new Error(String(error));
     }
   }
 
@@ -171,7 +186,7 @@ class ApiClient {
         data: error,
         timestamp: new Date().toISOString(),
       })
-      throw Error(error);
+      throw new Error(String(error));
     }
   }
 

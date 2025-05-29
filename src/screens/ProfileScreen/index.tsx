@@ -16,9 +16,11 @@ import EducationSection from './Education';
 import { fetchCandidateWorkHistory } from '../../store/thunk/candidateWorkHistory.thunk';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { fetchCandidateEducations } from '../../store/thunk/candidateEducation.thunk';
-import { fetchCandidateProfessionalInformation } from '../../store/thunk/candidateProfessionalInfo.thunk';
+import { fetchCandidateProfessionalInfo } from '../../store/thunk/candidateProfessionalInfo.thunk';
 import { fetchCandidateReferences } from '../../store/thunk/candidateReferences.thunk';
 import { ProfessionalInformation } from './ProfessionalInformation';
+import WorkHistory from './WorkHistory/WorkHistory';
+import Education from './Education/Education';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -52,11 +54,11 @@ export const ProfileScreen = () => {
                 );
             case 'WorkHistory':
                 return (
-                    <WorkHistorySection />
+                    <WorkHistory />
                 );
             case 'Education':
                 return (
-                    <EducationSection />
+                    <Education />
                 );
             case 'ProfessionalInformation':
                 return (
@@ -106,7 +108,7 @@ export const ProfileScreen = () => {
                 await Promise.all([
                     dispatch(fetchCandidateWorkHistory()),
                     dispatch(fetchCandidateEducations()),
-                    dispatch(fetchCandidateProfessionalInformation()),
+                    dispatch(fetchCandidateProfessionalInfo()),
                     dispatch(fetchCandidateReferences()),
                 ]);
             } catch (error) {

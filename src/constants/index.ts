@@ -462,3 +462,9 @@ export const specialtiesMap = {
     "Sitter",
   ],
 };
+
+export const sortByOptions = [
+  "Relevance",
+  "Newest",
+  "Highest Pay",
+];

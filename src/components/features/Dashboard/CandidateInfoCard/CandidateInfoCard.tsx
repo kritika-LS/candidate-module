@@ -18,6 +18,7 @@ const CandidateInfoCard: React.FC<CandidateInfoCardProps> = ({
 }) => {
     const navigation = useNavigation();
     const candidateData = useAppSelector((state) => state?.candidate?.candidate?.responsePayload);
+    const personalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload);
 
     // Safely extract data with default empty strings
     const firstName = candidateData?.firstName || '';
@@ -59,9 +60,9 @@ const CandidateInfoCard: React.FC<CandidateInfoCardProps> = ({
             <View style={styles.progressBarContainer}>
                 <View style={styles.progressHeading}>
                     <TextStyle size='xs'>Profile Completion</TextStyle>
-                    <TextStyle size='xs' variant='bold'>60%</TextStyle>
+                    <TextStyle size='xs' variant='bold'>{`${personalDetails?.profileCompletionPercentage}%`}</TextStyle>
                 </View>
-                <HorizontalProgressBar progress={60} style={{ height: 10 }} />
+                <HorizontalProgressBar progress={personalDetails?.profileCompletionPercentage} style={{ height: 10 }} />
             </View>
             {showCompleteButton && (
                 <TouchableOpacity style={styles.button} onPress={handleComplete}>

@@ -24,6 +24,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
       state.error = null;
     },
     fetchJobsSuccess: (state, action: PayloadAction<Job[]>) => {
+      console.log({dataaaaaaaaAaaaaaa: action})
       state.loading = false;
       state.jobs = action.payload;
     },

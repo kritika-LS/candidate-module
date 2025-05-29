@@ -9,15 +9,17 @@ export const fetchRecommendedJobs = createAsyncThunk(
     { 
       page, 
       pageSize, 
-      sortOrder, 
       sortBy,
-      jobCategory 
+      job_category ,
+      durationFrom,
+      durationTo,
     }: {
       page: number;
       pageSize: number;
-      sortOrder: 'Asc' | 'Desc';
       sortBy: 'RELEVANCE' | 'NEWEST' | 'PAYRATE';
-      jobCategory?: string;
+      job_category?: string;
+      durationFrom?: null,
+      durationTo?: null,
     },
     { dispatch }
   ) => {
@@ -25,10 +27,11 @@ export const fetchRecommendedJobs = createAsyncThunk(
       dispatch(fetchJobsStart());
       const response = await JobsService.getRecommendedJobs(
         page, 
-        pageSize, 
-        sortOrder, 
+        pageSize,
         sortBy,
-        jobCategory
+        job_category,
+        durationFrom,
+        durationTo,
       );
       dispatch(fetchJobsSuccess(response));
       return response;

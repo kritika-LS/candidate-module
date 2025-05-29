@@ -7,7 +7,7 @@ const SocialMediaCard = ({ url }: { url: string }) => (
   <View style={styles.card}>
     <TextStyle variant="bold" size="md" style={styles.sectionTitle}>Social Media URL</TextStyle>
     <TouchableOpacity onPress={() => Linking.openURL(url)}>
-      <Text style={styles.viewMore}>{url}</Text>
+      <Text style={styles.viewMore}>{url || '-'}</Text>
     </TouchableOpacity>
   </View>
 );

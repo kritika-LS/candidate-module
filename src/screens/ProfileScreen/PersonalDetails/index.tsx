@@ -31,76 +31,42 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 			icon: 'account-circle-outline',
 			completed: false,
 			ScreenName: 'BasicInformationScreen',
-			content: (
-				<View style={styles.accordionContent}>
-					
-					<Header />
-
-					<BasicInformationScreen />
-					
-				</View>
-			)
 		},
 		{
 			title: 'Address Details',
 			icon: 'home-edit-outline',
 			completed: false,
 			ScreenName: 'AddressDetailsScreen',
-			content: (
-				<View style={styles.accordionContent}>
-					<AddressDetailsScreen />
-				</View>
-			)
 		},
 		{
 			title: 'Professional Details',
 			icon: 'book-edit-outline',
 			completed: false,
 			ScreenName: 'ProfessionalDetailsScreen',
-			content: (
-				<View style={styles.accordionContent}>
-					<ProfessionalDetailsScreen />
-				</View>
-			)
 		},
 		{
 			title: 'Portfolio',
 			icon: 'web',
 			completed: true,
 			ScreenName: 'PortfolioScreen',
-			content: (
-				<View style={styles.accordionContent}>
-					<PortfolioScreen />
-				</View>
-
-			)
 		},
 		{
 			title: 'Job Preferences',
 			icon: 'cog-outline',
 			completed: false,
 			ScreenName: 'JobPreferencesScreen',
-			content: <View style={styles.accordionContent}><JobPreferencesForm /></View>
 		},
 		{
 			title: 'Submittal Information',
 			icon: 'clipboard-text-outline',
 			completed: true,
 			ScreenName: 'SubmittalInformationScreen',
-			content: (
-				<View style={styles.accordionContent}>
-					<SubmittalInformationScreen />
-				</View>
-			)
 		},
 		{
 			title: 'Emergency Contact and Address',
 			icon: 'shield-alert-outline',
 			completed: true,
 			ScreenName: 'EmergencyContactAddressScreen',
-			content: <View style={styles.accordionContent}>
-				<EmergencyContactAddressScreen />
-			</View>
 		}
 	];
 
@@ -116,6 +82,11 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 
 			<PrimaryMenu
 				menuItems={accordionItems}
+				onPressItem={(item) => {
+          navigation.navigate("PersonalDetailsScreen", {
+            section: item.ScreenName, // <-- Pass section key as route param
+          });
+        }}
 			/>
 			
 		</ScrollView>

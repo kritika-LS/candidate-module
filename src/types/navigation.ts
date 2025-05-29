@@ -1,11 +1,13 @@
 export type RootStackParamList = {
     AuthNavigator: undefined;
-    AppNavigator: undefined; 
+    AppNavigator: undefined;
+    JobPreviewScreen: { jobId: string };
+    SearchJobs: undefined;
 }
 
 export type AuthStackParamList = {
     Splash: undefined;
-    Home: undefined;
+    HomeScreen: undefined;
     WalkthroughScreen: undefined;
     SignUpScreen: undefined;
     LoginScreen: (email: string, password: string) => Promise<void>;
@@ -19,7 +21,7 @@ export type AuthStackParamList = {
 };
   
 export type DrawerParamList = {
-    Home: undefined;
+    HomeScreen: undefined;
     ScreeningsScreen: undefined;
     SkillsChecklistScreen: undefined;
     ReferencesScreen: undefined;
@@ -40,9 +42,13 @@ export type DrawerParamList = {
     ChartingSystemScreen: undefined;
     BackgroundInformationScreen: undefined;
     JobPreviewScreen: undefined;
+    PersonalDetailsScreen: undefined;
+    WorkHistorySection: undefined;
+    EducationSection: undefined;
 };
 
 export type BottomTabsParamsList = {
+    [x: string]: any;
     Home: undefined;
     'Search Jobs': undefined;
     'My Jobs': undefined;

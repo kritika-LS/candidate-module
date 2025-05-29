@@ -31,9 +31,7 @@ const EducationSection = () => {
 
     return (
         <ScrollView style={styles.sectionContainer}>
-            {showHistoryList ? (
-                <>
-                    {EducationHistoryData.length > 0 ? (
+            {showHistoryList || EducationHistoryData.length > 0 ? 
                         <>
                             <HistoryListCard
                                 listIcon={'bookshelf'}
@@ -55,36 +53,9 @@ const EducationSection = () => {
                                 <TextStyle color={theme.colors.primary.main} style={styles.addWorkHistoryText}>Add Education</TextStyle>
                             </TouchableOpacity>
                         </>
-                    ) : (
+                        :
                         <AddEducationForm />
-                    )}
-                </>
-            ) : (
-                accordionData.map((item, index) => (
-                    <View key={index} style={styles.accordionItem}>
-                        <TouchableOpacity
-                            style={styles.accordionHeader}
-                            onPress={() => setExpandedItem(expandedItem === item.title ? null : item.title)}
-                        >
-                            <View style={styles.accordionTitleContainer}>
-                                <Icon name={item.icon} size={18} color={'#888'} />
-                                <Text style={styles.accordionTitle}>{item.title}</Text>
-                            </View>
-
-                            <View style={styles.flexRow}>
-                                <Icon
-                                    name={expandedItem === item.title ? "chevron-up" : "chevron-down"}
-                                    size={20}
-                                    color={'#888'}
-                                    style={styles.iconSpacing}
-                                />
-                            </View>
-                        </TouchableOpacity>
-
-                        {expandedItem === item.title && item.content}
-                    </View>
-                ))
-            )}
+            }
         </ScrollView>
     );
 };

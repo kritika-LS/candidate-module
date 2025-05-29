@@ -17,6 +17,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Yup from 'yup';
 import { TextStyle } from '../../../components/common/Text';
+import { ProfileScreenHeader } from "../../../components/features/ProfileScreenHeader";
+import { SaveButton } from "../../../components/features/SaveButton";
 // import DocumentPicker from 'react-native-document-picker';
 
 interface EducationFormValues {
@@ -138,6 +140,11 @@ export const AddEducationForm = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
+        <View style={styles.body}>
+          <ProfileScreenHeader
+              headerTitle='Education'
+              completedStatus={false}
+          />
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -425,14 +432,17 @@ export const AddEducationForm = () => {
                   </TouchableOpacity>
                 )}
               </View>
-
-              <TouchableOpacity style={styles.saveBtn} onPress={handleSubmit as any}>
-                <Text style={styles.saveBtnText}>{isSubmitting ? 'Saving...' : 'Save'}</Text>
-              </TouchableOpacity>
             </>
           )}
         </Formik>
+        </View>
       </ScrollView>
+      <View style={styles.saveButton}>
+        <SaveButton
+          title="Save"
+          onPress={handleSave}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -440,11 +450,17 @@ export const AddEducationForm = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.background.default,
   },
   container: {
     flex: 1,
-    paddingHorizontal: theme.spacing.md,
+  },
+  body: {
+    margin: 16,
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
   },
   formSection: {
     marginBottom: theme.spacing.lg,
@@ -554,5 +570,10 @@ const styles = StyleSheet.create({
   removeDocument: {
     color: 'red',
     fontWeight: '500',
+  },
+  saveButton: {
+    backgroundColor: '#fff', 
+    paddingHorizontal: 16, 
+    paddingBottom: 16
   },
 });

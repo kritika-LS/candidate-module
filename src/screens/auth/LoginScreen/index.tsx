@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Image, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Linking, Image, SafeAreaView, ScrollView, ActivityIndicator } from 'react-native';
 import { EmailInput } from '../../../components/common/EmailInput';
 import { PasswordInput } from '../../../components/common/PasswordInput';
 import { ConfirmPasswordInput } from '../../../components/common/ConfirmPasswordInput';
@@ -29,184 +29,173 @@ import { fetchCandidate } from '../../../store/thunk/candidate.thunk';
 
 export const LoginScreen = () => {
 
-    const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
-    const dispatch = useAppDispatch();
+  const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
+  const dispatch = useAppDispatch();
 
-    const { login } = useAuth();
+  const { login } = useAuth();
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [errors, setErrors] = useState({ email: '', password: ''});
-    const [rememberAccount, setRememberAccount] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({ email: '', password: '' });
+  const [rememberAccount, setRememberAccount] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        const loadRememberedCredentials = async () => {
-          try {
-            const remember = await AsyncStorage.getItem('@auth:rememberAccount');
-            if (remember === 'true') {
-              const encryptedEmail = await AsyncStorage.getItem('@auth:email');
-              const encryptedPassword = await AsyncStorage.getItem('@auth:password');
-      
-              if (encryptedEmail && encryptedPassword) {
-                const decryptedEmail = CryptoJS.AES.decrypt(encryptedEmail, 'your-secret-key').toString(CryptoJS.enc.Utf8);
-                const decryptedPassword = CryptoJS.AES.decrypt(encryptedPassword, 'your-secret-key').toString(CryptoJS.enc.Utf8);
-                setEmail(decryptedEmail); 
-                setPassword(decryptedPassword);
-                setRememberAccount(true);
-              }
-            }
-          } catch (error) {
-            console.error("Failed to load remembered credentials:", error);
+  useEffect(() => {
+    const loadRememberedCredentials = async () => {
+      try {
+        const remember = await AsyncStorage.getItem('@auth:rememberAccount');
+        if (remember === 'true') {
+          const encryptedEmail = await AsyncStorage.getItem('@auth:email');
+          const encryptedPassword = await AsyncStorage.getItem('@auth:password');
+
+          if (encryptedEmail && encryptedPassword) {
+            const decryptedEmail = CryptoJS.AES.decrypt(encryptedEmail, 'your-secret-key').toString(CryptoJS.enc.Utf8);
+            const decryptedPassword = CryptoJS.AES.decrypt(encryptedPassword, 'your-secret-key').toString(CryptoJS.enc.Utf8);
+            setEmail(decryptedEmail);
+            setPassword(decryptedPassword);
+            setRememberAccount(true);
           }
-        };
-      
-        loadRememberedCredentials();
-    }, []);
-
-    const handleLogin = async () => {
-        try {
-            await login(email, password, rememberAccount);
-            await getAuthDetails();
-            
-            // Check candidate status after successful login
-            try {
-                const response = await dispatch(fetchCandidate()).unwrap();
-                console.log({response})
-                // If we get here, the candidate is authorized
-                navigation.navigate(ScreenNames.HomeScreen);
-            } catch (error: any) {
-                // If unauthorized, navigate to upload resume screen
-      console.log({error})
-                if (error.status === 401 || error.status === 'UNAUTHORIZED') {
-                    navigation.navigate(ScreenNames.UploadResumeScreen);
-                } else {
-                    Toast.show({
-                        type: 'error',
-                        text1: 'Failed to verify candidate status'
-                    });
-                }
-            }
-        } catch (error: any) {
-          console.log({errorerror: error})
-            if (error.name === 'UserNotFoundException') {
-                Toast.show({
-                    type: 'error',
-                    text1: 'This email address is not registered with us. Try signing up'
-                })
-                setErrors({...errors, email: 'User not found. Please sign up.'});
-            } else if (error.name === 'NotAuthorizedException') {
-                Toast.show({
-                    type: 'error',
-                    text1: 'Please enter a valid password'
-                })
-                setErrors({...errors, password: 'Incorrect username or password.'});
-            } else {
-                Toast.show({
-                    type: 'error',
-                    text1: error.message
-                })
-                setErrors({...errors, password: error.message || 'Login failed'});
-            }
         }
+      } catch (error) {
+        console.error("Failed to load remembered credentials:", error);
+      }
     };
 
-    const checkFormValidity = () => {
-        try {
-            loginSchema.validateSync({ email, password }, { abortEarly: false });
-            return true;
-        } catch {
-            return false;
-        }
-    };
+    loadRememberedCredentials();
+  }, []);
 
-    const emailValidity = (email: string) => {
-        (loginSchema.fields.email as yup.StringSchema)
-          .validate(email)
-          .then(() => {
-            setErrors(prev => ({ ...prev, email: '' }));
-          })
-          .catch((err: yup.ValidationError) => {
-            setErrors(prev => ({ ...prev, email: err.message }));
-          });
-      
-        setEmail(email);
-      };
-
-    const passwordValidity = (password: string) => {
-        (loginSchema.fields.password as yup.StringSchema)
-          .validate(password)
-          .then(() => {
-            setErrors(prev => ({ ...prev, password: '' }));
-          })
-          .catch((err: yup.ValidationError) => {
-            setErrors(prev => ({ ...prev, password: err.message }));
-          });
-      
-        setPassword(password);
-      };
-
-    const isFormValid = checkFormValidity();
-
-    const handleSignUpPressed = () => {
-        navigation.navigate(ScreenNames.SignUpScreen);
+  const handleLogin = async () => {
+    try {
+      setLoading(true);
+      const response = await login(email, password, rememberAccount);
+      setLoading(false);
+      if (!response?.userRegistered) navigation.navigate(ScreenNames.UploadResumeScreen);
+    } catch (error: any) {
+      console.log({ errorerror: error })
+      setLoading(false)
+      if (error.name === 'UserNotFoundException') {
+        Toast.show({
+          type: 'error',
+          text1: 'This email address is not registered with us. Try signing up'
+        })
+        setErrors({ ...errors, email: 'User not found. Please sign up.' });
+      } else if (error.name === 'NotAuthorizedException') {
+        Toast.show({
+          type: 'error',
+          text1: 'Please enter a valid password'
+        })
+        setErrors({ ...errors, password: 'Incorrect username or password.' });
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: error.message
+        })
+        setErrors({ ...errors, password: error.message || 'Login failed' });
+      }
     }
+  };
 
-    const handleForgotPasswordPress = () => {
-        navigation.navigate(ScreenNames.ForgetPasswordScreen);
+
+  const checkFormValidity = () => {
+    try {
+      loginSchema.validateSync({ email, password }, { abortEarly: false });
+      return true;
+    } catch {
+      return false;
     }
+  };
+
+  const emailValidity = (email: string) => {
+    (loginSchema.fields.email as yup.StringSchema)
+      .validate(email)
+      .then(() => {
+        setErrors(prev => ({ ...prev, email: '' }));
+      })
+      .catch((err: yup.ValidationError) => {
+        setErrors(prev => ({ ...prev, email: err.message }));
+      });
+
+    setEmail(email);
+  };
+
+  const passwordValidity = (password: string) => {
+    (loginSchema.fields.password as yup.StringSchema)
+      .validate(password)
+      .then(() => {
+        setErrors(prev => ({ ...prev, password: '' }));
+      })
+      .catch((err: yup.ValidationError) => {
+        setErrors(prev => ({ ...prev, password: err.message }));
+      });
+
+    setPassword(password);
+  };
+
+  const isFormValid = checkFormValidity();
+
+  const handleSignUpPressed = () => {
+    navigation.navigate(ScreenNames.SignUpScreen);
+  }
+
+  const handleForgotPasswordPress = () => {
+    navigation.navigate(ScreenNames.ForgetPasswordScreen);
+  }
 
   return (
     <SafeAreaView style={styles.container}>
-			<ScrollView
-                contentContainerStyle={styles.scrollContent}
-                keyboardShouldPersistTaps="handled"
-                showsVerticalScrollIndicator={false}
-            >
-				
-				<SignInHeader
-					title='Welcome Back!'
-					subText='Connect with top healthcare employers, verify credentials, and advance your career.'
-				/>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
 
-				<EmailInput value={email} onChange={emailValidity} error={errors.email} />
-				<PasswordInput
-					value={password}
-					onChange={passwordValidity}
-					error={errors.password}
-					label="Password"
-					placeholder="Enter password"
-				/>
-                <LoginExtras 
-                    check={rememberAccount} 
-                    setCheck={setRememberAccount} 
-                    onForgotPasswordPress={handleForgotPasswordPress} 
-                />
+        <SignInHeader
+          title='Welcome Back!'
+          subText='Connect with top healthcare employers, verify credentials, and advance your career.'
+        />
 
-				<TouchableOpacity
-					style={[styles.button, { backgroundColor: isFormValid ? '#347CD5' : '#ccc' }]}
-					onPress={handleLogin}
-					// disabled={!isFormValid}
-				>
-					<TextStyle variant='bold' size={'md'} style={styles.buttonText}>Log In</TextStyle>
-				</TouchableOpacity>
+        <EmailInput value={email} onChange={emailValidity} error={errors.email} />
+        <PasswordInput
+          value={password}
+          onChange={passwordValidity}
+          error={errors.password}
+          label="Password"
+          placeholder="Enter password"
+        />
+        <LoginExtras
+          check={rememberAccount}
+          setCheck={setRememberAccount}
+          onForgotPasswordPress={handleForgotPasswordPress}
+        />
 
-                <Text style={styles.loginText}>
-                    Don't have an account? <Text style={styles.loginLink}  onPress={handleSignUpPressed}>Sign Up</Text>
-                </Text>
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: isFormValid ? '#347CD5' : '#ccc' }]}
+          onPress={handleLogin}
+        // disabled={!isFormValid}
+        >
+          {loading ?
+            <ActivityIndicator color={'#fff'} /> :
+            <TextStyle variant='bold' size={'md'} style={styles.buttonText}>Log In</TextStyle>
+          }
+        </TouchableOpacity>
 
-				<View style={styles.orSection}>
-					<View style={styles.semiDivider} />
-					<Text style={styles.orText}>OR</Text>
-					<View style={styles.semiDivider} />
-				</View>
+        <Text style={styles.loginText}>
+          Don't have an account? <Text style={styles.loginLink} onPress={handleSignUpPressed}>Sign Up</Text>
+        </Text>
 
-                <SocialButtons />
+        <View style={styles.orSection}>
+          <View style={styles.semiDivider} />
+          <Text style={styles.orText}>OR</Text>
+          <View style={styles.semiDivider} />
+        </View>
 
-                <View style={styles.footer}>
-                    <TermsPolicies />
-				    <CopyrightFooter />
-                </View>
-			</ScrollView>
+        <SocialButtons />
+
+        <View style={styles.footer}>
+          <TermsPolicies />
+          <CopyrightFooter />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

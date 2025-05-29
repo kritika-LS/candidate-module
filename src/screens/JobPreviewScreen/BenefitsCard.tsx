@@ -13,14 +13,19 @@ const BenefitsCard = ({ benefits }: { benefits: string[] }) => {
   return (
     <View style={styles.card}>
       <TextStyle variant="bold" size="md" style={styles.sectionTitle}>Benefits</TextStyle>
-      {displayBenefits.map((benefit, idx) => (
-        <Text key={idx} style={styles.descriptionText}>• {benefit}</Text>
-      ))}
-      {showToggle && (
-        <TouchableOpacity onPress={() => setExpanded(!expanded)}>
-          <Text style={styles.viewMore}>{expanded ? 'View Less' : 'View More'}</Text>
-        </TouchableOpacity>
-      )}
+      {benefits ?
+        <View>
+          {displayBenefits.map((benefit, idx) => (
+            <Text key={idx} style={styles.descriptionText}>• {benefit}</Text>
+          ))}
+          {showToggle && (
+            <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+              <Text style={styles.viewMore}>{expanded ? 'View Less' : 'View More'}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+        : <Text style={styles.descriptionText}>Not specified</Text>
+      }
     </View>
   );
 };

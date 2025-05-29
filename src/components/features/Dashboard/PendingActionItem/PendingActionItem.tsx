@@ -2,16 +2,28 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { TextStyle } from '../../../common/Text';
 import { theme } from '../../../../theme';
+import { useNavigation } from '@react-navigation/native';
+import { BottomTabsParamsList } from '../../../../types/navigation';
 
 interface Props {
   text: string;
+  item?: any;
+  targetScreen: string;
+  targetTabIndex?: number;
 }
 
-const PendingActionItem: React.FC<Props> = ({ text }) => {
+const PendingActionItem: React.FC<Props> = ({ text, item, targetScreen, targetTabIndex }) => {
+
+  const navigation = useNavigation<BottomTabsParamsList>();
+
+  const handlePress = () => {
+    navigation.navigate('Profile', { screen: targetScreen, initialTabIndex: targetTabIndex });
+  };
+
   return(
     <View style={styles.container}>
       <TextStyle style={styles.text} size='xs'>{text}</TextStyle>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity onPress={handlePress} style={styles.button}>
         <TextStyle style={styles.buttonText}>View</TextStyle>
       </TouchableOpacity>
     </View>

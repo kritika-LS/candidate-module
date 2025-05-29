@@ -20,15 +20,13 @@ const WorkHistorySection = () => {
             title: 'Work History',
             icon: 'briefcase', 
 			completed: false,
-			ScreenName: 'AddWorkHistory',
+			ScreenName: 'WorkHistorySection',
         },
     ];
 
     return (
         <ScrollView style={styles.sectionContainer}>
-            {showHistoryList ? (
-                <>
-                    { WorkHistoryData.length > 0 ? (
+            {showHistoryList || WorkHistoryData.length ? (
                         <>
                             <HistoryListCard
                                 listIcon={'office-building'}
@@ -52,41 +50,8 @@ const WorkHistorySection = () => {
                                 <TextStyle color={theme.colors.primary.main} style={styles.addWorkHistoryText}>Add Work History</TextStyle>
                             </TouchableOpacity>
                         </>
-                        ) : ( 
-                            <PrimaryMenu
-                                menuItems={accordionData}
-                            />
-                            // <AddWorkHistory />
-                         )}
-                </>
             ) : (
-                <PrimaryMenu
-                    menuItems={accordionData}
-                />
-                // accordionData.map((item, index) => (
-                //     <View key={index} style={styles.accordionItem}>
-                //         <TouchableOpacity
-                //             style={styles.accordionHeader}
-                //             onPress={() => setExpandedItem(expandedItem === item.title ? null : item.title)}
-                //         >
-                //             <View style={styles.accordionTitleContainer}>
-                //                 <Icon name={item.icon} size={18} color={'#888'} />
-                //                 <Text style={styles.accordionTitle}>{item.title}</Text>
-                //             </View>
-
-                //             <View style={styles.flexRow}>
-                //                 <Icon
-                //                     name={expandedItem === item.title ? "chevron-up" : "chevron-down"}
-                //                     size={20}
-                //                     color={'#888'}
-                //                     style={styles.iconSpacing}
-                //                 />
-                //             </View>
-                //         </TouchableOpacity>
-
-                //         {expandedItem === item.title && item.content}
-                //     </View>
-                // ))
+                <AddWorkHistory />
             )}
         </ScrollView>
     );

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import apiClient, { ApiClient } from '../../api/apiClient';
+import { ApiClient } from '../../api/apiClient';
 import { RootState } from '../store';
 
 interface OnboardingState {
@@ -18,12 +18,12 @@ export const submitOnboarding = createAsyncThunk(
   'onboarding/submit',
   async (formData: FormData, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post('/candidate/onboard', formData, {
+      const response = await ApiClient.post('/candidate/onboard', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      return response.data;
+      return response?.data;
     } catch (error: any) {
       console.log({error})
       return rejectWithValue(error.response?.data?.message || 'Failed to submit onboarding');

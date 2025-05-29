@@ -1,8 +1,7 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 // import ProfileScreen from '../screens/ProfileScreen';
-// import SettingsScreen from '../screens/SettingsScreen';
-import HomeScreen from '../screens/HomScreen';
+// import SettingsScreen from '../screens/SettingsScreen'
 import { DrawerParamList } from '../types/navigation';
 import CustomDrawer from '../components/CustomDrawer/CustomDrawer';
 import { ScreeningsScreen } from '../screens/ScreeningsScreen';
@@ -28,6 +27,11 @@ import ReferenceSection from '../screens/ProfileScreen/ProfessionalInformation/R
 import ChartingSystem from '../screens/ProfileScreen/ProfessionalInformation/ChartingSystem';
 import BackgroundInformation from '../screens/ProfileScreen/ProfessionalInformation/BackgroundInformation';
 import JobPreviewScreen from '../screens/JobPreviewScreen';
+import { PersonalDetailsScreen } from '../screens/ProfileScreen/PersonalDetails/PersonalDetailsScreen';
+import HomeScreen from '../screens/HomScreen';
+import WorkHistorySection from '../screens/ProfileScreen/WorkHistory/WorkHistory';
+import { AddEducationForm } from '../screens/ProfileScreen/Education/AddEducationForm';
+import EducationSection from '../screens/ProfileScreen/Education';
 
 
 const Drawer = createDrawerNavigator<DrawerParamList>();
@@ -41,7 +45,7 @@ const DrawerNavigator = () => (
     drawerContent={(props) => <CustomDrawer {...props} />}
   >
     <Drawer.Screen name="BottomTabs" component={BottomTabs} options={{ title: '' }} />
-    <Drawer.Screen name="Home" component={HomeScreen} />
+    <Drawer.Screen name="HomeScreen" component={HomeScreen} />
     <Drawer.Screen name="ScreeningsScreen" component={ScreeningsScreen} />
     <Drawer.Screen name="SkillsChecklistScreen" component={SkillsChecklistScreen} />
     <Drawer.Screen name="ReferencesScreen" component={ReferencesScreen} />
@@ -54,6 +58,7 @@ const DrawerNavigator = () => (
     <Drawer.Screen name="JobPreferencesScreen" component={JobPreferencesScreen} />
     <Drawer.Screen name="SubmittalInformationScreen" component={SubmittalInformationScreen} />
     <Drawer.Screen name="EmergencyContactAddressScreen" component={EmergencyContactAddressScreen} />
+    <Drawer.Screen name="WorkHistorySection" component={WorkHistorySection} />
     <Drawer.Screen name="AddWorkHistory" component={AddWorkHistory} />
     <Drawer.Screen name="CertificateScreen" component={Certificate} />
     <Drawer.Screen name="LicenseScreen" component={License} />
@@ -61,6 +66,8 @@ const DrawerNavigator = () => (
     <Drawer.Screen name="ChartingSystemScreen" component={ChartingSystem} />
     <Drawer.Screen name="BackgroundInformationScreen" component={BackgroundInformation} />
     <Drawer.Screen name="JobPreviewScreen" component={JobPreviewScreen} />
+    <Drawer.Screen name="PersonalDetailsScreen" component={PersonalDetailsScreen} />
+    <Drawer.Screen name="EducationSection" component={EducationSection} />
   </Drawer.Navigator>
 );
 

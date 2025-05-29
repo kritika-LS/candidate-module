@@ -1,9 +1,11 @@
+// index.tsx
 import React, { useRef, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import Icon from '../../../common/Icon/Icon';
 import { theme } from '../../../../theme';
 import { useAppSelector } from '../../../../hooks/useAppDispatch';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 type StatCardProps = {
   icon: React.ReactNode;
@@ -11,15 +13,24 @@ type StatCardProps = {
   count: number;
   bgColor: string;
   iconBgColor: string;
-  ScreenName: string;
+  ScreenName: string; // This prop is not directly used for navigation in StatCard but is part of the data structure
+  navigateToTab?: 'saved' | 'applications' | 'onboardings' | 'assignments'; // New prop for tab navigation
 };
 
-const StatCard = ({ icon, label, count, bgColor, iconBgColor }: StatCardProps) => {
+const StatCard = ({ icon, label, count, bgColor, iconBgColor, navigateToTab }: StatCardProps) => {
+  const navigation = useNavigation<any>(); // Initialize useNavigation hook
+
+  const handlePress = () => {
+    if (navigateToTab) {
+      navigation.navigate('My Jobs', { initialTab: navigateToTab }); // Navigate to MyJobs with initialTab parameter
+    }
+  };
+
   return (
-    <TouchableOpacity style={[styles.card, { backgroundColor: bgColor }]} activeOpacity={0.8}>
+    <TouchableOpacity style={[styles.card, { backgroundColor: bgColor }]} activeOpacity={0.8} onPress={handlePress}>
       <View style={styles.countsection}>
         <View style={[styles.iconCircle, { backgroundColor: iconBgColor }]}>{icon}</View>
-        {count && <Text style={styles.count}>{count}</Text>}
+        <Text style={styles.count}>{count}</Text>
       </View>
       <Text style={styles.label}>{label}</Text>
     </TouchableOpacity>
@@ -41,6 +52,7 @@ export const DashboardStats = () => {
       bgColor: '#E6DBFD',
       iconBgColor: "#8800FF",
       ScreenName: '',
+      navigateToTab: 'saved', // Specify target tab
     },
     {
       icon: <Icon name="file-multiple-outline" size={12} color="white" />,
@@ -49,6 +61,7 @@ export const DashboardStats = () => {
       bgColor: '#FFF2CC',
       iconBgColor: theme.colors.accent.main,
       ScreenName: '',
+      navigateToTab: 'applications', // Specify target tab
     },
     {
       icon: <Icon name="monitor" size={12} color="white" />,
@@ -57,6 +70,7 @@ export const DashboardStats = () => {
       bgColor: '#DAF0FF',
       iconBgColor: theme.colors.primary.main,
       ScreenName: '',
+      navigateToTab: 'onboardings', // Specify target tab
     },
     {
       icon: <Icon name="file-clock-outline" size={12} color="white" />,
@@ -65,6 +79,7 @@ export const DashboardStats = () => {
       bgColor: '#E5F8E8',
       iconBgColor: theme.colors.green.success_100,
       ScreenName: '',
+      navigateToTab: 'assignments', // Specify target tab
     },
     {
       icon: <Icon name="account-search-outline" size={12} color="white" />,
@@ -73,6 +88,7 @@ export const DashboardStats = () => {
       bgColor: '#ffded1',
       iconBgColor: '#ff9066',
       ScreenName: '',
+      // No navigateToTab for 'Screenings' as per requirement
     },
   ];
 

@@ -1,130 +1,188 @@
-import React, { useState } from "react";
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView, TextInput } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, SafeAreaView, ActivityIndicator, FlatList } from "react-native";
 import { SearchSection } from "../../components/features/SearchSection";
 import JobCard from "../../components/features/JobCard";
-import Toast from "react-native-toast-message";
-import CustomModal from "../../components/common/Modal";
-import Icon from "../../components/common/Icon/Icon";
 import { EmptyJobs } from '../../components/features/EmptyJobs';
 import { TextStyle } from "../../components/common/Text";
-import { FilterSheetModal } from "../../components/features/SearchSection/FilterSheetModal";
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types/navigation';
 import { styles } from "./styles";
 import { SaveSearchModal } from '../../components/features/SearchSection/SaveSearchModal';
+import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
+import { fetchCandidateSearchCriteria } from "../../store/thunk/candidateSearchCriteria.thunk";
+import { clearJobsError } from "../../store/slices/jobs.slice";
+import { clearCandidateSearchCriteriaError } from "../../store/slices/candidateSearchCriteria.slice";
+import { theme } from "../../theme";
+import { FilterBottomsheet } from "../../components/features/SearchSection/FilterBottomsheet";
+import { sortByOptions } from "../../constants";
+import { Job } from '../../models/types/Dashboard';
+import { JobDetails } from '../../models/types/jobDetails';
+import { useSearchJobs } from '../../hooks/useSearchJobs';
+import Icon from "../../components/common/Icon/Icon";
+import { fetchRecommendedJobs } from "../../store/thunk/jobs.thunk";
+import JobCardSkeleton from "../../components/features/JobCard/JobCardSkeleton";
 
-const mockJobs: any[] = [
-  {
-    id: 1,
-    jobTitle: "Registered Nurse",
-    jobType: "Travel",
-    facilityName: "Starlight Medical Center",
-    city: "Syracuse",
-    state: "NY",
-    country: "US",
-    jobReferenceNumber: "RE-1032YPL",
-    payRateMinimum: "$2484",
-    payRateMaximum: "$2681",
-    jobExperienceLevel: "0-2 years",
-    shiftDetails: "3x12",
-    validFrom: "Dec 02, 2024",
-    validTill: "Mar 02, 2025",
-    duration: "3 Months",
-    numberOfOpenings: 1,
-    postedOn: "2 days ago"
-  },
-  // ...add more mock jobs as needed
-];
+type SearchJobsNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SearchJobs'>;
+
+// Create a function to convert Job to JobDetails
+const convertJobToJobDetails = (job: Job): JobDetails => {
+  return {
+    ...job,
+    appliedDate: '',
+    externalJobId: '',
+    enterpriseId: '',
+    clientEnterpriseId: null,
+    facilityEnterpriseId: null,
+    mspEnterpriseId: null,
+    enterpriseUserId: 0,
+    jobDescriptionUrl: null,
+    jobDescriptionText: '',
+    jobCategory: '',
+    skillData: [],
+    payRateType: '',
+    payRateTypeFullText: null,
+    payRateMinimum: job.payRateMinimum ? parseFloat(job.payRateMinimum) : null,
+    payRateMaximum: job.payRateMaximum ? parseFloat(job.payRateMaximum) : null,
+    overallYearsOfExperienceMinimum: job.overallYearsOfExperienceMinimum ? parseFloat(job.overallYearsOfExperienceMinimum) : null,
+    overallYearsOfExperienceMaximum: job.overallYearsOfExperienceMaximum ? parseFloat(job.overallYearsOfExperienceMaximum) : null,
+    jobExperienceLevelFullText: null,
+    currency: '',
+    workFrom: '',
+    workFromFullText: null,
+    zipCode: '',
+    latitude: null,
+    longitude: null,
+    shiftType: '',
+    shiftStartTime: '',
+    shiftEndTime: '',
+    shiftTimezone: null,
+    minimumEducation: null,
+    minimumEducationFullText: null,
+    refreshedOn: '',
+    benefits: null,
+    additionalFields: null,
+    checklistId: null,
+    status: '',
+    statusFullText: null,
+    numberOfViews: 0,
+    socialMediaUrl: null,
+    allowedToWorkInOtherJobs: '',
+    limitForApplications: null,
+    limitForShortlists: null,
+    interviewConfigurations: null,
+    interviewStopCriteria: null,
+    numberOfCalendarSchedulesToBlock: null,
+    expiryMinutesForAcceptingSchedules: null,
+    jobEducationalQualifications: [],
+    candidateProcessStatus: null
+  };
+};
 
 export const SearchJobs = () => {
-  const [sort, setSort] = useState("Relevance");
-  const [searchValue, setSearchValue] = useState("");
-  const [chips, setChips] = useState<string[]>([]);
-  const [filterVisible, setFilterVisible] = useState(false);
-  // Filter state
-  const [selectedEmploymentTypes, setSelectedEmploymentTypes] = useState<string[]>([]);
-  const [contractLength, setContractLength] = useState<[number, number]>([1, 2]);
-  const [selectedShifts, setSelectedShifts] = useState<string[]>([]);
+  const navigation = useNavigation<SearchJobsNavigationProp>();
+  const dispatch = useAppDispatch();
+  const {
+    searchValue,
+    chips,
+    selectedEmploymentTypes,
+    contractLength,
+    selectedShifts,
+    saveSearchModalVisible,
+    saveSearchInput,
+    savedSearches,
+    editingSearch,
+    showSortDropdown,
+    sortByOption,
+    setSortByOption,
+    jobDataToDisplay,
+    totalResults,
+    loadingJobs,
+    loadingParse,
+    loadingMatchingJobs,
+    bottomSheetModalRef,
+    isFilterApplied,
+    handleSearchValueChange,
+    handleAddChip,
+    handleRemoveChip,
+    handleClearAll,
+    handleFilterPress,
+    handleToggleEmploymentType,
+    handleContractLengthChange,
+    handleToggleShift,
+    handleResetFilters,
+    handleSaveFilters,
+    openSaveSearchModal,
+    closeSaveSearchModal,
+    handleSaveSearch,
+    handleDeleteSavedSearch,
+    handleSheetChanges,
+    handleFilterBottomsheetClose,
+    calculateFilterCount,
+    setShowSortDropdown,
+    setSaveSearchInput,
+    executeSearch,
+    currentPage,
+    hasMoreJobs,
+    isLoadingMore,
+    loadMoreJobs,
+    PAGE_SIZE,
+    setCurrentPage,
+    setHasMoreJobs,
+  } = useSearchJobs();
 
-  // Save search modal state
-  const [saveSearchModalVisible, setSaveSearchModalVisible] = useState(false);
-  const [saveSearchInput, setSaveSearchInput] = useState("");
-  const [savedSearches, setSavedSearches] = useState<string[]>([]);
-  const [editingSearch, setEditingSearch] = useState<string | null>(null);
+  const jobsErrorMessage = useAppSelector((state) => state?.jobs?.error || '');
 
-  const navigation = useNavigation();
+  type SortByOption = 'RELEVANCE' | 'NEWEST' | 'PAYRATE';
 
-  const handleSearchValueChange = (val: string) => setSearchValue(val);
+  const sortByOptions: { label: string; value: SortByOption }[] = [
+    { label: 'Relevance', value: 'RELEVANCE' },
+    { label: 'Newest', value: 'NEWEST' },
+    { label: 'Highest Pay', value: 'PAYRATE' },
+  ];
 
-  const handleAddChip = () => {
-    const trimmed = searchValue.trim();
-    if (trimmed && !chips.includes(trimmed)) {
-      setChips([...chips, trimmed]);
-    }
-    setSearchValue("");
-  };
+  useEffect(() => {
+    dispatch(fetchCandidateSearchCriteria());
+    dispatch(fetchRecommendedJobs({ 
+      page: 0, 
+      pageSize: PAGE_SIZE, 
+      sortBy: sortByOption,
+      durationFrom: null,
+      durationTo: null,
+      job_category: 'Healthcare',
+    }));
 
-  const handleRemoveChip = (chip: string) => {
-    setChips(chips.filter((c) => c !== chip));
-  };
+    return () => {
+      dispatch(clearJobsError());
+      dispatch(clearCandidateSearchCriteriaError());
+    };
+  }, [dispatch, sortByOption, PAGE_SIZE]);
 
-  const handleClearAll = () => {
-    setChips([]);
-  };
+  const overallLoading = loadingJobs || loadingParse || loadingMatchingJobs;
 
-  const handleFilterPress = () => {
-    setFilterVisible(true);
-  };
-
-  // FilterSheet handlers
-  const handleToggleEmploymentType = (type: string) => {
-    setSelectedEmploymentTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+  const renderFooter = () => {
+    if (!isLoadingMore) return null;
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.colors.primary.main} />
+      </View>
     );
   };
-  const handleContractLengthChange = (range: [number, number]) => {
-    setContractLength(range);
-  };
-  const handleToggleShift = (shift: string) => {
-    setSelectedShifts((prev) =>
-      prev.includes(shift) ? prev.filter((s) => s !== shift) : [...prev, shift]
-    );
-  };
-  const handleResetFilters = () => {
-    setSelectedEmploymentTypes([]);
-    setContractLength([1, 2]);
-    setSelectedShifts([]);
-  };
-  const handleSaveFilters = () => {
-    setFilterVisible(false);
-    // Optionally trigger job search/filtering here
-  };
 
-  // Save search modal logic
-  const openSaveSearchModal = (searchName?: string) => {
-    setSaveSearchInput("");
-    setEditingSearch(searchName || null);
-    setSaveSearchModalVisible(true);
-    setFilterVisible(false);
-  };
-  const closeSaveSearchModal = () => {
-    setSaveSearchModalVisible(false);
-    setEditingSearch(null);
-  };
-  const handleSaveSearch = () => {
-    if (saveSearchInput.trim()) {
-      if (!savedSearches.includes(saveSearchInput.trim())) {
-        setSavedSearches([...savedSearches, saveSearchInput.trim()]);
-      }
-      closeSaveSearchModal();
-      Toast.show({ type: 'success', text1: 'Search saved successfully' });
-    }
-  };
-  const handleDeleteSavedSearch = (name: string) => {
-    setSavedSearches(savedSearches.filter(s => s !== name));
-    if (editingSearch === name) {
-      setEditingSearch(null);
-      setSaveSearchInput("");
-    }
+  const handleSortByChange = (option: SortByOption) => {
+    setSortByOption(option);
+    setShowSortDropdown(false);
+    // Reset pagination when sort changes
+    setCurrentPage(0);
+    setHasMoreJobs(true);
+    dispatch(fetchRecommendedJobs({ 
+      page: 0, 
+      pageSize: PAGE_SIZE, 
+      durationFrom: null,
+      durationTo: null,
+      job_category: "Healthcare",
+      sortBy: option
+    }));
   };
 
   return (
@@ -137,52 +195,119 @@ export const SearchJobs = () => {
         onRemoveChip={handleRemoveChip}
         onClearAll={handleClearAll}
         onFilterPress={handleFilterPress}
-        openSaveSearchModal={openSaveSearchModal}
       />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {mockJobs.length === 0 ? (
-          <EmptyJobs />
-        ) : (
-          <View style={styles.jobsSection}>
-            <View style={styles.jobsHeaderRow}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={styles.jobsCount}>{mockJobs.length} Jobs for you</Text>
-                <TouchableOpacity style={styles.bookmarkIconBtn} onPress={() => openSaveSearchModal(savedSearches[0])}>
-                  <Icon name="bookmark-outline" size={20} color="#1976D2" />
-                </TouchableOpacity>
-              </View>
-              <View style={styles.sortRow}>
-                <Text style={styles.sortLabel}>Sort by</Text>
-                <TouchableOpacity style={styles.sortDropdown}>
-                  <Text style={styles.sortValue}>{sort}</Text>
-                  {/* Add dropdown icon if needed */}
-                </TouchableOpacity>
-              </View>
+  
+      {overallLoading && currentPage === 0 ? ( // Only show full screen loader for initial load
+        <View style={styles.loadingContainer}>
+          <FlatList
+            contentContainerStyle={styles.jobsSection}
+            data={Array(3).fill(0)}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={() => <JobCardSkeleton />}
+          />
+        </View>
+      ) : !jobDataToDisplay.length ? (
+        <EmptyJobs noJobsText={`No jobs found, try refining \n your search criteria`} />
+      ) : (
+        <>
+          {(jobsErrorMessage && isFilterApplied) && <TextStyle style={{paddingHorizontal: 16, marginTop: 12}}>{jobsErrorMessage}</TextStyle>}
+          <View style={styles.jobsHeaderRow}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.jobsCount}>{totalResults} Jobs for you</Text>
+              <TouchableOpacity
+                style={styles.bookmarkIconBtn}
+                onPress={() => openSaveSearchModal(savedSearches[0])}
+              >
+                <Icon name="bookmark-outline" size={20} color="#1976D2" />
+              </TouchableOpacity>
             </View>
-            {mockJobs.map((job) => (
-              <JobCard 
-                key={job.id}
-                job={job}
-                onPress={() => navigation.navigate('JobPreviewScreen')}
-              />
-            ))}
-          </View>
-        )}
-      </ScrollView>
+            <View style={styles.sortRow}>
+              <Text style={styles.sortLabel}>Sort by</Text>
+              <TouchableOpacity
+                style={styles.sortDropdown}
+                onPress={() => setShowSortDropdown(!showSortDropdown)}
+              >
+                <Text style={styles.sortValue}>{sortByOptions.find(option => option.value === sortByOption)?.label || 'Relevance'}</Text>
+                <Icon name="chevron-down" size={20} color={theme.colors.grey[700]} />
+              </TouchableOpacity>
+            </View>
 
-      <FilterSheetModal
-        visible={filterVisible}
-        onClose={() => setFilterVisible(false)}
+            {showSortDropdown && (
+              <View style={styles.suggestionsContainer}>
+                <FlatList
+                  data={sortByOptions}
+                  keyExtractor={(item) => item.value}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={styles.suggestionItem}
+                      onPress={() => handleSortByChange(item.value)}
+                    >
+                      <TextStyle variant="regular" size="sm">
+                        {item.label}
+                      </TextStyle>
+                    </TouchableOpacity>
+                  )}
+                  keyboardShouldPersistTaps="handled"
+                  nestedScrollEnabled
+                  style={styles.suggestionsList}
+                />
+              </View>
+            )}
+          </View>
+          <FlatList
+            contentContainerStyle={styles.jobsSection}
+            data={jobDataToDisplay}
+            keyExtractor={(item, index) => item?.jobId?.toString() || index.toString()}
+            renderItem={({ item }) => (
+              <JobCard
+                key={item.jobId}
+                job={convertJobToJobDetails(item)}
+                fetchJobs={() => {
+                  if (chips.length > 0) {
+                    executeSearch(chips[0]);
+                  } else {
+                    dispatch(fetchRecommendedJobs({
+                      page: 0,
+                      pageSize: PAGE_SIZE,
+                      sortBy: sortByOption,
+                      durationFrom: null,
+                      durationTo: null,
+                      job_category: "Healthcare"
+                    }));
+                  }
+                }}
+                onPress={() => navigation.navigate('JobPreviewScreen', { jobId: item.jobId })}
+              />
+            )}
+            onEndReached={hasMoreJobs && !isLoadingMore ? loadMoreJobs : null}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+          />
+        </>
+      )}
+  
+      <FilterBottomsheet
+        bottomSheetModalRef={bottomSheetModalRef}
         onReset={handleResetFilters}
-        onSaveSearch={() => openSaveSearchModal()}
+        onSaveSearch={handleSaveFilters}
         selectedEmploymentTypes={selectedEmploymentTypes}
         onToggleEmploymentType={handleToggleEmploymentType}
         contractLength={contractLength}
         onContractLengthChange={handleContractLengthChange}
         selectedShifts={selectedShifts}
         onToggleShift={handleToggleShift}
+        handleSheetChanges={handleSheetChanges}
+        handleFilterBottomsheetClose={handleFilterBottomsheetClose}
+        filterCount={calculateFilterCount()}
+        value={saveSearchInput}
+        onChange={setSaveSearchInput}
+        onSave={handleSaveSearch}
+        onClose={closeSaveSearchModal}
+        savedSearches={savedSearches}
+        onDelete={handleDeleteSavedSearch}
+        onChipPress={openSaveSearchModal}
       />
-      {/* Save Search Modal */}
+  
       <SaveSearchModal
         visible={saveSearchModalVisible}
         value={saveSearchInput}
