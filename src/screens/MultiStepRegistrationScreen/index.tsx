@@ -35,6 +35,7 @@ import { AuthStackParamList } from '../../types/navigation';
 import { RootState } from '../../store/store';
 import Toast from 'react-native-toast-message';
 import moment from 'moment';
+import RNFetchBlob from 'react-native-blob-util';
 
 // Types
 interface ParentScreenRef {
@@ -215,6 +216,7 @@ export const MultiStepRegistrationScreen = () => {
 
   const route = useRoute();
   const resumeData = (route?.params as any)?.responseData || {};
+  const resumeFile = (route?.params as any)?.resumeFile;
 
   console.log({route})
 
@@ -392,10 +394,13 @@ export const MultiStepRegistrationScreen = () => {
   // Form Submission
   const handleRegister = useCallback(async () => {
     const isValid = await validateAll();
-    // if (!isValid) {
-    //   Alert.alert('Validation Error', 'Please fill all mandatory fields');
-    //   return;
-    // }
+    if (!isValid) {
+      Toast.show({
+        type: 'error',
+        text1: 'Please fill all mandatory fields'
+      })
+      return;
+    }
 
     try {
       console.log("-------------")
@@ -425,7 +430,7 @@ export const MultiStepRegistrationScreen = () => {
         availableFrom: moment(formData.jobPref.availabilityDate, "YYYY-MM-DD").format("YYYY-MM-DD"),
         preferredShift: formData.jobPref.shift,
         preferredLocation: formData.jobPref.selectedStates,
-        skillData: [],
+        skillData: (resumeData.skills || []).map((keyword: string) => ({ keyword, lastUsed: null })),
         resumes: [
           {
             professionalTitle: formData.professional.profession,
@@ -437,6 +442,14 @@ export const MultiStepRegistrationScreen = () => {
       };
       console.log({onboardingDetails})
       onboardingFormData.append('onboardingDetails', JSON.stringify(onboardingDetails));
+      console.log({resumeFile})
+      if (resumeFile) {
+        onboardingFormData.append('resume', {
+          uri: resumeFile.uri,
+          type: resumeFile.type || 'application/pdf',
+          name: resumeFile.name || 'resume.pdf',
+        });
+      }
       await dispatch(submitOnboarding(onboardingFormData)).unwrap();
       navigation.navigate(ScreenNames.RegistrationASuccessScreen);
     } catch (error: any) {
@@ -446,14 +459,14 @@ export const MultiStepRegistrationScreen = () => {
         text1: error.message || 'Failed to submit registration'
       })
     }
-  }, [formData, validateAll, dispatch, navigation]);
+  }, [formData, validateAll, dispatch, navigation, resumeFile]);
 
   // Render Functions
   const renderScene = useCallback(({ route }: { route: Route }) => {
     switch (route.key) {
       case 'personal':
         return (
-          <PersonalDetails
+          <PersonalDetailsSection
             data={formData.personal}
             onChange={(field: string, value: any) => {
               setFormData(prev => ({
@@ -564,7 +577,7 @@ export const MultiStepRegistrationScreen = () => {
             onPress={handleRegister}
             disabled={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0)}
             style={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0) ? styles.disabledButton : styles.registerButton}
-            textStyle={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0) && {color: '#fff'}}
+            textStyle={Object.values(formErrors).some(errorObj => Object.keys(errorObj).length > 0) ? {color: '#fff'} : {}}
           />
         </View>
         <TermsPolicies />

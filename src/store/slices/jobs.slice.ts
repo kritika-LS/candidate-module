@@ -5,12 +5,14 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
  interface JobsState {
   jobs: Job[];
+  jobsObject: any,
   loading: boolean;
   error: string | null;
  }
 
  const initialState: JobsState = {
   jobs: [],
+  jobsObject:{},
   loading: false,
   error: null,
  };
@@ -23,10 +25,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
       state.loading = true;
       state.error = null;
     },
-    fetchJobsSuccess: (state, action: PayloadAction<Job[]>) => {
-      console.log({dataaaaaaaaAaaaaaa: action})
+    fetchJobsSuccess: (state, action: PayloadAction<{ jobs: any[]; pagination?: string }>) => {
       state.loading = false;
-      state.jobs = action.payload;
+      if (action.payload.pagination) {
+        state.jobs = [...(state.jobs || []), ...action.payload.jobs];
+      } else {
+        state.jobs = action.payload.jobs;
+      }
+    },
+    setJobsObject: (state, action: PayloadAction<string>) => {
+      state.jobsObject = action.payload;
     },
     fetchJobsFailure: (state, action: PayloadAction<string>) => {
       state.loading = false;
@@ -41,6 +49,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
  export const {
   fetchJobsStart,
   fetchJobsSuccess,
+  setJobsObject,
   fetchJobsFailure,
   clearJobsError,
  } = jobsSlice.actions;

@@ -26,7 +26,7 @@ import JobCardSkeleton from "../../components/features/JobCard/JobCardSkeleton";
 type SearchJobsNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SearchJobs'>;
 
 // Create a function to convert Job to JobDetails
-const convertJobToJobDetails = (job: Job): JobDetails => {
+export const convertJobToJobDetails = (job: Job): JobDetails => {
   return {
     ...job,
     appliedDate: '',
@@ -131,7 +131,7 @@ export const SearchJobs = () => {
     setHasMoreJobs,
   } = useSearchJobs();
 
-  const jobsErrorMessage = useAppSelector((state) => state?.jobs?.error || '');
+  const jobsErrorMessage = useAppSelector((state) => state?.jobs?.jobsObject?.errorMessages  || '');
 
   type SortByOption = 'RELEVANCE' | 'NEWEST' | 'PAYRATE';
 
@@ -214,12 +214,12 @@ export const SearchJobs = () => {
           <View style={styles.jobsHeaderRow}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={styles.jobsCount}>{totalResults} Jobs for you</Text>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.bookmarkIconBtn}
                 onPress={() => openSaveSearchModal(savedSearches[0])}
               >
                 <Icon name="bookmark-outline" size={20} color="#1976D2" />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
             <View style={styles.sortRow}>
               <Text style={styles.sortLabel}>Sort by</Text>
@@ -254,13 +254,14 @@ export const SearchJobs = () => {
               </View>
             )}
           </View>
+          <View>
           <FlatList
             contentContainerStyle={styles.jobsSection}
             data={jobDataToDisplay}
             keyExtractor={(item, index) => item?.jobId?.toString() || index.toString()}
             renderItem={({ item }) => (
               <JobCard
-                key={item.jobId}
+                key={item.jobId + 'search'}
                 job={convertJobToJobDetails(item)}
                 fetchJobs={() => {
                   if (chips.length > 0) {
@@ -283,6 +284,7 @@ export const SearchJobs = () => {
             onEndReachedThreshold={0.5}
             ListFooterComponent={renderFooter}
           />
+          </View>
         </>
       )}
   

@@ -2,8 +2,6 @@ import React from 'react';
 import {
   View,
   StyleSheet,
-  ScrollView,
-  SafeAreaView,
   Text,
   TextInput,
   Switch,
@@ -13,13 +11,11 @@ import { useNavigation } from '@react-navigation/native';
 import { theme } from '../../../../theme';
 import { TextStyle } from '../../../../components/common/Text';
 import { Input } from '../../../../components/common/Input';
-import { Button } from '../../../../components/common/Button';
 import { Formik } from 'formik';
 import Toast from 'react-native-toast-message';
 import { addressValidationSchema2 } from '../../../../validations/addressValidation';
 import { useAppSelector, useAppDispatch } from '../../../../hooks/useAppDispatch';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
-import { SaveButton } from '../../../../components/features/SaveButton';
 import { updateCandidatePersonalDetails } from '../../../../store/thunk/candidatePersonalDetails.thunk';
 import { CandidatePersonalDetailsPayload } from '../../../../types/personalDetails';
 
@@ -99,8 +95,6 @@ const AddressDetailsScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
 
         <View style={styles.body}>
           <ProfileScreenHeader
@@ -288,28 +282,14 @@ const AddressDetailsScreen: React.FC = () => {
             )}
           </Formik>
         </View>
-      </ScrollView>
-      <View style={styles.saveButton}>
-        <SaveButton
-          title="Save"
-          onPress={handleSave}
-        />
-      </View>
-    </SafeAreaView>
   );
 };
 
 export default AddressDetailsScreen;
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-  },
   body: {
-    margin: 16,
+    marginVertical: 16,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
@@ -340,27 +320,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: theme.spacing.md,
   },
-  saveButton: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingBottom: 16
-  },
   label: {
     marginTop: 16,
     marginBottom: 4,
     fontSize: 14,
     fontWeight: '500',
-  },
-  saveBtn: {
-    marginTop: 24,
-    backgroundColor: '#0A47E9',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  saveBtnText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
   },
 });

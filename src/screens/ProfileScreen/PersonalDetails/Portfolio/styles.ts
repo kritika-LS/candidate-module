@@ -1,11 +1,8 @@
 import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   body:{
-    margin: 16,
+    marginVertical: 16,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
@@ -32,10 +29,5 @@ export const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     backgroundColor: '#fff',
-  },
-  saveButton: {
-    backgroundColor: '#fff', 
-    paddingHorizontal: 16, 
-    paddingBottom: 16
   },
 });

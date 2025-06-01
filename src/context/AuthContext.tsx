@@ -192,6 +192,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const accessToken = sessionResult.tokens?.accessToken?.toString() || null;
       //   const refreshToken = sessionResult.tokens?.refreshToken?.toString();
 
+      console.log({accessToken})
+      console.log({idToken})
+
       // const currentUser = await getCurrentUser();
       await AsyncStorage.setItem('auth_token', accessToken || '');
       await apiClient.setToken(accessToken);

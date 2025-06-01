@@ -14,8 +14,9 @@ import styles from './styles';
 import Icon from '../../components/common/Icon/Icon';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigation/RootNavigator';
+import { RootStackParamList } from '../../types/navigation';
 import { ScreenNames } from '../../utils/ScreenConstants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const walkthroughData: WalkthroughItemType[] = [
   {
@@ -36,12 +37,16 @@ const walkthroughData: WalkthroughItemType[] = [
     key: '3',
     title: 'Grow with Every Click',
     description:
-      'Set your goals, track your journey, and unlock new opportunities. This isn’t just job searching — it’s career-building, made simple.',
+      'Set your goals, track your journey, and unlock new opportunities. This isn\'t just job searching — it\'s career-building, made simple.',
     image: require('../../../assets/walkthrough/3.png'),
   },
 ];
 
-const WalkthroughScreen: React.FC = () => {
+interface WalkthroughScreenProps {
+  onDone?: () => void;
+}
+
+const WalkthroughScreen: React.FC<WalkthroughScreenProps> = ({ onDone }) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const flatListRef = useRef<FlatList>(null);
@@ -65,9 +70,10 @@ const WalkthroughScreen: React.FC = () => {
     }
   };
 
-  const onPressExploreOpportunities = () => {
-      navigation.replace(ScreenNames.SignUpScreen);
-  }
+  const onPressExploreOpportunities = async () => {
+    await AsyncStorage.setItem('hasSeenWalkthrough', 'true');
+    if (onDone) onDone();
+  };
 
   return (
     <View style={styles.container}>

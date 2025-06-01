@@ -13,7 +13,7 @@ class ApiClient {
       baseURL: ENV.DEV_API_URL,
       timeout: APP_CONSTANTS.API_TIMEOUT,
       headers: {
-        'Content-Type': 'application/json',
+        // 'Content-Type': 'application/json',
       },
     });
     this.setupInterceptors();
@@ -32,8 +32,8 @@ class ApiClient {
       const token = await AsyncStorage.getItem('auth_token');
       if (token) {
         this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        console.log('✅ Token set in axios headers:', {
-          token: token.substring(0, 20) + '...', // Log only first 20 chars for security
+        console.log('✅ Token get in axios headers:', {
+          token: token, // Log only first 20 chars for security
           headers: this.axiosInstance.defaults.headers.common
         });
       } else {
@@ -49,7 +49,7 @@ class ApiClient {
       if (token) {
         this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         console.log('✅ Token set in axios headers:', {
-          token: token.substring(0, 20) + '...', // Log only first 20 chars for security
+          token: token, // Log only first 20 chars for security
           headers: this.axiosInstance.defaults.headers.common
         });
       } else {

@@ -5,7 +5,7 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   body:{
-    margin: 16,
+    marginVertical: 16,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
@@ -36,11 +36,6 @@ export const styles = StyleSheet.create({
   },
   calendarIcon: {
   },
-  saveButton: {
-    backgroundColor: '#fff', 
-    paddingHorizontal: 16, 
-    paddingBottom: 16
-  },
   errorText: {
     color: 'red',
     fontSize: 12,
@@ -55,18 +50,6 @@ export const styles = StyleSheet.create({
   dropdownContainer: {
     maxHeight: 200,
     zIndex: 1000,
-  },
-  saveBtn: {
-    marginTop: 24,
-    backgroundColor: '#0A47E9',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  saveBtnText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
   },
   error: {
     color: 'red',

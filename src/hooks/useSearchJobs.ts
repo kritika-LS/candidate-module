@@ -24,7 +24,7 @@ export const useSearchJobs = () => {
   const dispatch = useAppDispatch();
 
   // Redux states
-  const recommendedJobs = useAppSelector((state) => state.jobs.jobs) as unknown as CandidatePoolJobsApiResponse;
+  const {jobsObject,jobs:recommendedJobs} = useAppSelector((state) => state.jobs) as unknown as CandidatePoolJobsApiResponse;
   const matchingJobs = useAppSelector((state) => state.jobsMatching.jobs) as Job[];
   const loadingJobs = useAppSelector((state) => state.jobs.loading);
   const errorJobs = useAppSelector((state) => state.jobs.error);
@@ -58,13 +58,14 @@ export const useSearchJobs = () => {
   // Refs
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const jobDataToDisplay = chips.length > 0 ? matchingJobs : (recommendedJobs?.responsePayload || []);
-  const totalResults = chips.length > 0 ? (matchingJobs?.length || 0) : (recommendedJobs?.totalResults || 0);
+  const jobDataToDisplay = chips.length > 0 ? matchingJobs : (recommendedJobs || []);
+  const totalResults = chips.length > 0 ? (matchingJobs?.length || 0) : (jobsObject?.totalResults || 0);
 
   const handleSearchValueChange = (val: string) => setSearchValue(val);
 
   const executeSearch = useCallback(async (query: string, page: number = 0) => {
     if (!query.trim()) {
+      console.log("tag 0")
       dispatch(fetchRecommendedJobs({ 
         page, 
         pageSize: PAGE_SIZE, 
@@ -124,7 +125,8 @@ export const useSearchJobs = () => {
           durationFrom: null,
           durationTo: null,
           job_category: "Healthcare",
-          sortBy: sortByOption
+          sortBy: sortByOption,
+          pagination:"Active",
         }));
       }
       setCurrentPage(nextPage);
@@ -274,7 +276,6 @@ export const useSearchJobs = () => {
         job_category: 'Healthcare',
         sortBy: sortByOption
       };
-
       dispatch(fetchRecommendedJobsWithFilters({
         page: 0,
         pageSize: 10,
@@ -299,7 +300,6 @@ export const useSearchJobs = () => {
       job_category: 'Healthcare',
       sortBy: sortByOption
     };
-
     dispatch(fetchRecommendedJobsWithFilters({
       page: 0,
       pageSize: PAGE_SIZE,

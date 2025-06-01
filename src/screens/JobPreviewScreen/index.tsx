@@ -22,21 +22,21 @@ import { withdrawApplication } from '../../store/thunk/withdrawApplication.thunk
 import { fetchDashboardStatistics } from '../../store/thunk/dashboardStats.thunk';
 import { fetchCandidatePoolJobs } from '../../store/thunk/candidatePoolJobs.thunk';
 import Toast from 'react-native-toast-message';
+import { CandidatePoolJobsApiResponse } from '../../models/types/candidatePoolJobs';
+import JobPreviewSkeleton from './JobPreviewSkeleton';
 
-// Define the type for the route parameters
 type JobPreviewScreenRouteParams = {
   jobId: string;
-  currentTab?: string; // currentTab is optional
+  currentTab?: string;
 };
 
-// Define the type for the route prop
 type JobPreviewScreenRouteProp = RouteProp<{ JobPreview: JobPreviewScreenRouteParams }, 'JobPreview'>;
 
 const JobPreviewScreen = () => {
   const route = useRoute<JobPreviewScreenRouteProp>();
-  const navigation = useNavigation<any>(); // You might want to type navigation more specifically
+  const navigation = useNavigation<any>();
 
-  const { jobId } = route.params; // jobId is now guaranteed to be a string based on the RouteProp
+  const { jobId } = route.params;
 
   const dispatch = useAppDispatch();
   const jobDetails = useAppSelector((state: RootState) => state?.jobDetails?.data);
@@ -91,18 +91,14 @@ const JobPreviewScreen = () => {
   };
 
   if (!jobDetails) {
-    return (
-      <View style={styles.emptyContainer}>
-        <ActivityIndicator />
-      </View>
-    );
+    return <JobPreviewSkeleton />;
   }
 
   // From this point onwards, jobDetails is guaranteed to be of type JobDetails
   return (
     <View style={{ flex: 1, backgroundColor: '#f7f7f7' }}>
       <Header showBackButton title="Job Details" />
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <ScrollView contentContainerStyle={[styles.scrollViewContent, { paddingTop: 16 }]}>
         <JobCard
           job={jobDetails}
           fetchJobs={refetchCurrentJobDetails}

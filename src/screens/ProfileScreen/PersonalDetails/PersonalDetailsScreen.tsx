@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { ScrollView, View, SafeAreaView, KeyboardAvoidingView, Platform } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import BasicInformationScreen from "./BasicInformationScreen";
 import AddressDetailsScreen from "./Address";
 import ProfessionalDetailsScreen from "./ProfessionalDetails";
@@ -9,10 +9,12 @@ import JobPreferencesForm from "./JobPreferences";
 import SubmittalInformationScreen from "./SubmittalInformation";
 import EmergencyContactAddressScreen from "./EmergencyContactAndAddress";
 import { styles } from "./styles";
+import { ProfileScreenHeader } from "../../../components/features/ProfileScreenHeader";
 
 export const PersonalDetailsScreen = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const route = useRoute();
+  const navigation = useNavigation();
   const sectionToScroll: string = (route.params as any)?.section;
 
   const sectionRefs = {
@@ -33,8 +35,8 @@ export const PersonalDetailsScreen = () => {
         (_x, y) => {
           scrollViewRef.current?.scrollTo({ y, animated: true });
         },
-        (error) => {
-          console.warn("measureLayout error:", error);
+        () => {
+          console.warn("Failed to measure layout");
         }
       );
     }

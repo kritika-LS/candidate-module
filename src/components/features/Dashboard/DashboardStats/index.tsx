@@ -12,12 +12,11 @@ type StatCardProps = {
   label: string;
   count: number;
   bgColor: string;
-  iconBgColor: string;
   ScreenName: string; // This prop is not directly used for navigation in StatCard but is part of the data structure
   navigateToTab?: 'saved' | 'applications' | 'onboardings' | 'assignments'; // New prop for tab navigation
 };
 
-const StatCard = ({ icon, label, count, bgColor, iconBgColor, navigateToTab }: StatCardProps) => {
+const StatCard = ({ icon, label, count, bgColor, navigateToTab }: StatCardProps) => {
   const navigation = useNavigation<any>(); // Initialize useNavigation hook
 
   const handlePress = () => {
@@ -29,7 +28,7 @@ const StatCard = ({ icon, label, count, bgColor, iconBgColor, navigateToTab }: S
   return (
     <TouchableOpacity style={[styles.card, { backgroundColor: bgColor }]} activeOpacity={0.8} onPress={handlePress}>
       <View style={styles.countsection}>
-        <View style={[styles.iconCircle, { backgroundColor: iconBgColor }]}>{icon}</View>
+        <View style={[styles.iconCircle]}>{icon}</View>
         <Text style={styles.count}>{count}</Text>
       </View>
       <Text style={styles.label}>{label}</Text>
@@ -46,47 +45,42 @@ export const DashboardStats = () => {
 
   const data: StatCardProps[] = [
     {
-      icon: <Icon name="briefcase-outline" size={12} color="white" />,
-      label: 'Saved Jobs',
+      icon: <Icon name="bookmark-outline" size={12} />,
+      label: 'Saved',
       count: dashboardStats.totalSavedJobs,
-      bgColor: '#E6DBFD',
-      iconBgColor: "#8800FF",
+      bgColor: '#d9f3e3',
       ScreenName: '',
       navigateToTab: 'saved', // Specify target tab
     },
     {
-      icon: <Icon name="file-multiple-outline" size={12} color="white" />,
-      label: 'Applications',
+      icon: <Icon name="briefcase-outline" size={12} />,
+      label: 'Applied',
       count: dashboardStats.totalAppliedJobs,
-      bgColor: '#FFF2CC',
-      iconBgColor: theme.colors.accent.main,
+      bgColor: '#d6e8fa',
       ScreenName: '',
       navigateToTab: 'applications', // Specify target tab
     },
     {
-      icon: <Icon name="monitor" size={12} color="white" />,
+      icon: <Icon name="bell-outline" size={12} />,
       label: 'Onboardings',
       count: dashboardStats.totalOnboardedJobs,
-      bgColor: '#DAF0FF',
-      iconBgColor: theme.colors.primary.main,
+      bgColor: '#fce8d4',
       ScreenName: '',
       navigateToTab: 'onboardings', // Specify target tab
     },
     {
-      icon: <Icon name="file-clock-outline" size={12} color="white" />,
+      icon: <Icon name="file-document-outline" size={12} />,
       label: 'Assignments',
       count: dashboardStats.totalOfferedJobs,
-      bgColor: '#E5F8E8',
-      iconBgColor: theme.colors.green.success_100,
+      bgColor: '#e5e1f9',
       ScreenName: '',
       navigateToTab: 'assignments', // Specify target tab
     },
     {
-      icon: <Icon name="account-search-outline" size={12} color="white" />,
+      icon: <Icon name="account-search-outline" size={12} />,
       label: 'Screenings',
       count: dashboardStats.totalOffersAccepted,
-      bgColor: '#ffded1',
-      iconBgColor: '#ff9066',
+      bgColor: '#ffe9e7',
       ScreenName: '',
       // No navigateToTab for 'Screenings' as per requirement
     },

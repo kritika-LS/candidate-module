@@ -44,7 +44,11 @@ interface EducationFormValues {
   verificationStatusOpen: boolean;
 }
 
-export const AddEducationForm = () => {
+interface AddEducationProps {
+  setShowForm?: any;
+}
+
+export const AddEducationForm: React.FC<AddEducationProps> = ({ setShowForm }) => {
   const [showDatePicker, setShowDatePicker] = useState({
     startDate: false,
     endDate: false,
@@ -92,8 +96,8 @@ export const AddEducationForm = () => {
         currentlyStudying
           ? schema.notRequired()
           : schema
-              .min(Yup.ref('startDate'), 'End date cannot be before start date')
-              .required('End Date is required')
+            .min(Yup.ref('startDate'), 'End date cannot be before start date')
+            .required('End Date is required')
       ),
     city: Yup.string().required('City is required'),
     state: Yup.string().required('State is required'),
@@ -142,221 +146,222 @@ export const AddEducationForm = () => {
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.body}>
           <ProfileScreenHeader
-              headerTitle='Education'
-              completedStatus={false}
+            headerTitle='Education'
+            completedStatus={false}
+            headerIcon={'school-outline'}
           />
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSave}
-        >
-          {({
-            values,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            setFieldValue,
-            isSubmitting,
-            errors,
-            touched,
-          }) => (
-            <>
-              <View style={styles.formSection}>
-                
-                {/* Level of Education */}
-                <Text style={styles.label}>Level of Education *</Text>
-                <DropDownPicker
-                  open={values.levelOfEducationOpen}
-                  setOpen={(open) => setFieldValue('levelOfEducationOpen', open)}
-                  items={[
-                    { label: 'S-School', value: 'school' },
-                    { label: 'D-Diploma', value: 'diploma' },
-                    { label: 'B-Bachelors', value: 'bachelors' },
-                    { label: 'M-Masters', value: 'masters' },
-                    { label: 'P-Doctorate', value: 'doctorate' },
-                  ]}
-                  value={values.levelOfEducation}
-                  setValue={(callback) => setFieldValue('levelOfEducation', callback(values.levelOfEducation))}
-                  placeholder="Select level of education"
-                  searchable={false}
-                  listMode="SCROLLVIEW"
-                  style={[styles.dropdown, { zIndex: values.levelOfEducationOpen ? 10 : 1 }]}
-                  dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
-                />
-                {touched.levelOfEducation && errors.levelOfEducation && (
-                  <Text style={styles.error}>{errors.levelOfEducation}</Text>
-                )}
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSave}
+          >
+            {({
+              values,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              setFieldValue,
+              isSubmitting,
+              errors,
+              touched,
+            }) => (
+              <>
+                <View style={styles.formSection}>
 
-                {/* Mode of Education */}
-                <Text style={styles.label}>Mode of Education *</Text>
-                <DropDownPicker
-                  open={values.modeOfEducationOpen}
-                  setOpen={(open) => setFieldValue('modeOfEducationOpen', open)}
-                  items={[
-                    { label: 'F-Full Time', value: 'full_time' },
-                    { label: 'P-Part Time', value: 'part_time' },
-                    { label: 'D-Distant Education', value: 'distant' },
-                  ]}
-                  value={values.modeOfEducation}
-                  setValue={(callback) => setFieldValue('modeOfEducation', callback(values.modeOfEducation))}
-                  placeholder="Select mode of education"
-                  searchable={false}
-                  listMode="SCROLLVIEW"
-                  style={[styles.dropdown, { zIndex: values.modeOfEducationOpen ? 10 : 1 }]}
-                  dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
-                />
-                {touched.modeOfEducation && errors.modeOfEducation && (
-                  <Text style={styles.error}>{errors.modeOfEducation}</Text>
-                )}
-
-                {/* Name of Degree */}
-                <Input
-                  label="Name of Degree *"
-                  value={values.degreeName}
-                  onChangeText={handleChange('degreeName')}
-                  onBlur={handleBlur('degreeName')}
-                  placeholder="Enter name of degree"
-                  maxLength={128}
-                  error={errors.degreeName}
-                  touched={touched.degreeName}
-                />
-
-                {/* University Name */}
-                <Input
-                  label="University Name *"
-                  value={values.universityName}
-                  onChangeText={handleChange('universityName')}
-                  onBlur={handleBlur('universityName')}
-                  placeholder="Enter university name"
-                  maxLength={128}
-                  error={errors.universityName}
-                  touched={touched.universityName}
-                />
-
-                {/* Start Date */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Start Date *</Text>
-                  <TouchableOpacity
-                    style={styles.datePickerButton}
-                    onPress={() => setShowDatePicker({ ...showDatePicker, startDate: true })}
-                  >
-                    <Text style={styles.input}>
-                      {values.startDate || 'Select start date'}
-                    </Text>
-                  </TouchableOpacity>
-                  {showDatePicker.startDate && (
-                    <DateTimePicker
-                      value={values.startDate ? new Date(values.startDate) : new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowDatePicker({ ...showDatePicker, startDate: false });
-                        if (selectedDate) {
-                          setFieldValue('startDate', selectedDate.toISOString());
-                        }
-                      }}
-                    />
+                  {/* Level of Education */}
+                  <Text style={styles.label}>Level of Education *</Text>
+                  <DropDownPicker
+                    open={values.levelOfEducationOpen}
+                    setOpen={(open) => setFieldValue('levelOfEducationOpen', open)}
+                    items={[
+                      { label: 'S-School', value: 'school' },
+                      { label: 'D-Diploma', value: 'diploma' },
+                      { label: 'B-Bachelors', value: 'bachelors' },
+                      { label: 'M-Masters', value: 'masters' },
+                      { label: 'P-Doctorate', value: 'doctorate' },
+                    ]}
+                    value={values.levelOfEducation}
+                    setValue={(callback) => setFieldValue('levelOfEducation', callback(values.levelOfEducation))}
+                    placeholder="Select level of education"
+                    searchable={false}
+                    listMode="SCROLLVIEW"
+                    style={[styles.dropdown, { zIndex: values.levelOfEducationOpen ? 10 : 1 }]}
+                    dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+                  />
+                  {touched.levelOfEducation && errors.levelOfEducation && (
+                    <Text style={styles.error}>{errors.levelOfEducation}</Text>
                   )}
-                  {touched.startDate && errors.startDate && (
-                    <Text style={styles.error}>{errors.startDate}</Text>
+
+                  {/* Mode of Education */}
+                  <Text style={styles.label}>Mode of Education *</Text>
+                  <DropDownPicker
+                    open={values.modeOfEducationOpen}
+                    setOpen={(open) => setFieldValue('modeOfEducationOpen', open)}
+                    items={[
+                      { label: 'F-Full Time', value: 'full_time' },
+                      { label: 'P-Part Time', value: 'part_time' },
+                      { label: 'D-Distant Education', value: 'distant' },
+                    ]}
+                    value={values.modeOfEducation}
+                    setValue={(callback) => setFieldValue('modeOfEducation', callback(values.modeOfEducation))}
+                    placeholder="Select mode of education"
+                    searchable={false}
+                    listMode="SCROLLVIEW"
+                    style={[styles.dropdown, { zIndex: values.modeOfEducationOpen ? 10 : 1 }]}
+                    dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+                  />
+                  {touched.modeOfEducation && errors.modeOfEducation && (
+                    <Text style={styles.error}>{errors.modeOfEducation}</Text>
                   )}
-                </View>
 
-                {/* Currently Studying Checkbox */}
-                <View style={styles.checkboxContainer}>
-                  <TouchableOpacity
-                    style={styles.squareCheckbox}
-                    onPress={() => setFieldValue('currentlyStudying', !values.currentlyStudying)}
-                  >
-                    {values.currentlyStudying && <View style={styles.checkboxSelected} />}
-                  </TouchableOpacity>
-                  <Text style={styles.checkboxLabel}>I am currently studying here</Text>
-                </View>
+                  {/* Name of Degree */}
+                  <Input
+                    label="Name of Degree *"
+                    value={values.degreeName}
+                    onChangeText={handleChange('degreeName')}
+                    onBlur={handleBlur('degreeName')}
+                    placeholder="Enter name of degree"
+                    maxLength={128}
+                    error={errors.degreeName}
+                    touched={touched.degreeName}
+                  />
 
-                {/* End Date */}
-                {!values.currentlyStudying && (
+                  {/* University Name */}
+                  <Input
+                    label="University Name *"
+                    value={values.universityName}
+                    onChangeText={handleChange('universityName')}
+                    onBlur={handleBlur('universityName')}
+                    placeholder="Enter university name"
+                    maxLength={128}
+                    error={errors.universityName}
+                    touched={touched.universityName}
+                  />
+
+                  {/* Start Date */}
                   <View style={styles.inputGroup}>
-                    <Text style={styles.label}>End Date *</Text>
+                    <Text style={styles.label}>Start Date *</Text>
                     <TouchableOpacity
                       style={styles.datePickerButton}
-                      onPress={() => setShowDatePicker({ ...showDatePicker, endDate: true })}
+                      onPress={() => setShowDatePicker({ ...showDatePicker, startDate: true })}
                     >
                       <Text style={styles.input}>
-                        {values.endDate || 'Select end date'}
+                        {values.startDate || 'Select start date'}
                       </Text>
                     </TouchableOpacity>
-                    {showDatePicker.endDate && (
+                    {showDatePicker.startDate && (
                       <DateTimePicker
-                        value={values.endDate ? new Date(values.endDate) : new Date()}
+                        value={values.startDate ? new Date(values.startDate) : new Date()}
                         mode="date"
                         display="default"
                         onChange={(event, selectedDate) => {
-                          setShowDatePicker({ ...showDatePicker, endDate: false });
+                          setShowDatePicker({ ...showDatePicker, startDate: false });
                           if (selectedDate) {
-                            setFieldValue('endDate', selectedDate.toISOString());
+                            setFieldValue('startDate', selectedDate.toISOString());
                           }
                         }}
                       />
                     )}
-                    {touched.endDate && errors.endDate && (
-                      <Text style={styles.error}>{errors.endDate}</Text>
+                    {touched.startDate && errors.startDate && (
+                      <Text style={styles.error}>{errors.startDate}</Text>
                     )}
                   </View>
-                )}
 
-                {/* Specialisation */}
-                <Input
-                  label="Specialisation"
-                  value={values.specialisation}
-                  onChangeText={handleChange('specialisation')}
-                  onBlur={handleBlur('specialisation')}
-                  placeholder="Enter specialisation"
-                  maxLength={32}
-                  error={errors.specialisation}
-                  touched={touched.specialisation}
-                />
+                  {/* Currently Studying Checkbox */}
+                  <View style={styles.checkboxContainer}>
+                    <TouchableOpacity
+                      style={styles.squareCheckbox}
+                      onPress={() => setFieldValue('currentlyStudying', !values.currentlyStudying)}
+                    >
+                      {values.currentlyStudying && <View style={styles.checkboxSelected} />}
+                    </TouchableOpacity>
+                    <Text style={styles.checkboxLabel}>I am currently studying here</Text>
+                  </View>
 
-                {/* Grade */}
-                <Input
-                  label="Grade"
-                  value={values.grade}
-                  onChangeText={handleChange('grade')}
-                  onBlur={handleBlur('grade')}
-                  placeholder="Enter grade"
-                  maxLength={32}
-                  error={errors.grade}
-                  touched={touched.grade}
-                />
-
-                {/* Certified Date */}
-                <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Certified Date</Text>
-                  <TouchableOpacity
-                    style={styles.datePickerButton}
-                    onPress={() => setShowDatePicker({ ...showDatePicker, certifiedDate: true })}
-                  >
-                    <Text style={styles.input}>
-                      {values.certifiedDate || 'Select certified date'}
-                    </Text>
-                  </TouchableOpacity>
-                  {showDatePicker.certifiedDate && (
-                    <DateTimePicker
-                      value={values.certifiedDate ? new Date(values.certifiedDate) : new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowDatePicker({ ...showDatePicker, certifiedDate: false });
-                        if (selectedDate) {
-                          setFieldValue('certifiedDate', selectedDate.toISOString());
-                        }
-                      }}
-                    />
+                  {/* End Date */}
+                  {!values.currentlyStudying && (
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>End Date *</Text>
+                      <TouchableOpacity
+                        style={styles.datePickerButton}
+                        onPress={() => setShowDatePicker({ ...showDatePicker, endDate: true })}
+                      >
+                        <Text style={styles.input}>
+                          {values.endDate || 'Select end date'}
+                        </Text>
+                      </TouchableOpacity>
+                      {showDatePicker.endDate && (
+                        <DateTimePicker
+                          value={values.endDate ? new Date(values.endDate) : new Date()}
+                          mode="date"
+                          display="default"
+                          onChange={(event, selectedDate) => {
+                            setShowDatePicker({ ...showDatePicker, endDate: false });
+                            if (selectedDate) {
+                              setFieldValue('endDate', selectedDate.toISOString());
+                            }
+                          }}
+                        />
+                      )}
+                      {touched.endDate && errors.endDate && (
+                        <Text style={styles.error}>{errors.endDate}</Text>
+                      )}
+                    </View>
                   )}
-                </View>
 
-                {/* Graduation Status */}
-                <Text style={styles.label}>Graduation Status</Text>
-                {/* <DropDownPicker
+                  {/* Specialisation */}
+                  <Input
+                    label="Specialisation"
+                    value={values.specialisation}
+                    onChangeText={handleChange('specialisation')}
+                    onBlur={handleBlur('specialisation')}
+                    placeholder="Enter specialisation"
+                    maxLength={32}
+                    error={errors.specialisation}
+                    touched={touched.specialisation}
+                  />
+
+                  {/* Grade */}
+                  <Input
+                    label="Grade"
+                    value={values.grade}
+                    onChangeText={handleChange('grade')}
+                    onBlur={handleBlur('grade')}
+                    placeholder="Enter grade"
+                    maxLength={32}
+                    error={errors.grade}
+                    touched={touched.grade}
+                  />
+
+                  {/* Certified Date */}
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Certified Date</Text>
+                    <TouchableOpacity
+                      style={styles.datePickerButton}
+                      onPress={() => setShowDatePicker({ ...showDatePicker, certifiedDate: true })}
+                    >
+                      <Text style={styles.input}>
+                        {values.certifiedDate || 'Select certified date'}
+                      </Text>
+                    </TouchableOpacity>
+                    {showDatePicker.certifiedDate && (
+                      <DateTimePicker
+                        value={values.certifiedDate ? new Date(values.certifiedDate) : new Date()}
+                        mode="date"
+                        display="default"
+                        onChange={(event, selectedDate) => {
+                          setShowDatePicker({ ...showDatePicker, certifiedDate: false });
+                          if (selectedDate) {
+                            setFieldValue('certifiedDate', selectedDate.toISOString());
+                          }
+                        }}
+                      />
+                    )}
+                  </View>
+
+                  {/* Graduation Status */}
+                  <Text style={styles.label}>Graduation Status</Text>
+                  {/* <DropDownPicker
                   open={values.graduationStatusOpen}
                   setOpen={(open) => setFieldValue('graduationStatusOpen', open)}
                   items={[
@@ -369,9 +374,9 @@ export const AddEducationForm = () => {
                   style={styles.dropdown}
                 /> */}
 
-                {/* Verification Status */}
-                <Text style={styles.label}>Verification Status</Text>
-                {/* <DropDownPicker
+                  {/* Verification Status */}
+                  <Text style={styles.label}>Verification Status</Text>
+                  {/* <DropDownPicker
                   open={values.verificationStatusOpen}
                   setOpen={(open) => setFieldValue('verificationStatusOpen', open)}
                   items={[
@@ -386,58 +391,61 @@ export const AddEducationForm = () => {
                   style={styles.dropdown}
                 /> */}
 
-                {/* Location Fields */}
-                <Input
-                  label="City *"
-                  value={values.city}
-                  onChangeText={handleChange('city')}
-                  onBlur={handleBlur('city')}
-                  placeholder="Enter city"
-                  error={errors.city}
-                  touched={touched.city}
-                />
-                <Input
-                  label="State *"
-                  value={values.state}
-                  onChangeText={handleChange('state')}
-                  onBlur={handleBlur('state')}
-                  placeholder="Enter state"
-                  error={errors.state}
-                  touched={touched.state}
-                />
-                <Input
-                  label="Country *"
-                  value={values.country}
-                  onChangeText={handleChange('country')}
-                  onBlur={handleBlur('country')}
-                  placeholder="Enter country"
-                  error={errors.country}
-                  touched={touched.country}
-                />
+                  {/* Location Fields */}
+                  <Input
+                    label="City *"
+                    value={values.city}
+                    onChangeText={handleChange('city')}
+                    onBlur={handleBlur('city')}
+                    placeholder="Enter city"
+                    error={errors.city}
+                    touched={touched.city}
+                  />
+                  <Input
+                    label="State *"
+                    value={values.state}
+                    onChangeText={handleChange('state')}
+                    onBlur={handleBlur('state')}
+                    placeholder="Enter state"
+                    error={errors.state}
+                    touched={touched.state}
+                  />
+                  <Input
+                    label="Country *"
+                    value={values.country}
+                    onChangeText={handleChange('country')}
+                    onBlur={handleBlur('country')}
+                    placeholder="Enter country"
+                    error={errors.country}
+                    touched={touched.country}
+                  />
 
-                {/* Document Upload */}
-                <Text style={styles.sectionTitle}>Upload Document</Text>
-                <Text style={styles.label}>Accepted File Formats: PNG, JPEG, JPG, DOC, DOCX, PDF up to 10 MB</Text>
-                
-                {document ? (
-                  <View style={styles.documentContainer}>
-                    <Text style={styles.documentName}>{document.name}</Text>
-                    <TouchableOpacity onPress={handleRemoveDocument}>
-                      <Text style={styles.removeDocument}>Remove</Text>
+                  {/* Document Upload */}
+                  <Text style={styles.sectionTitle}>Upload Document</Text>
+                  <Text style={styles.label}>Accepted File Formats: PNG, JPEG, JPG, DOC, DOCX, PDF up to 10 MB</Text>
+
+                  {document ? (
+                    <View style={styles.documentContainer}>
+                      <Text style={styles.documentName}>{document.name}</Text>
+                      <TouchableOpacity onPress={handleRemoveDocument}>
+                        <Text style={styles.removeDocument}>Remove</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <TouchableOpacity style={styles.uploadButton} onPress={handleDocumentUpload}>
+                      <Text style={styles.uploadButtonText}>Choose File</Text>
                     </TouchableOpacity>
-                  </View>
-                ) : (
-                  <TouchableOpacity style={styles.uploadButton} onPress={handleDocumentUpload}>
-                    <Text style={styles.uploadButtonText}>Choose File</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </>
-          )}
-        </Formik>
+                  )}
+                </View>
+              </>
+            )}
+          </Formik>
         </View>
       </ScrollView>
       <View style={styles.saveButton}>
+        <TouchableOpacity style={styles.cancelButton} onPress={() => setShowForm(false)}>
+          <TextStyle>Cancel</TextStyle>
+        </TouchableOpacity>
         <SaveButton
           title="Save"
           onPress={handleSave}
@@ -455,7 +463,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    margin: 16,
+    marginVertical: 16,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
@@ -574,6 +582,17 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: '#fff', 
     paddingHorizontal: 16, 
-    paddingBottom: 16
+    paddingBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
+  cancelButton: {
+    borderWidth: 1,
+    borderColor: theme.colors.grey[300],
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 24,
+    marginRight: 16
+  }
 });

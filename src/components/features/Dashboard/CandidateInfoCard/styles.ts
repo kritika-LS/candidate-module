@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		padding: theme.spacing.md,
 		borderRadius: 12,
-		marginVertical: 10,
+		marginBottom: 16,
 		elevation: 2,
 	},
 	candidateInfoSection: {

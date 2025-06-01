@@ -2,22 +2,14 @@ import React from 'react';
 import {
   View,
   StyleSheet,
-  ScrollView,
-  SafeAreaView,
-  Text,
-  TextInput,
   TouchableOpacity,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {theme} from '../../../../theme';
-import {TextStyle} from '../../../../components/common/Text';
-import {Input} from '../../../../components/common/Input';
-import {Button} from '../../../../components/common/Button';
-import {Formik} from 'formik';
+import { useNavigation } from '@react-navigation/native';
+import { Input } from '../../../../components/common/Input';
+import { Formik } from 'formik';
 import Toast from 'react-native-toast-message';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/useAppDispatch';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
-import { SaveButton } from '../../../../components/features/SaveButton';
 import { updateCandidatePersonalDetails } from '../../../../store/thunk/candidatePersonalDetails.thunk';
 import { CandidatePersonalDetailsPayload } from '../../../../types/personalDetails';
 
@@ -115,15 +107,13 @@ const EmergencyContactAddressScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={styles.body}>
-        <Formik<EmergencyContactFormValues>
-          initialValues={initialValues}
-          onSubmit={handleSave}>
-          {({ values, handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting, errors, touched, isValid, dirty }) => {
-            console.log("error", errors);
-            return (
+    <View style={styles.body}>
+      <Formik<EmergencyContactFormValues>
+        initialValues={initialValues}
+        onSubmit={handleSave}>
+        {({ values, handleChange, handleBlur, handleSubmit, setFieldValue, isSubmitting, errors, touched, isValid, dirty }) => {
+          console.log("error", errors);
+          return (
             <>
               <View style={styles.formSection}>
                 <ProfileScreenHeader
@@ -236,18 +226,11 @@ const EmergencyContactAddressScreen: React.FC = () => {
                   touched={touched.notes as boolean}
                 />
               </View>
-              <View style={styles.buttonContainer}>
-                <SaveButton
-                  onPress={() => handleSubmit()}
-                  disabled={!(isValid && dirty)}
-                />
-              </View>
             </>
-          )}}
-        </Formik>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          )
+        }}
+      </Formik>
+    </View>
   );
 };
 
@@ -260,15 +243,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    flex: 1,
+    marginVertical: 16,
     padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
   },
   formSection: {
-    marginBottom: 24,
-  },
-  buttonContainer: {
-    marginTop: 24,
-    marginBottom: 32,
+    // marginBottom: 24,
   },
 });
 

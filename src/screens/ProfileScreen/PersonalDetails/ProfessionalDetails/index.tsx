@@ -137,7 +137,6 @@ const ProfessionalDetailsScreen: React.FC = () => {
       style={styles.container}
       behavior={Platform.select({ ios: 'padding', android: undefined })}
     >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
         <ProfileScreenHeader
           headerIcon='book-edit-outline'
           headerTitle='Professional Details'
@@ -196,7 +195,7 @@ const ProfessionalDetailsScreen: React.FC = () => {
           modalProps={{ animationType: 'slide' }}
           disabled={!profession}
           onChangeSearchText={(text) => {
-            if (!specialtyItems.find(p => p.label.toLowerCase().includes(text.toLowerCase()))) {
+            if (!specialtyItems.find((p:any) => p.label.toLowerCase().includes(text.toLowerCase()))) {
               Alert.alert('Info', 'Please choose from the list');
             }
           }}
@@ -223,11 +222,6 @@ const ProfessionalDetailsScreen: React.FC = () => {
             uploadProgress={90} // Example progress value
             uploading={false} // Set to true if uploading
         />
-
-        <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-          <Text style={styles.saveBtnText}>Save</Text>
-        </TouchableOpacity>
-      </ScrollView>
     </KeyboardAvoidingView>
   );
 };
@@ -237,16 +231,21 @@ export default ProfessionalDetailsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  scrollContent: {
-    flex: 1,
-    margin: 16,
+    marginVertical: 16,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ddd',
     backgroundColor: '#fff',
-    paddingBottom: 40,
+  },
+  scrollContent: {
+    flex: 1,
+    marginVertical: 16,
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 18,
@@ -294,17 +293,5 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
     marginTop: 4,
-  },
-  saveBtn: {
-    marginTop: 24,
-    backgroundColor: '#0A47E9',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  saveBtnText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
   },
 });

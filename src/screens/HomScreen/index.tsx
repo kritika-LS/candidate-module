@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, Button, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { View, Text, Button, ScrollView, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
 import { DrawerScreenProps } from '@react-navigation/drawer';
-import { DrawerParamList } from '../../types/navigation';
+import { DrawerParamList, RootStackParamList } from '../../types/navigation';
 import DashboardGreetingsCard from '../../components/features/Dashboard/DashboardGreetingsCard/DashboardGreetingsCard';
 import CandidateInfoCard from '../../components/features/Dashboard/CandidateInfoCard/CandidateInfoCard';
 import PendingActionItem from '../../components/features/Dashboard/PendingActionItem/PendingActionItem';
@@ -26,8 +26,20 @@ import DashboardStatsSkeleton from '../../components/features/Dashboard/Dashboar
 import CandidateInfoCardSkeleton from '../../components/features/Dashboard/CandidateInfoCard/CandidateInfoCardSkeleton';
 import JobCardSkeleton from '../../components/features/JobCard/JobCardSkeleton';
 import { CandidatePoolJobsApiResponse } from '../../models/types/candidatePoolJobs';
+import { convertJobToJobDetails } from '../SearchJobs';
+import { useSearchJobs } from '../../hooks/useSearchJobs';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type Props = DrawerScreenProps<DrawerParamList, 'HomeScreen'>;
+type SearchJobsNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SearchJobs'>;
+type SortByOption = 'RELEVANCE' | 'NEWEST' | 'PAYRATE';
+
+const sortByOptions: { label: string; value: SortByOption }[] = [
+  { label: 'Relevance', value: 'RELEVANCE' },
+  { label: 'Newest', value: 'NEWEST' },
+  { label: 'Highest Pay', value: 'PAYRATE' },
+];
 
 const mapJobToJobDetails = (job: Job): JobDetails => ({
   jobId: job.jobId,
@@ -94,21 +106,27 @@ const mapJobToJobDetails = (job: Job): JobDetails => ({
   candidateProcessStatus: null
 });
 
-const HomeScreen: React.FC<Props> = ({ navigation }) => {
+const HomeScreen: React.FC<Props> = () => {
+    const navigation = useNavigation<SearchJobsNavigationProp>();
+    const scrollViewRef = useRef();
   const {isRegistered } = useAuth();
   const dispatch = useAppDispatch();
-  const jobs = useAppSelector((state) => state?.jobs?.jobs) as unknown as CandidatePoolJobsApiResponse;
+  const {jobsObject, jobs} = useAppSelector((state) => state?.jobs) as unknown as CandidatePoolJobsApiResponse;
   const pendingActionsData = useAppSelector((state) => state?.pendingActions?.actions) as unknown as { responsePayload: Record<string, { pending: boolean; messages: string[] }> };
 
-  const jobData: JobDetails[] = (jobs?.responsePayload || []).map(mapJobToJobDetails);
-
-  const [open, setOpen] = useState(false);
-  const [sortByOption, setSortByOption] = useState('Relevance');
-  const [items, setItems] = useState([
-    { label: 'Relevance', value: 'Relevance' },
-    { label: 'Newest', value: 'Newest' },
-    { label: 'Highest Pay', value: 'PayRate' },
-  ]);
+  const jobData: JobDetails[] = (jobs || []).map(mapJobToJobDetails);
+  const {
+      sortByOption,
+      setSortByOption,
+      hasMoreJobs,
+      isLoadingMore,
+      showSortDropdown,
+      loadMoreJobs,
+      PAGE_SIZE,
+      setCurrentPage,
+      setHasMoreJobs,
+      setShowSortDropdown,
+    } = useSearchJobs();
 
   const [loading, setLoading] = useState(true);
 
@@ -142,13 +160,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const pendingActionsCount = pendingActions.length;
 
   const fetchJobs = useCallback(async () => {
-    const sortBy = sortByOption === 'Newest' ? 'NEWEST' : 
-                  sortByOption === 'Highest Pay' ? 'PAYRATE' : 'RELEVANCE';
-    
+    console.log("tag 10")
     await dispatch(fetchRecommendedJobs({ 
       page: 0, 
       pageSize: 10, 
-      sortBy,
+      sortBy: sortByOption,
       job_category: 'Healthcare'
     }));
   }, [dispatch, sortByOption]);
@@ -171,6 +187,22 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
+  const handleScroll = (event) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isNearBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 100;
+
+    if (isNearBottom && hasMoreJobs && !isLoadingMore) {
+      loadMoreJobs();
+    }
+  };
+
+  const handleSortByChange = (option: SortByOption) => {
+      setSortByOption(option);
+      setShowSortDropdown(false);
+      setCurrentPage(0);
+      setHasMoreJobs(true);
+    };
+
   useEffect(() => {
     fetchInitialData();
     return () => {
@@ -183,7 +215,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   }, [fetchJobs]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      ref={scrollViewRef}
+      onScroll={handleScroll}
+      scrollEventThrottle={16}
+      style={styles.container} >
       <DashboardGreetingsCard />
 
       {loading ? (
@@ -224,23 +260,37 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
         <View style={styles.section}>
           <View style={styles.jobHeader}>
-            <Text style={styles.sectionTitle}>{jobs?.totalResults || 0} Jobs for you</Text>
+            <Text style={styles.sectionTitle}>{jobsObject?.totalResults || 0} Jobs for you</Text>
             <View>
-              <TextStyle size='sm' style={styles.sortByText}>
-                Sort by
-              </TextStyle>
-              <DropDownPicker
-                open={open}
-                value={sortByOption}
-                items={items}
-                setOpen={setOpen}
-                setValue={setSortByOption}
-                setItems={setItems}
-                style={styles.dropdown}
-                listItemLabelStyle={styles.dropdownLabel}
-                dropDownContainerStyle={styles.dropdownContainer}
-                textStyle={styles.dropdownLabel}
-              />
+            <View style={styles.sortContainer}>
+              <View style={styles.sortRow}>
+              <Text style={styles.sortLabel}>Sort by</Text>
+              <TouchableOpacity
+                style={styles.sortDropdown}
+                onPress={() => setShowSortDropdown(!showSortDropdown)}
+              >
+                <Icon name="swap-vertical" size={20} color={theme.colors.text.light} />
+                <Text style={styles.sortValue}>{sortByOptions.find(option => option.value === sortByOption)?.label || 'Relevance'}</Text>
+                <Icon name="chevron-down" size={20} color={theme.colors.text.light} />
+              </TouchableOpacity>
+            </View>
+
+            {showSortDropdown && (
+              <View style={styles.suggestionsContainer}>
+                {sortByOptions.map((item) => (
+                  <TouchableOpacity
+                    key={item.value}
+                    style={styles.suggestionItem}
+                    onPress={() => handleSortByChange(item.value)}
+                  >
+                    <TextStyle variant="regular" size="sm">
+                      {item.label}
+                    </TextStyle>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+            </View>
             </View>
           </View>
 
@@ -251,9 +301,21 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             ))
           ) : (
             jobData.map((job) => (
-              <JobCard key={job.jobId} job={job} fetchJobs={fetchJobs} />
+              <JobCard
+                key={job.jobId}
+                job={job}
+                fetchJobs={() => {
+                  fetchJobs();
+                }}
+                onPress={() => navigation.navigate('JobPreviewScreen', { jobId: job.jobId })}
+              />
             ))
           )}
+          {isLoadingMore && (
+              <View style={{ padding: 16 }}>
+                <ActivityIndicator size="small" />
+              </View>
+            )}
         </View>
       </View>
     </ScrollView>

@@ -11,12 +11,16 @@ import { useNavigation } from '@react-navigation/native';
 // }
 
 const DrawerHeader = () => {
-
 	const navigation = useNavigation();
 
 	const handleMenuPress = () => {
 		//@ts-ignore
 		navigation.openDrawer();
+	};
+
+	const handleSearchBarPress = () => {
+		//@ts-ignore
+		navigation.navigate('Search Jobs');
 	};
 
 	return (
@@ -27,9 +31,9 @@ const DrawerHeader = () => {
 
 			<SearchBar placeholder="Search for jobs" showSearchIcon />
 
-			<TouchableOpacity>
+			{/* <TouchableOpacity>
 				<Icon name='chat-outline' color={theme.colors.text.light} />
-			</TouchableOpacity>
+			</TouchableOpacity> */}
 			<TouchableOpacity>
 				<Icon name='bell-outline' color={theme.colors.text.light} />
 			</TouchableOpacity>

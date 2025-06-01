@@ -27,6 +27,7 @@ export const styles = StyleSheet.create({
 		justifyContent: 'center',
 		padding: 10,
 		marginBottom: 8,
+		backgroundColor: '#fff'
 	},
 	count: {
 		fontSize: 20,

@@ -7,7 +7,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import { theme } from '../../../theme';
 import { Input } from '../../../components/common/Input';
@@ -21,7 +20,11 @@ import { TextStyle } from '../../../components/common/Text';
 import { ProfileScreenHeader } from '../../../components/features/ProfileScreenHeader';
 import { SaveButton } from '../../../components/features/SaveButton';
 
-const AddWorkHistory: React.FC = () => {
+interface AddWorkHistoryProps {
+  setShowForm?: any;
+}
+
+const AddWorkHistory: React.FC<AddWorkHistoryProps> = ({setShowForm}) => {
   const [showDatePicker, setShowDatePicker] = useState({
     startDate: false,
     endDate: false,
@@ -36,9 +39,9 @@ const AddWorkHistory: React.FC = () => {
   };
 
   const initialValues = {
-    firstName: '',
-    middleName: '',
-    lastName: '',
+    facilityname: '',
+    profession: '',
+    specialty: '',
     typeofBusiness: '',
     startDate: '',
     endDate: '',
@@ -67,9 +70,9 @@ const AddWorkHistory: React.FC = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    firstName: Yup.string().required('Worked with/Facility Name is required'),
-    middleName: Yup.string().required('Profile title profession is required'),
-    lastName: Yup.string().required('Skills worked/specialty is required'),
+    facilityname: Yup.string().required('Worked with/Facility Name is required'),
+    profession: Yup.string().required('Profile title profession is required'),
+    specialty: Yup.string().required('Skills worked/specialty is required'),
     typeofBusiness: Yup.string().required('Type of Business/facility is required'),
     startDate: Yup.string().required('Start Date is required'),
     endDate: Yup.string().required('End Date is required'),
@@ -115,6 +118,7 @@ const AddWorkHistory: React.FC = () => {
           <ProfileScreenHeader
               headerTitle='Work History'
               completedStatus={false}
+              headerIcon='briefcase-outline'
           />
           <Formik
             initialValues={initialValues}
@@ -135,42 +139,44 @@ const AddWorkHistory: React.FC = () => {
                 <View style={styles.formSection}>
                   <Input
                     label="Worked with/Facility Name"
-                    value={values.firstName}
-                    onChangeText={handleChange('firstName')}
-                    onBlur={handleBlur('firstName')}
+                    value={values.facilityname}
+                    onChangeText={handleChange('facilityname')}
+                    onBlur={handleBlur('facilityname')}
                     placeholder="Enter facility name"
                     maxLength={128}
-                    error={errors.firstName}
-                    touched={touched.firstName}
+                    error={errors.facilityname}
+                    touched={touched.facilityname}
+                    required
                   />
                   <Input
                     label="Profile title/Profession"
-                    value={values.middleName}
-                    onChangeText={handleChange('middleName')}
-                    onBlur={handleBlur('middleName')}
+                    value={values.profession}
+                    onChangeText={handleChange('profession')}
+                    onBlur={handleBlur('profession')}
                     placeholder="Enter title/profession"
                     maxLength={128}
-                    error={errors.middleName}
-                    touched={touched.middleName}
+                    error={errors.profession}
+                    touched={touched.profession}
+                    required
                   />
                   <Input
                     label="Skills worked/Specialty"
-                    value={values.lastName}
-                    onChangeText={handleChange('lastName')}
-                    onBlur={handleBlur('lastName')}
+                    value={values.specialty}
+                    onChangeText={handleChange('specialty')}
+                    onBlur={handleBlur('specialty')}
                     placeholder="Enter skills"
                     maxLength={128}
-                    error={errors.lastName}
-                    touched={touched.lastName}
+                    error={errors.specialty}
+                    touched={touched.specialty}
                   />
-                  <Text style={styles.label}>Type of Business/Facility</Text>
+                  <Text style={styles.label}>Type of Business/Facility <TextStyle color='red'>*</TextStyle></Text>
                   <DropDownPicker
                     open={values.typeofBusinessOpen}
                     setOpen={(open) => setFieldValue('typeofBusinessOpen', open)}
                     items={[
-                      { label: 'Hospital', value: 'hospital' },
-                      { label: 'Clinic', value: 'clinic' },
-                      { label: 'Other', value: 'other' },
+                      { label: 'Trauma', value: 'Trauma' },
+                      { label: 'Magnet', value: 'Magnet' },
+                      { label: 'Teaching', value: 'Teaching' },
                     ]}
                     value={values.typeofBusiness}
                     setValue={(callback) => setFieldValue('typeofBusiness', callback(values.typeofBusiness))}
@@ -448,6 +454,9 @@ const AddWorkHistory: React.FC = () => {
         </View>
       </ScrollView>
       <View style={styles.saveButton}>
+        <TouchableOpacity style={styles.cancelButton} onPress={() => setShowForm(false)}>
+          <TextStyle>Cancel</TextStyle>
+        </TouchableOpacity>
         <SaveButton
           title="Save"
           onPress={handleSave}
@@ -468,7 +477,7 @@ const styles = StyleSheet.create({
     // backgroundColor: '#fff',
   },
   body: {
-    margin: 16,
+    marginVertical: 16,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
@@ -575,7 +584,10 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: '#fff', 
     paddingHorizontal: 16, 
-    paddingBottom: 16
+    paddingBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   dropdownContainer: {
     maxHeight: 200,
@@ -584,4 +596,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#fff',
   },
+  cancelButton: {
+    borderWidth: 1,
+    borderColor: theme.colors.grey[300],
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: 24,
+    marginRight: 16
+  }
 });

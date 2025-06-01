@@ -8,7 +8,8 @@ export const styles = StyleSheet.create({
 		// backgroundColor: theme,
 	},
 	candidateInfoCard: {
-		padding: theme.spacing.md,
+		paddingHorizontal: theme.spacing.md,
+		paddingTop: theme.spacing.md,
 	},
 	scene: {
 		flex: 1,
@@ -33,7 +34,6 @@ export const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'center',
-		// width: '21%',
 		paddingVertical: 10,
 		paddingHorizontal: 16,
 	},

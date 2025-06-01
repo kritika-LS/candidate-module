@@ -4,7 +4,7 @@ import { TextStyle } from '../../common/Text';
 import { theme } from '../../../theme';
 
 interface SaveButtonProps {
-  onPress: () => void;
+  onPress: any;
   title?: string;
   disabled?: boolean;
 }

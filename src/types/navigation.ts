@@ -1,27 +1,47 @@
 export type RootStackParamList = {
     AuthNavigator: undefined;
-    AppNavigator: undefined;
+    AppNavigator: { screen: keyof BottomTabsParamsList };
     JobPreviewScreen: { jobId: string };
     SearchJobs: undefined;
+    Walkthrough: { onDone: () => void };
+    BasicInformationScreen: undefined;
+    AddressDetailsScreen: undefined;
+    ProfessionalDetailsScreen: undefined;
+    PortfolioScreen: undefined;
+    JobPreferencesScreen: undefined;
+    SubmittalInformationScreen: undefined;
+    EmergencyContactAddressScreen: undefined;
+    AddWorkHistory: undefined;
+    CertificateScreen: undefined;
+    LicenseScreen: undefined;
+    ReferenceSectionScreen: undefined;
+    ChartingSystemScreen: undefined;
+    BackgroundInformationScreen: undefined;
+    PersonalDetailsScreen: undefined;
+    WorkHistorySection: undefined;
+    EducationSection: undefined;
 }
 
 export type AuthStackParamList = {
-    Splash: undefined;
-    HomeScreen: undefined;
-    WalkthroughScreen: undefined;
+    LoginScreen: undefined;
     SignUpScreen: undefined;
-    LoginScreen: (email: string, password: string) => Promise<void>;
-    EmailVerificationScreen: { email: string; password: string };
+    EmailVerificationScreen: undefined;
     UploadResumeScreen: undefined;
     ForgetPasswordScreen: undefined;
     MultiStepRegistrationScreen: undefined;
     RegistrationASuccessScreen: undefined;
-    PersonalDetailsScreen: undefined;
-    JobPreviewScreen: undefined;
-};
-  
+}
+
+export type BottomTabsParamsList = {
+    Home: undefined;
+    'Search Jobs': undefined;
+    'My Jobs': undefined;
+    Profile: undefined;
+}
+
 export type DrawerParamList = {
     HomeScreen: undefined;
+    SearchJobs: undefined;
     ScreeningsScreen: undefined;
     SkillsChecklistScreen: undefined;
     ReferencesScreen: undefined;
@@ -46,14 +66,6 @@ export type DrawerParamList = {
     WorkHistorySection: undefined;
     EducationSection: undefined;
 };
-
-export type BottomTabsParamsList = {
-    [x: string]: any;
-    Home: undefined;
-    'Search Jobs': undefined;
-    'My Jobs': undefined;
-    Profile: undefined;
-}
 
 declare global {
     namespace ReactNavigation {

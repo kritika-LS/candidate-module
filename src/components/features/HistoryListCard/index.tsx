@@ -5,6 +5,7 @@ import { styles } from './styles';
 import { theme } from '../../../theme';
 import { TextStyle } from '../../common/Text';
 import { Text } from 'react-native-gesture-handler';
+import Chip from '../../common/Chip';
 
 interface HistoryListCardProps {
 	title: string;
@@ -60,9 +61,12 @@ const HistoryListCard: React.FC<HistoryListCardProps> = ({
 
 					<View style={[styles.flexRow]}>
 						<TextStyle size='sm' color={theme.colors.text.heading} variant='bold' style={styles.title}>{title}</TextStyle>
-						{ pillText && <View style={styles.pillContainer}>
-							<TextStyle size='xs' color={theme.colors.text.white}>{pillText}</TextStyle>
-						</View>}
+						{ pillText && 
+						<Chip chipName={pillText} status='success' />
+						// <View style={styles.pillContainer}>
+						// 	<TextStyle size='xs' color={theme.colors.text.white}>{pillText}</TextStyle>
+						// </View>
+						}
 					</View>
 
 					{subtitle1 && <TextStyle size='sm' color={theme.colors.text.heading}>{subtitle1}</TextStyle>}

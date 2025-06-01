@@ -24,7 +24,7 @@ export const ProfileScreenHeader: React.FC<ProfileScreenHeaderProps> = ({
   };
 
   return (
-    <TouchableOpacity style={styles.accordionHeader} onPress={handlePress}>
+    <View style={styles.accordionHeader} onPress={handlePress}>
       <View style={styles.accordionTitleContainer}>
         { headerIcon && <Icon name={headerIcon} size={20} color={theme.colors.grey[800]} />}
         <TextStyle size="md" style={styles.accordionTitle}>
@@ -56,13 +56,13 @@ export const ProfileScreenHeader: React.FC<ProfileScreenHeaderProps> = ({
             </TextStyle>
           </View>
         )}
-        <Icon
+        {/* <Icon
           name="chevron-up"
           size={24}
           color={theme.colors.grey[500]}
           style={styles.iconSpacing}
-        />
+        /> */}
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };

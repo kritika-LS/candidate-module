@@ -2,6 +2,9 @@ export const ENDPOINTS = {
   AUTH: {
     LOGIN: '/api/Authenticate',
   },
+  CANDIDATE_ONBOARDING: { // NEW: Add this section
+    onboard: '/api/v1/candidate/onboard', // NEW: Add this endpoint
+  },
   DASHBOARD: {
     recommendedJobs: '/api/v1/candidate/jobs/recommended',
     pendingActions: '/api/v1/candidate/pending-actions',

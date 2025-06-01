@@ -1,17 +1,23 @@
-import React, { useEffect } from 'react';
-import { View, Animated, StyleSheet, ViewStyle } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, Animated } from 'react-native';
 import { theme } from '../../../theme';
 
 interface SkeletonLoaderProps {
-  width: number;
-  height: number;
-  style?: ViewStyle;
+  width?: number | string;
+  height?: number;
+  style?: any;
+  borderRadius?: number;
 }
 
-const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ width, height, style }) => {
+const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
+  width = '100%',
+  height = 20,
+  style,
+  borderRadius = 4,
+}) => {
   const animatedValue = new Animated.Value(0);
 
-  useEffect(() => {
+  React.useEffect(() => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(animatedValue, {
@@ -40,6 +46,7 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ width, height, style })
         {
           width,
           height,
+          borderRadius,
           opacity,
         },
         style,
@@ -50,8 +57,7 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({ width, height, style })
 
 const styles = StyleSheet.create({
   skeleton: {
-    backgroundColor: theme.colors.grey[200],
-    borderRadius: 4,
+    backgroundColor: theme.colors.grey[300],
   },
 });
 

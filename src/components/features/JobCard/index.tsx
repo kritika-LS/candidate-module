@@ -15,6 +15,7 @@ import moment from 'moment';
 import { JobDetails } from '../../../models/types/jobDetails';
 import { applyForJob } from '../../../store/thunk/applyJob.thunk';
 import { useNavigation } from '@react-navigation/native';
+import Chip from '../../common/Chip';
 
 interface JobCardProps {
   job: JobDetails;
@@ -72,7 +73,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, 
       if (isCurrentlySaved) {
         await dispatch(unsaveJob(job.jobId)).unwrap();
         Toast.show({ type: 'success', text1: `Job "${job.jobTitle || 'Unknown'}" unsaved successfully!` });
-        navigation.goBack();
+        // navigation.goBack();
       } else {
         await dispatch(saveJob(job.jobId)).unwrap();
         Toast.show({ type: 'success', text1: `Job "${job.jobTitle || 'Unknown'}" saved successfully!` });
@@ -137,19 +138,20 @@ const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, 
         </View>
 
         <View style={styles.actionButtons}>
-          {currentTab !== 'applications' && (
+          {(currentTab === 'saved' || !currentTab) && (
             <TouchableOpacity onPress={handleToggleSaveJob} disabled={isSaveUnsaveInProgress}>
               {isSaveUnsaveInProgress ? (
                 <ActivityIndicator size="small" color={theme.colors.primary.main} />
               ) : (
                 <Icon
-                  name={(job.candidateProcessStatus === 'S' || currentTab === 'saved') ? 'bookmark' : 'bookmark-outline'}
+                  name={(currentTab === 'saved') ? 'bookmark' : 'bookmark-outline'}
                   size={16}
-                  color={(job.candidateProcessStatus === 'S' || currentTab === 'saved') ? theme.colors.primary.main : theme.colors.grey[500]}
+                  color={(currentTab === 'saved') ? theme.colors.primary.main : theme.colors.grey[500]}
                 />
               )}
             </TouchableOpacity>
           )}
+          {/* <Chip chipName='Active' status='completed' /> */}
         </View>
       </View>
 
@@ -239,12 +241,12 @@ const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, 
                   Posted {job.postedOn ? moment(job.postedOn).fromNow() : '-'}
                 </TextStyle>
               </View>
-              { currentTab === 'saved' &&
-              <View>
-                <TextStyle size='xs' color={theme.colors.grey[600]} style={styles.iconSpacing} numberOfLines={1}>
-                  Applied on: <TextStyle size='xs' color={theme.colors.grey[800]}>{job.appliedDate ? moment(job.appliedDate).format('DD MMM, YYYY') : '-'}</TextStyle>
-                </TextStyle>
-              </View>
+              { currentTab === 'applications' &&
+                <View>
+                  <TextStyle size='xs' color={theme.colors.grey[600]} style={styles.iconSpacing} numberOfLines={1}>
+                    Applied on: <TextStyle size='xs' color={theme.colors.grey[800]}>{job.appliedDate ? moment(job.appliedDate).format('DD MMM, YYYY') : '-'}</TextStyle>
+                  </TextStyle>
+                </View>
               }
             </View>
 

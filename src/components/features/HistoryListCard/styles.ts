@@ -11,8 +11,10 @@ export const styles = StyleSheet.create({
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.1,
 		shadowRadius: 4,
-		elevation: 3, // For Android shadow
-		position: 'relative', // Needed for absolute positioning of actions
+		elevation: 3,
+		position: 'relative',
+		borderWidth: 0.7,
+		borderColor: theme.colors.grey[300],
 	},
 	header: {
 		flexDirection: 'row',
@@ -21,6 +23,7 @@ export const styles = StyleSheet.create({
 		// justifyContent: 'flex-start',
 	},
 	title: {
+		marginRight: 16,
 		// width: '65%',
 	},
 	icon: {

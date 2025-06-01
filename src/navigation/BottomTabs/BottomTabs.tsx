@@ -2,27 +2,26 @@
 
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import HomeScreen from '../../screens/HomScreen';
-import { ProfileScreen } from '../../screens/ProfileScreen';
 import { BottomTabsParamsList } from '../../types/navigation';
 import CustomTabBar from './CustomTabBar';
-import { SearchJobs } from '../../screens/SearchJobs';
 import { MyJobs } from '../../screens/MyJobs';
+import ProfileScreen from '../../screens/ProfileScreen';
+import HomeDrawer from '../HomeDrawer';
+import SearchJobsDrawer from '../SearchJobsDrawer';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<BottomTabsParamsList>();
 
 const tabScreens: {
-  name: any;
+  name: keyof BottomTabsParamsList;
   component: React.ComponentType<any>;
 }[] = [
   {
     name: 'Home',
-    component: HomeScreen,
+    component: HomeDrawer,
   },
   {
     name: 'Search Jobs',
-    component: SearchJobs,
+    component: SearchJobsDrawer,
   },
   {
     name: 'My Jobs',

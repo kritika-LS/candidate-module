@@ -6,9 +6,10 @@ import dashboardStatsReducer from './slices/dashboardStats.slice';
 import candidateReducer from './slices/candidate.slice';
 import candidatePersonalDetailsReducer from './slices/candidatePersonalDetails.slice';
 import candidateProfessionalInfoReducer from './slices/candidateProfessionalInfo.slice';
-import candidateJobPreferencesReducer from './slices/candidateJobPreferences.slice';
+// import candidateJobPreferencesReducer from './slices/candidateJobPreferences.slice';
 import candidateResumeReducer from './slices/candidateResume.slice';
 import onboardingReducer from './slices/onboarding.slice';
+import onboardReducer from './slices/onboard.slice';
 
 export const store = configureStore({
   reducer: {
@@ -19,9 +20,10 @@ export const store = configureStore({
     candidate: candidateReducer,
     candidatePersonalDetails: candidatePersonalDetailsReducer,
     candidateProfessionalInfo: candidateProfessionalInfoReducer,
-    candidateJobPreferences: candidateJobPreferencesReducer,
+    // candidateJobPreferences: candidateJobPreferencesReducer,
     candidateResume: candidateResumeReducer,
     onboarding: onboardingReducer,
+    onboard: onboardReducer,
   },
 });
 

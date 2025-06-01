@@ -10,10 +10,10 @@ import {
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 import styles from './styles';
-import { SaveButton } from '../../../../components/features/SaveButton';
 import CustomModal from '../../../../components/common/Modal';
 import { TextStyle } from '../../../../components/common/Text';
 import { theme } from '../../../../theme';
+import { SaveButton } from '../../../../components/features/SaveButton';
 
 const questions = [
   {

@@ -11,15 +11,13 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Input } from '../../../../components/common/Input';
 // import DocumentPicker from 'react-native-document-picker';
 import { theme } from '../../../../theme';
 import { TextStyle } from '../../../../components/common/Text';
 import Icon from '../../../../components/common/Icon/Icon';
-import { SaveButton } from '../../../../components/features/SaveButton';
 import { UploadButton } from '../../../../components/features/UploadButton';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
-// import { styles } from './styles';
+import { SaveButton } from '../../../../components/features/SaveButton';
 
 interface CertificateFormValues {
   certificateName: string;

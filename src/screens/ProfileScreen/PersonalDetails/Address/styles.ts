@@ -9,7 +9,6 @@ export const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: theme.spacing.md,
   },
   formSection: {
     backgroundColor: theme.colors.background.paper,

@@ -84,15 +84,4 @@ export const styles = StyleSheet.create({
         color: '#666',
         alignSelf: 'flex-end',
     },
-    saveButton: {
-        backgroundColor: '#007bff',
-        padding: 15,
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    saveButtonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
 });

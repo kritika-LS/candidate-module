@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { JobsService } from '../../api/services/jobs.service';
-import { fetchJobsFailure, fetchJobsStart, fetchJobsSuccess } from '../slices/jobs.slice';
+import { fetchJobsFailure, fetchJobsStart, fetchJobsSuccess, setJobsObject } from '../slices/jobs.slice';
 import { ApiError } from '../../models/types/common';
 
 export const fetchRecommendedJobs = createAsyncThunk(
@@ -13,6 +13,7 @@ export const fetchRecommendedJobs = createAsyncThunk(
       job_category ,
       durationFrom,
       durationTo,
+      pagination,
     }: {
       page: number;
       pageSize: number;
@@ -20,6 +21,7 @@ export const fetchRecommendedJobs = createAsyncThunk(
       job_category?: string;
       durationFrom?: null,
       durationTo?: null,
+      pagination?: string
     },
     { dispatch }
   ) => {
@@ -33,7 +35,8 @@ export const fetchRecommendedJobs = createAsyncThunk(
         durationFrom,
         durationTo,
       );
-      dispatch(fetchJobsSuccess(response));
+      dispatch(fetchJobsSuccess({ jobs: response?.responsePayload || [], pagination }));
+      dispatch(setJobsObject(response));
       return response;
     } catch (error) {
       const apiError = error as ApiError;

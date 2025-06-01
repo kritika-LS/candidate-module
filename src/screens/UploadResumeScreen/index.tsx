@@ -85,7 +85,10 @@ console.log("tag here token",token)
       console.log({response})
       
       setIsUploading(false);
-      navigation.navigate(ScreenNames.MultiStepRegistrationScreen, {responseData: response?.responsePayload}); // Navigate after successful upload
+      navigation.navigate(ScreenNames.MultiStepRegistrationScreen, {
+        responseData: response?.responsePayload,
+        resumeFile: result,
+      }); // Navigate after successful upload
 
     } catch (err: any) {
       setFileName(null);

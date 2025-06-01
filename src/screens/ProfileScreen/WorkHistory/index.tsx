@@ -7,30 +7,32 @@ import { theme } from '../../../theme';
 import { TextStyle } from '../../../components/common/Text';
 import { useAppSelector } from '../../../hooks/useAppDispatch';
 import { PrimaryMenu } from '../../../components/common/PrimaryMenu';
+import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
+import WorkHistoryListCard from './WorkHistoryListCard';
 
-const WorkHistorySection = () => {
+const WorkHistorySection:React.FC = () => {
 
-    const WorkHistoryData = useAppSelector((state) => state.candidateWorkHistory?.workHistory?.responsePayload) || {};
+    const navigation = useNavigation();
+
+    const WorkHistoryData = useAppSelector((state) => state?.candidateWorkHistory?.workHistory?.responsePayload) || [];
 
     const [showHistoryList, setShowHistoryList] = useState(true);
-    const [expandedItem, setExpandedItem] = useState<string | null>('Work History'); // Set default expanded item
+    const [showForm, setShowForm] = useState<boolean>(false); // Set default expanded item
 
-    const accordionData = [
-        {
-            title: 'Work History',
-            icon: 'briefcase', 
-			completed: false,
-			ScreenName: 'WorkHistorySection',
-        },
-    ];
+    const handleAddWorkHistoryPress = () => {
+        setShowForm(true);
+    };
+
+    console.log({WorkHistoryData})
 
     return (
         <ScrollView style={styles.sectionContainer}>
             {showHistoryList || WorkHistoryData.length ? (
                         <>
-                            <HistoryListCard
-                                listIcon={'office-building'}
-                                title='Registered Nurse'
+                            {/* <HistoryListCard
+                                listIcon={'briefcase-outline'}
+                                title={WorkHistoryData[0]?.title}
                                 subtitle1='ICU'
                                 subtitle2='Trauma Hospital'
                                 workSpaceName='Springfield Memorial Hospital - 867567'
@@ -41,18 +43,45 @@ const WorkHistorySection = () => {
                                 pillText={'Travel'}
                                 onEdit={() => console.log('Edit pressed')}
                                 onDelete={() => console.log('Delete pressed')}
-                            />
-                            <TouchableOpacity
+                            /> */}
+                            {WorkHistoryData.map((item:any, index:number) => {
+                                const startDate = moment(item?.workedFrom).format('MMM, YYYY');
+                                const endDate = item?.workedTill == 'present' ? 'Present' : moment(item?.workedTill).format('MMM, YYYY');
+                                const pillText = item?.workedTill == 'present' ? 'Current' : '';
+                                return(
+                                    <WorkHistoryListCard
+                                        key={index}
+                                        listIcon={'briefcase-outline'}
+                                        title={item.title}
+                                        subtitle1={'Work experience details'}
+                                        workSpaceName={item.workedWith || 'Facility Name'}
+                                        skillsWorked={item?.skillsWorked || ''}
+                                        businessType={item?.typeOfBusiness || ''}
+                                        ratio={item?.additionalDetails?.[0]?.nurseToPatientRatio || '-'}
+                                        startDate={startDate || '-'}
+                                        endDate={endDate || '-'}
+                                        address={item.address}
+                                        city={item.city}
+                                        state={item.state}
+                                        country={item.country}
+                                        pillText={pillText}
+                                        onEdit={() => console.log('Edit pressed', item)}
+                                        onDelete={() => console.log('Delete pressed', item)}
+                                    />
+                            )})}
+                            { !showForm && <TouchableOpacity
                                 style={styles.addWorkHistoryContainer}
-                                onPress={() => setShowHistoryList(false)}
+                                onPress={handleAddWorkHistoryPress}
                             >
-                                <Icon name="add" size={20} color={theme.colors.primary.main} />
-                                <TextStyle color={theme.colors.primary.main} style={styles.addWorkHistoryText}>Add Work History</TextStyle>
-                            </TouchableOpacity>
+                                <Icon name="add" size={16} color={theme.colors.primary.main} />
+                                <TextStyle color={theme.colors.primary.main} style={styles.addWorkHistoryText} size='sm'>Add Work History</TextStyle>
+                            </TouchableOpacity>}
                         </>
-            ) : (
-                <AddWorkHistory />
-            )}
+            ) : null
+            }
+            { showForm &&
+                <AddWorkHistory setShowForm={setShowForm} />
+            }
         </ScrollView>
     );
 };
@@ -73,7 +102,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     addWorkHistoryText: {
-        marginLeft: 8,
+        marginLeft: 4,
     },
     accordionItem: {
         marginBottom: 16,

@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, SafeAreaView, ScrollView } from 'react-native';
+import { View, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles';
-import Icon from '../../../../components/common/Icon/Icon';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
-import { SaveButton } from '../../../../components/features/SaveButton';
 
 const MAX_CHAR_LENGTH = 256;
 
@@ -38,57 +36,43 @@ const PortfolioScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* <View style={styles.header}>
-        <Icon name='web' />
-        <Text style={styles.title}>Portfolio</Text>
-      </View> */}
-      <ScrollView style={{flex: 1}}>
-        <View style={styles.body}>
-          <ProfileScreenHeader
-            headerIcon='web'
-            headerTitle='Portfolio'
-            completedStatus={false}
-          />
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter portfolio url 1"
-              value={portfolioUrl1}
-              onChangeText={setPortfolioUrl1}
-              maxLength={MAX_CHAR_LENGTH}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter portfolio url 2"
-              value={portfolioUrl2}
-              onChangeText={setPortfolioUrl2}
-              maxLength={MAX_CHAR_LENGTH}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter portfolio url 3"
-              value={portfolioUrl3}
-              onChangeText={setPortfolioUrl3}
-              maxLength={MAX_CHAR_LENGTH}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Enter portfolio url 4"
-              value={portfolioUrl4}
-              onChangeText={setPortfolioUrl4}
-              maxLength={MAX_CHAR_LENGTH}
-            />
-          </View>
-      </View>
-      </ScrollView>
-      <View style={styles.saveButton}>
-        <SaveButton
-          title="Save"
-          onPress={handleSave}
+    <View style={styles.body}>
+      <ProfileScreenHeader
+        headerIcon='web'
+        headerTitle='Portfolio'
+        completedStatus={false}
+      />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter portfolio url 1"
+          value={portfolioUrl1}
+          onChangeText={setPortfolioUrl1}
+          maxLength={MAX_CHAR_LENGTH}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter portfolio url 2"
+          value={portfolioUrl2}
+          onChangeText={setPortfolioUrl2}
+          maxLength={MAX_CHAR_LENGTH}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter portfolio url 3"
+          value={portfolioUrl3}
+          onChangeText={setPortfolioUrl3}
+          maxLength={MAX_CHAR_LENGTH}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter portfolio url 4"
+          value={portfolioUrl4}
+          onChangeText={setPortfolioUrl4}
+          maxLength={MAX_CHAR_LENGTH}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

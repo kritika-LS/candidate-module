@@ -8,32 +8,32 @@ import { theme } from '../../../../theme';
 import { useNavigation } from '@react-navigation/native';
 import { useAppSelector } from '../../../../hooks/useAppDispatch';
 import apiClient from '../../../../api/apiClient';
+import moment from 'moment';
 
 interface CandidateInfoCardProps {
-  showCompleteButton?: boolean;
+    showCompleteButton?: boolean;
 }
 
 const CandidateInfoCard: React.FC<CandidateInfoCardProps> = ({
-  showCompleteButton = true,
+    showCompleteButton = true,
 }) => {
     const navigation = useNavigation();
-    const candidateData = useAppSelector((state) => state?.candidate?.candidate?.responsePayload);
-    const personalDetails = useAppSelector((state) => state.candidatePersonalDetails.personalDetails.responsePayload);
+    // const candidateData = useAppSelector((state) => state?.candidate?.candidate?.responsePayload);
+    const personalDetails = useAppSelector((state) => state?.candidatePersonalDetails?.personalDetails?.responsePayload);
+
+    console.log({ personalDetails })
 
     // Safely extract data with default empty strings
-    const firstName = candidateData?.firstName || '';
-    const lastName = candidateData?.lastName || '';
-    const mobileNumber = candidateData?.mobileNumber || '';
-    const emailAddress = candidateData?.emailAddress || '';
+    const firstName = personalDetails?.firstName || '';
+    const lastName = personalDetails?.lastName || '';
+    const mobileNumber = personalDetails?.mobileNumber || '';
+    const emailAddress = personalDetails?.emailAddress || '';
 
     // Safely get initials
     const initials = firstName && lastName ? `${firstName[0].toUpperCase()}${lastName[0].toUpperCase()}` : '';
 
     const handleComplete = () => {
-        console.log("heyyyy")
-        apiClient.get<any>("/api/v1/candidate/educations");
-        // apiClient.logAllTokens();
-        // navigation.navigate('Profile', { initialTabIndex: 1 });
+        navigation.navigate('AppNavigator', { screen: 'Profile' });
     }
 
     return (
@@ -44,7 +44,7 @@ const CandidateInfoCard: React.FC<CandidateInfoCardProps> = ({
                 </View>
                 <View style={styles.candidiateInfo}>
                     <TextStyle size='sm' style={styles.name}>{firstName} {lastName}</TextStyle>
-                    <TextStyle size='xs' style={styles.role}>Registered Nurse</TextStyle>
+                    <TextStyle size='xs' style={styles.role}>{personalDetails?.profileTitle}</TextStyle>
                     <View style={styles.contactInfo}>
                         <View style={styles.contactDetails}>
                             <Icon name='email-outline' size={10} color={theme.colors.primary.main} />
@@ -55,20 +55,28 @@ const CandidateInfoCard: React.FC<CandidateInfoCardProps> = ({
                             <TextStyle style={styles.phone}>{mobileNumber}</TextStyle>
                         </View>
                     </View>
+                    <TextStyle size='xs' variant='bold'>
+                        Available from:
+                        <TextStyle size='xs'>{` ${moment(personalDetails?.availableFrom).format('MMM DD, YYYY')}`}</TextStyle>
+                    </TextStyle>
                 </View>
             </View>
-            <View style={styles.progressBarContainer}>
-                <View style={styles.progressHeading}>
-                    <TextStyle size='xs'>Profile Completion</TextStyle>
-                    <TextStyle size='xs' variant='bold'>{`${personalDetails?.profileCompletionPercentage}%`}</TextStyle>
-                </View>
-                <HorizontalProgressBar progress={personalDetails?.profileCompletionPercentage} style={{ height: 10 }} />
-            </View>
-            {showCompleteButton && (
-                <TouchableOpacity style={styles.button} onPress={handleComplete}>
-                    <TextStyle style={styles.buttonText} size='xs'>Complete</TextStyle>
-                </TouchableOpacity>
-            )}
+            {personalDetails?.profileCompletionPercentage < '100' &&
+                <>
+                    <View style={styles.progressBarContainer}>
+                        <View style={styles.progressHeading}>
+                            <TextStyle size='xs'>Profile Completion</TextStyle>
+                            <TextStyle size='xs' variant='bold'>{`${personalDetails?.profileCompletionPercentage}%`}</TextStyle>
+                        </View>
+                        <HorizontalProgressBar progress={personalDetails?.profileCompletionPercentage} style={{ height: 10 }} />
+                    </View>
+                    {showCompleteButton && (
+                        <TouchableOpacity style={styles.button} onPress={handleComplete}>
+                            <TextStyle style={styles.buttonText} size='xs'>Complete</TextStyle>
+                        </TouchableOpacity>
+                    )}
+                </>
+            }
         </View>
     );
 };

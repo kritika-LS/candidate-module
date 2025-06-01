@@ -7,4 +7,6 @@ export interface CandidatePoolJobsApiResponse {
   errorMessages: string | null;
   totalResults: number | null;
   responsePayload: Job[];
+  jobsObject?: any;
+  jobs?: Job[];
 }

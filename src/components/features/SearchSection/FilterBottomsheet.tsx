@@ -91,6 +91,7 @@ export const FilterBottomsheet = forwardRef<BottomSheet, FilterBottomsheetProps>
               onToggleShift={onToggleShift}
               onReset={onReset}
               onSaveSearch={() => setShowSaveSearch(true)}
+              handleFilterBottomsheetClose={handleFilterBottomsheetClose}
             />
           </>
           :

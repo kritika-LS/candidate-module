@@ -24,6 +24,7 @@ export type FilterSheetProps = {
   onToggleShift: (shift: string) => void;
   onReset: () => void;
   onSaveSearch: () => void;
+  handleFilterBottomsheetClose?: () => void;
 };
 
 export const FilterSheet: React.FC<FilterSheetProps> = ({
@@ -35,6 +36,7 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
   onToggleShift,
   onReset,
   onSaveSearch,
+  handleFilterBottomsheetClose,
 }) => {
   const [minContract, maxContract] = contractLength;
   const [localContractLength, setLocalContractLength] = useState<[number, number]>(contractLength);
@@ -133,6 +135,7 @@ export const FilterSheet: React.FC<FilterSheetProps> = ({
         <TouchableOpacity style={styles.saveButton} onPress={() => {
           handleApplyFilter();
           bottomSheetModalRef?.current?.dismiss();
+          handleFilterBottomsheetClose?.();
         }}>
           <TextStyle style={styles.saveButtonText}>Apply</TextStyle>
         </TouchableOpacity>

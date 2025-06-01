@@ -1,18 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, Alert, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { Input } from '../../../components/common/Input';
 import { PhoneNumberInput } from '../../../components/common/PhoneInput';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { theme } from '../../../theme';
-import { Button } from '../../../components/common/Button';
 import { DEFAULT_VALUES } from '../../../config/constants';
 import Toast from 'react-native-toast-message';
 import { useAppSelector, useAppDispatch } from '../../../hooks/useAppDispatch';
 import { Header } from './Header';
 import { ProfileScreenHeader } from '../../../components/features/ProfileScreenHeader';
-import { SaveButton } from '../../../components/features/SaveButton';
 import { updateCandidatePersonalDetails } from '../../../store/thunk/candidatePersonalDetails.thunk';
 import { CandidatePersonalDetailsPayload } from '../../../types/personalDetails';
 
@@ -133,12 +130,10 @@ const BasicInformationScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView style={{ flex: 1 }}>
           <View style={styles.body}>
             <ProfileScreenHeader
               headerIcon='account-circle-outline'
@@ -330,20 +325,11 @@ const BasicInformationScreen: React.FC = () => {
                       onBlur={handleBlur('brief')}
                     />
                   </View>
-                  <View style={styles.saveButton}>
-                    <SaveButton
-                      title="Save"
-                      onPress={handleSubmit}
-                      disabled={!isValid || !dirty}
-                    />
-                  </View>
                 </>
               )}
             </Formik>
           </View>
-        </ScrollView>
       </KeyboardAvoidingView>
-    </SafeAreaView>
   );
 };
 
@@ -359,7 +345,7 @@ const styles = StyleSheet.create({
   },
   body: {
     flex: 1,
-    margin: 16,
+    marginVertical: 16,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
@@ -379,23 +365,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderWidth: 1,
     borderColor: '#ddd',
-  },
-  saveButton: {
-    backgroundColor: '#fff', 
-    paddingHorizontal: 16, 
-    paddingBottom: 16
-  },
-  saveBtn: {
-    marginTop: 24,
-    backgroundColor: '#0A47E9',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  saveBtnText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
   },
   dropdownContainer: {
     borderColor: '#ddd',

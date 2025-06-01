@@ -48,26 +48,6 @@ const DrawerNavigator = () => (
     <Drawer.Screen name="HomeScreen" component={HomeScreen} />
     <Drawer.Screen name="ScreeningsScreen" component={ScreeningsScreen} />
     <Drawer.Screen name="SkillsChecklistScreen" component={SkillsChecklistScreen} />
-    <Drawer.Screen name="ReferencesScreen" component={ReferencesScreen} />
-    <Drawer.Screen name="DocumentsScreen" component={DocumentsScreen} />
-    <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
-    <Drawer.Screen name="BasicInformationScreen" component={BasicInformationScreen} />
-    <Drawer.Screen name="AddressDetailsScreen" component={AddressDetailsScreen} />
-    <Drawer.Screen name="ProfessionalDetailsScreen" component={ProfessionalDetailsScreen} />
-    <Drawer.Screen name="PortfolioScreen" component={PortfolioScreen} />
-    <Drawer.Screen name="JobPreferencesScreen" component={JobPreferencesScreen} />
-    <Drawer.Screen name="SubmittalInformationScreen" component={SubmittalInformationScreen} />
-    <Drawer.Screen name="EmergencyContactAddressScreen" component={EmergencyContactAddressScreen} />
-    <Drawer.Screen name="WorkHistorySection" component={WorkHistorySection} />
-    <Drawer.Screen name="AddWorkHistory" component={AddWorkHistory} />
-    <Drawer.Screen name="CertificateScreen" component={Certificate} />
-    <Drawer.Screen name="LicenseScreen" component={License} />
-    <Drawer.Screen name="ReferenceSectionScreen" component={ReferenceSection} />
-    <Drawer.Screen name="ChartingSystemScreen" component={ChartingSystem} />
-    <Drawer.Screen name="BackgroundInformationScreen" component={BackgroundInformation} />
-    <Drawer.Screen name="JobPreviewScreen" component={JobPreviewScreen} />
-    <Drawer.Screen name="PersonalDetailsScreen" component={PersonalDetailsScreen} />
-    <Drawer.Screen name="EducationSection" component={EducationSection} />
   </Drawer.Navigator>
 );
 

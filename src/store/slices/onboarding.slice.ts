@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { ApiClient } from '../../api/apiClient';
+import ApiClient from '../../api/apiClient';
 import { RootState } from '../store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface OnboardingState {
   loading: boolean;
@@ -18,10 +19,18 @@ export const submitOnboarding = createAsyncThunk(
   'onboarding/submit',
   async (formData: FormData, { rejectWithValue }) => {
     try {
-      const response = await ApiClient.post('/candidate/onboard', formData, {
+      const token = await AsyncStorage.getItem('auth_token');
+      console.log('Token used for onboarding:', token);
+      const response = await ApiClient.post('api/v1/candidate/onboard', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`, // ✅ Keep this
+          // 'Content-Type': 'multipart/form-data' // ❌ REMOVE this
         },
+        // transformRequest: [(data, headers) => {
+        //   // delete the JSON default:
+        //   delete headers['Content-Type'];
+        //   return data;
+        // }],
       });
       return response?.data;
     } catch (error: any) {

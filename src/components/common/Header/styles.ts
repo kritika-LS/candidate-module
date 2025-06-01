@@ -1,13 +1,12 @@
 import {StyleSheet, Platform, StatusBar} from 'react-native';
 import {theme} from '../../../theme';
 
-const STATUSBAR_HEIGHT =
-  Platform.OS === 'ios' ? 44 : 40;
+const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 0;
 
 export const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: theme.colors.primary.main,
-    // paddingTop: Platform.OS === 'android' ? STATUSBAR_HEIGHT : 0,
+    paddingTop: STATUSBAR_HEIGHT,
   },
   container: {
     height: 56,

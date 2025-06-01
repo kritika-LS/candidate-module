@@ -21,6 +21,7 @@ import { fetchDashboardStatistics } from '../../store/thunk/dashboardStats.thunk
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { fetchCandidatePoolJobs } from '../../store/thunk/candidatePoolJobs.thunk';
 import LottieView from 'lottie-react-native';
+import MyJobsSkeleton from './MyJobsSkeleton';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -131,16 +132,7 @@ export const MyJobs = () => {
     const currentTabLoading = isActiveTab ? loading : false;
 
     if (currentTabLoading) {
-      return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <LottieView
-            source={require('../../../assets/animations/Loader 1.json')}
-            autoPlay
-            loop
-            style={{ width: 100, height: 100 }}
-          />
-        </View>
-      );
+      return <MyJobsSkeleton />;
     }
 
     if (!jobs.length && (currentTabError || !currentTabLoading)) {
@@ -150,7 +142,7 @@ export const MyJobs = () => {
 
       switch (route.key) {
         case 'saved':
-          noJobsText = `You have not saved any jobs yet. Start searching for jobs and save the ones you’re interested in to view them here.`;
+          noJobsText = `You have not saved any jobs yet. Start searching for jobs and save the ones you're interested in to view them here.`;
           ctaTitle = "Search Jobs";
           onCtaPress = () => navigation.navigate('SearchJobs');
           break;
@@ -266,7 +258,7 @@ export const MyJobs = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f4f6fa' }}>
-      <View style={{ backgroundColor: theme.colors.primary.main, padding: 18, paddingTop: 24 }}>
+      <View style={{ backgroundColor: theme.colors.primary.main, padding: 18, paddingTop: 40 }}>
         <TextStyle style={{ color: '#fff', fontSize: 22, fontWeight: '700' }}>My Jobs</TextStyle>
       </View>
       <TabView

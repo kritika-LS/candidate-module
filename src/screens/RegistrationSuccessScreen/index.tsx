@@ -7,10 +7,12 @@ import { Button } from "../../components/common/Button";
 import { TextStyle } from "../../components/common/Text";
 import { useNavigation } from "@react-navigation/native";
 import LottieView from 'lottie-react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types/navigation';
 
 export const RegistrationASuccessScreen = () => {
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
     <SafeAreaView style={styles.mainScreen}>
@@ -44,7 +46,7 @@ export const RegistrationASuccessScreen = () => {
 
       <Button
         title="Search Jobs"
-        onPress={() => navigation.navigate("SearchJobs")}
+        onPress={() => navigation.navigate("AppNavigator", { screen: "Search Jobs" })}
         style={styles.searchJobsBtn}
       />
       <View style={styles.footer}>
