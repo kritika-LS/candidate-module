@@ -26,6 +26,7 @@ import { useNavigation, useRoute, DrawerActions } from '@react-navigation/native
 import Icon from '../../components/common/Icon/Icon';
 import AddWorkHistory from './WorkHistory/AddWorkForm';
 import { AddEducationForm } from './Education/AddEducationForm';
+import { ReferencesScreen } from '../ReferencesScreen';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -67,7 +68,7 @@ const ProfileTabContent = () => {
                 );
             case 'PersonalDetails':
                 return (
-                    <PersonalDetails expandedItem={expandedItem} setExpandedItem={setExpandedItem} />
+                    <PersonalDetails />
                 );
             case 'WorkHistory':
                 return (
@@ -79,11 +80,11 @@ const ProfileTabContent = () => {
                 );
             case 'ProfessionalInformation':
                 return (
-                    <ProfessionalInformation expandedItem={expandedItem} setExpandedItem={setExpandedItem} />
+                    <ProfessionalInformation />
                 );
             case 'Reference':
                 return (
-                    <ProfessionalInformation expandedItem={expandedItem} setExpandedItem={setExpandedItem} />
+                    <ReferencesScreen />
             );
             default:
                 return null;
@@ -150,17 +151,15 @@ const ProfileTabContent = () => {
 
     return (
         <SafeAreaView style={[styles.container, { flex: 1, backgroundColor: '#fff' }]}> {/* White background */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.primary.main, paddingHorizontal: 16, paddingTop: 40, paddingBottom: 30 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.primary.main, paddingHorizontal: 16, paddingTop: 50, paddingBottom: 20 }}>
                 <Pressable onPress={handleMenuPress} style={{ marginRight: 16 }}>
                     <Icon name="menu" color="#fff" size={28} />
                 </Pressable>
                 <TextStyle size="lg" variant="bold" color="#fff">Profile</TextStyle>
             </View>
-            {!expandedItem ?
-                <View style={styles.candidateInfoCard}>
-                    <CandidateInfoCard showCompleteButton={false} />
-                </View> : null
-            }
+            <View style={styles.candidateInfoCard}>
+                <CandidateInfoCard showCompleteButton={false} profileScreen />
+            </View>
             <TabView
                 navigationState={{ index, routes }}
                 renderScene={renderScene}

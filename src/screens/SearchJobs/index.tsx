@@ -188,6 +188,8 @@ export const SearchJobs = () => {
   return (
     <SafeAreaView style={styles.screen}>
       <SearchSection
+        title="Search Jobs"
+        subTitle="Explore our latest healthcare job openings and apply for the one that best suits you"
         searchValue={searchValue}
         onSearchValueChange={handleSearchValueChange}
         onSearch={handleAddChip}

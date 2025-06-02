@@ -3,9 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
 } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -13,8 +10,10 @@ import { Input } from '../../../../components/common/Input';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { PhoneNumberInput } from '../../../../components/common/PhoneInput';
 import styles from './styles';
-import { SaveButton } from '../../../../components/features/SaveButton';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
+import { TextStyle } from '../../../../components/common/Text';
+import { SaveButton } from '../../../../components/features/SaveButton';
+import { Checkbox } from '../../../../components/common/Checkbox';
 
 interface ReferenceFormValues {
   fullName: string;
@@ -25,7 +24,11 @@ interface ReferenceFormValues {
   isContactAllowed: boolean;
 }
 
-const ReferenceSection = () => {
+interface ReferenceProps {
+  setShowForm?: any;
+}
+
+const ReferenceSection:React.FC<ReferenceProps> = ({setShowForm}) => {
 
   const initialValues: ReferenceFormValues = {
     fullName: '',
@@ -51,8 +54,6 @@ const ReferenceSection = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.body}>
           <ProfileScreenHeader
             headerIcon='account-arrow-right-outline'
@@ -126,23 +127,22 @@ const ReferenceSection = () => {
                     touched={errors.mobileNumber}
                   />
                 <View style={styles.checkboxContainer}>
-                  <TouchableOpacity style={styles.checkbox} onPress={() => setFieldValue('isContactAllowed', !values.isContactAllowed)}>
-                    {values.isContactAllowed && <View style={styles.checkboxInner} />}
-                  </TouchableOpacity>
-                  <Text style={styles.checkboxLabel}>Is it ok to contact the reference?</Text>
+                  <Checkbox
+                    checked={values.isContactAllowed}
+                    onChange={() => setFieldValue('isContactAllowed', !values.isContactAllowed)}
+                    label="Is it ok to contact the reference?"
+                  />
                 </View>
               </View>
             )}
           </Formik>
+            <View style={styles.saveButton}>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setShowForm(false)}>
+                <TextStyle>Cancel</TextStyle>
+              </TouchableOpacity>
+              <SaveButton title="Save" onPress={handleSave} />
+            </View>
         </View>
-      </ScrollView>
-      <View style={styles.saveButton}>
-        <SaveButton
-          title="Save"
-          onPress={handleSave}
-        />
-      </View>
-    </SafeAreaView>
   );
 };
 

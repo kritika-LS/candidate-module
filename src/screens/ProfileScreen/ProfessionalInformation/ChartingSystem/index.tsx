@@ -1,11 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, ScrollView, StyleSheet, SafeAreaView, BackHandler } from 'react-native';
+import { View, TextInput, TouchableOpacity, BackHandler } from 'react-native';
 import { TextStyle } from '../../../../components/common/Text';
 import { Checkbox } from '../../../../components/common/Checkbox';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Or your icon lib
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 import styles from './styles';
-import { SaveButton } from '../../../../components/features/SaveButton';
 import { useFocusEffect } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 
@@ -112,9 +111,6 @@ useFocusEffect(
 );
 
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
-			<ScrollView contentContainerStyle={styles.container}>
-
 				<View style={styles.body}>
 					<ProfileScreenHeader
 						headerIcon='link-variant'
@@ -170,14 +166,6 @@ useFocusEffect(
 						</View>
 					)}
 				</View>
-			</ScrollView>
-      <View style={styles.saveButton}>
-        <SaveButton
-          title="Save"
-          onPress={handleSave}
-        />
-      </View>
-		</SafeAreaView>
 	);
 };
 

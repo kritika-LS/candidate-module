@@ -6,10 +6,11 @@ const styles = StyleSheet.create({
         flex: 1, 
         padding: 24, 
         backgroundColor: theme.colors.text.white, 
+        justifyContent: 'center',
     },
     scrollContent: {
         flexGrow: 1,
-        paddingTop: 24,
+        paddingTop: 40,
     },
     button: { 
         borderRadius: 24, 

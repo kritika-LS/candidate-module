@@ -17,16 +17,16 @@ const HomeDrawer = () => (
       headerTitle: '',
       drawerType: 'front',
       overlayColor: 'rgba(0,0,0,0.3)',
-      drawerStyle: { height: '100%' },
+      drawerStyle: { height: '100%', width: '70%' },
     }}
     // @ts-ignore
     sceneContainerStyle={{ backgroundColor: 'transparent' }}
     drawerContent={(props) => <CustomDrawer {...props} />}
   >
     <Drawer.Screen name="HomeScreen" component={HomeScreen} />
-    <Drawer.Screen name="ScreeningsScreen" component={ScreeningsScreen} />
+    {/* <Drawer.Screen name="ScreeningsScreen" component={ScreeningsScreen} />
     <Drawer.Screen name="SkillsChecklistScreen" component={SkillsChecklistScreen} />
-    <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
+    <Drawer.Screen name="SettingsScreen" component={SettingsScreen} /> */}
   </Drawer.Navigator>
 );
 

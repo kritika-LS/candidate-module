@@ -18,11 +18,9 @@ import { PrimaryMenu } from "../../../components/common/PrimaryMenu";
 import { SaveButton } from "../../../components/features/SaveButton";
 
 interface PersonalDetailsProps {
-	expandedItem: string | null;
-	setExpandedItem: any;
 }
 
-export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, setExpandedItem }) => {
+export const PersonalDetails: React.FC<PersonalDetailsProps> = () => {
 
 	const navigation = useNavigation();
 	
@@ -41,10 +39,6 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = ({ expandedItem, 
 				<JobPreferencesForm />
 				<SubmittalInformationScreen />
 				<EmergencyContactAddressScreen />
-
-				{/* <PrimaryMenu
-					menuItems={accordionItems}
-				/> */}
 				
 			</ScrollView>
 			

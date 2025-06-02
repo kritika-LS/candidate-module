@@ -44,6 +44,7 @@ export const styles = StyleSheet.create({
     contactDetails: {
         flexDirection: 'row',
         alignItems: 'center',
+				flexWrap: 'wrap',
     },
 	email: {
 		fontSize: 10,

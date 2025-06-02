@@ -346,7 +346,8 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     marginVertical: 16,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical:24,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ddd',

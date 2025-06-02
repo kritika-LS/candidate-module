@@ -233,7 +233,7 @@ const HomeScreen: React.FC<Props> = () => {
           {loading ? (
             <CandidateInfoCardSkeleton />
           ) : (
-            <CandidateInfoCard />
+            <CandidateInfoCard showCompleteButton />
           )}
         </View>
 

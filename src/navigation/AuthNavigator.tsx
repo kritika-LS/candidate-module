@@ -16,7 +16,7 @@ const AppNavigator = () => (
   <Stack.Navigator
     // initialRouteName={"Splash"}
     screenOptions={{
-        headerShown: true,
+        headerShown: false,
         contentStyle: {
         backgroundColor: theme.colors.background.default,
         },

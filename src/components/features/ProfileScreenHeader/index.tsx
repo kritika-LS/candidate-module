@@ -36,7 +36,7 @@ export const ProfileScreenHeader: React.FC<ProfileScreenHeaderProps> = ({
         {completedStatus ? (
           <View style={styles.flexRow}>
             <Icon
-              name="checkmark-circle"
+              name="checkbox-marked-circle-outline"
               size={18}
               color={theme.colors.status.success}
             />

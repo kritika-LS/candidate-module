@@ -7,6 +7,8 @@ import { TextStyle } from '../../common/Text';
 import { styles } from './styles';
 
 interface SearchSectionProps {
+  title: string;
+  subTitle: string;
   searchValue: string;
   onSearchValueChange: (val: string) => void;
   onSearch: () => void;
@@ -14,9 +16,12 @@ interface SearchSectionProps {
   onRemoveChip: (chip: string) => void;
   onClearAll: () => void;
   onFilterPress: () => void;
+  showFilter?: boolean;
 }
 
 export const SearchSection: React.FC<SearchSectionProps> = ({
+  title,
+  subTitle,
   searchValue,
   onSearchValueChange,
   onSearch,
@@ -24,6 +29,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
   onRemoveChip,
   onClearAll,
   onFilterPress,
+  showFilter=true,
 }) => {
   // Handle Enter key in TextInput
   const handleSubmitEditing = () => {
@@ -40,9 +46,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
       resizeMode="cover"
     >
       <View style={styles.container}>
-        <Text style={styles.header}>Search Jobs</Text>
+        <Text style={styles.header}>{title}</Text>
         <Text style={styles.description}>
-          Explore our latest healthcare job openings and apply for the one that best suits you
+          {subTitle}
         </Text>
 
         <View style={styles.searchBody}>
@@ -59,9 +65,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
             <TouchableOpacity style={styles.searchButton} onPress={handleSubmitEditing}>
               <Icon name='magnify' color='#fff' />
             </TouchableOpacity>
-          <TouchableOpacity style={styles.filterButton} onPress={onFilterPress}>
+          {showFilter && <TouchableOpacity style={styles.filterButton} onPress={onFilterPress}>
             <Icon name="filter-outline" color={'#fff'} />
-          </TouchableOpacity>
+          </TouchableOpacity>}
           </View>
 
           {chips.length > 0 && (

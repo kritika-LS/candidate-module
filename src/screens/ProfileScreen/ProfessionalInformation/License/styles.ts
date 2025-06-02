@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     body: {
-        margin: 16,
+        marginVertical: 16,
         padding: 16,
         borderRadius: 8,
         borderWidth: 1,

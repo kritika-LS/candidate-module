@@ -42,8 +42,10 @@ export const LoginScreen = () => {
 
   useEffect(() => {
     const loadRememberedCredentials = async () => {
+      console.log({rememberAccount})
       try {
         const remember = await AsyncStorage.getItem('@auth:rememberAccount');
+        console.log({remember})
         if (remember === 'true') {
           const encryptedEmail = await AsyncStorage.getItem('@auth:email');
           const encryptedPassword = await AsyncStorage.getItem('@auth:password');
@@ -55,6 +57,11 @@ export const LoginScreen = () => {
             setPassword(decryptedPassword);
             setRememberAccount(true);
           }
+        } else {
+          setEmail('');
+          setPassword('');
+          setRememberAccount(false);
+          await AsyncStorage.multiRemove(['@auth:rememberAccount', '@auth:email', '@auth:password']);
         }
       } catch (error) {
         console.error("Failed to load remembered credentials:", error);

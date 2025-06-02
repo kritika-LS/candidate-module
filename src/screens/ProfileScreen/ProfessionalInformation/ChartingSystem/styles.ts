@@ -39,17 +39,12 @@ const styles = StyleSheet.create({
         marginTop: theme.spacing.xs,
     },
 	body: {
-		margin: 16,
+		marginVertical: 16,
 		padding: 16,
 		borderRadius: 8,
 		borderWidth: 1,
 		borderColor: '#ddd',
 		backgroundColor: '#fff',
-    },
-    saveButton: {
-      backgroundColor: '#fff',
-      paddingHorizontal: 16,
-      paddingBottom: 16
     },
 });
 

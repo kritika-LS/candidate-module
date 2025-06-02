@@ -26,11 +26,11 @@ export const Header: React.FC<HeaderProps> = ({
   const navigation = useNavigation();
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar
+    <View style={styles.safeArea}>
+      {/* <StatusBar
         backgroundColor={theme.colors.primary.main}
         barStyle="light-content"
-      />
+      /> */}
       <View style={styles.container}>
         {showBackButton && (
           <TouchableOpacity
@@ -44,11 +44,11 @@ export const Header: React.FC<HeaderProps> = ({
           </TouchableOpacity>
         )}
 
-        {showBackButton ? (
+        {/* {showBackButton ? ( */}
           <TextStyle variant="medium" size="lg" style={styles.title}>
             {title}
           </TextStyle>
-        ) : null
+        {/* ) : null
         // (
         //   <View style={styles.logoContainer}>
         //     <Image
@@ -58,8 +58,8 @@ export const Header: React.FC<HeaderProps> = ({
         //     />
         //   </View>
         // )
-        }
+        } */}
       </View>
-    </SafeAreaView>
+    </View>
   );
 };

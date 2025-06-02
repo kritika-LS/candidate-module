@@ -5,7 +5,7 @@ import { StyleSheet, Dimensions } from 'react-native';
 const styles = StyleSheet.create({
   container: { flex: 1 },
   body: {
-      margin: 16,
+      marginVertical: 16,
       padding: 16,
       borderRadius: 8,
       borderWidth: 1,
@@ -57,11 +57,6 @@ const styles = StyleSheet.create({
     padding: 16,
     borderTopWidth: 1,
     borderColor: '#eee',
-  },
-  saveButton: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingBottom: 16
   },
 });
 

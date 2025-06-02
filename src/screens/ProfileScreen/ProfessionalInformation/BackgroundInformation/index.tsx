@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   SafeAreaView,
-  ScrollView,
   BackHandler,
 } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -13,7 +12,6 @@ import styles from './styles';
 import CustomModal from '../../../../components/common/Modal';
 import { TextStyle } from '../../../../components/common/Text';
 import { theme } from '../../../../theme';
-import { SaveButton } from '../../../../components/features/SaveButton';
 
 const questions = [
   {
@@ -98,7 +96,6 @@ const BackgroundInformation: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.body}>
           <ProfileScreenHeader
             headerIcon='shield-check-outline'
@@ -132,15 +129,6 @@ const BackgroundInformation: React.FC = () => {
             </View>
           ))}
         </View>
-      </ScrollView>
-
-      <View style={styles.saveButton}>
-        <SaveButton
-          title="Save"
-          onPress={handleSave}
-          // disabled={status !== 'Completed'}
-        />
-      </View>
 
       <CustomModal
         isVisible={modalVisible}

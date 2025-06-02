@@ -3,9 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
-  SafeAreaView,
-  ScrollView,
 } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -14,7 +11,6 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { Input } from '../../../../components/common/Input';
 import Icon from 'react-native-vector-icons/Ionicons';
 // import DocumentPicker from 'react-native-document-picker';
-import { SaveButton } from '../../../../components/features/SaveButton';
 import styles from './styles';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 // import { styles } from './styles';
@@ -85,8 +81,6 @@ const License = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.body}>
           <ProfileScreenHeader
             headerIcon='card-account-details-outline'
@@ -232,14 +226,6 @@ const License = () => {
             )}
           </Formik>
         </View>
-      </ScrollView>
-      <View style={styles.saveButton}>
-        <SaveButton
-          title="Save"
-          onPress={handleSave}
-        />
-      </View>
-    </SafeAreaView>
   );
 };
 

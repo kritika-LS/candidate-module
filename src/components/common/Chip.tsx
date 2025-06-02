@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { theme } from '../../theme';
 import Icon from './Icon/Icon';
 
-export type ChipStatus = 'terminated' | 'success' | 'completed';
+export type ChipStatus = 'terminated' | 'success' | 'completed' | 'warning';
 
 interface ChipProps {
   chipName: string;
@@ -31,6 +31,12 @@ const getStatusStyles = (status: ChipStatus) => {
       return {
         color: theme.colors.blue.light,
         backgroundColor: '#eff6ff',
+        borderColor: '#dbeafecc',
+      };
+      case 'warning':
+      return {
+        color: theme.colors.accent.main,
+        backgroundColor: theme.colors.status.warning + '20',
         borderColor: '#dbeafecc',
       };
     default:

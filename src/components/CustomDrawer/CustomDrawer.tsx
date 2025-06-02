@@ -22,7 +22,7 @@ const drawerItems = [
   { label: 'Skills Checklist', icon: 'format-list-checks', route: 'SkillsChecklistScreen' },
   // { label: 'References', icon: 'person-add', route: 'References' },
   // { label: 'Documents', icon: 'assignment', route: 'Documents' },
-  { label: 'Settings', icon: 'cog-outline', route: 'Settings' },
+  // { label: 'Settings', icon: 'cog-outline', route: 'Settings' },
 ];
 
 const CustomDrawer = ({ navigation }: any) => {
@@ -34,7 +34,10 @@ const CustomDrawer = ({ navigation }: any) => {
   const formattedDate = moment(lastActiveAccessLog?.date).format('MMM DD, YYYY HH:mm:ss');
 
   const handleNavigate = (route: string) => {
-    navigation.navigate(route);
+    // navigation.navigate(route);
+    navigation.closeDrawer();
+  // Navigate to the screen in the root stack
+  navigation.navigate(route);
   }
 
   const handleLogout = async() => {

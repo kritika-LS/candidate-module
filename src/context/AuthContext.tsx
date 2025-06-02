@@ -63,7 +63,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const getSession = async (): Promise<AuthSession | null | any> => {
     try {
-      console.log("tag here getSession");
       const session = await fetchAuthSession();
       if (session.tokens) {
         const response = await getAuthDetails();
@@ -85,7 +84,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Check if we have stored credentials and attempt silent sign-in
       const rememberAccount = await AsyncStorage.getItem('@auth:rememberAccount');
-      if (rememberAccount === 'true') {
+      const authToken = await AsyncStorage.getItem('auth_token');
+      if (rememberAccount === 'true' && authToken) {
         const encryptedEmail = await AsyncStorage.getItem('@auth:email');
         const encryptedPassword = await AsyncStorage.getItem('@auth:password');
 
@@ -168,7 +168,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut();
       setIsAuthenticated(false);
-      await AsyncStorage.setItem('@auth:isAuthenticated', 'false'); // Persist auth state
+      setIsRegistered(false);
+      await AsyncStorage.removeItem('auth_token');
+      await apiClient.setToken('');
+      await AsyncStorage.removeItem('@auth:isAuthenticated'); // Persist auth state
       const remember = await AsyncStorage.getItem('@auth:rememberAccount');
 
       // Only remove credentials if rememberAccount is false
@@ -191,9 +194,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const idToken = sessionResult.tokens?.idToken?.toString() || null;
       const accessToken = sessionResult.tokens?.accessToken?.toString() || null;
       //   const refreshToken = sessionResult.tokens?.refreshToken?.toString();
-
-      console.log({accessToken})
-      console.log({idToken})
 
       // const currentUser = await getCurrentUser();
       await AsyncStorage.setItem('auth_token', accessToken || '');

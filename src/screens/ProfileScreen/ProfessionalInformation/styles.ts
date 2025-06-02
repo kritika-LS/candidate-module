@@ -134,4 +134,11 @@ export const styles = StyleSheet.create({
 		paddingVertical: theme.spacing.sm,
 		width: Dimensions.get('screen').width*0.32,
 	},
+  saveButton: {
+		borderTopWidth: 1,
+		borderTopColor: theme.colors.grey[100],
+    backgroundColor: '#fff', 
+    paddingHorizontal: 24, 
+		marginTop: 20
+  },
 })

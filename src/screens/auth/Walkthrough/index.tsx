@@ -11,6 +11,7 @@ import WalkthroughItem from '../../../components/features/WalkthroughItem';
 import { WalkthroughItemType } from '../../../models/types/WalkthroughItemType';
 import styles from './styles';
 import Icon from '../../../components/common/Icon/Icon';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const walkthroughData: WalkthroughItemType[] = [
@@ -64,7 +65,8 @@ const WalkthroughScreen: React.FC<WalkthroughScreenProps> = ({onDone}) => {
     }
   };
 
-  const onPressExploreOpportunities = () => {
+  const onPressExploreOpportunities = async() => {
+    await AsyncStorage.setItem('hasSeenWalkthrough','true');
       onDone();
   };
 

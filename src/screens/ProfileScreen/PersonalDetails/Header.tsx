@@ -1,29 +1,37 @@
 import React, { useState } from "react";
-import { Alert, Image, TouchableOpacity, View } from "react-native";
+import { Image, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import Icon from "../../../components/common/Icon/Icon";
 import { TextStyle } from "../../../components/common/Text";
 import { theme } from "../../../theme";
-// import DocumentPicker from 'react-native-document-picker';
+import { pick, types, isCancel } from '@react-native-documents/picker';
+import Toast from "react-native-toast-message";
 
 export const Header = () => {
 
   	const [document, setDocument] = useState<any>(null);
 
-	const handleDocumentUpload = async () => {
-		// try {
-		//   const res = await DocumentPicker.pick({
-		// 	type: [DocumentPicker.types.images],
-		//   });
-		//   setDocument(res[0]);
-		// } catch (err) {
-		//   if (DocumentPicker.isCancel(err)) {
-		// 	// User cancelled the picker
-		//   } else {
-		// 	Alert.alert('Error', 'Failed to pick document');
-		//   }
-		// }
-	};
+		const handleDocumentUpload = async () => {
+			try {
+				const res = await pick({
+					type: [types.images],
+				});
+				setDocument(res[0]);
+			} catch (err) {
+				if (isCancel(err)) { 
+					Toast.show({
+						type: 'error',
+						text1: 'Failed to pick document',
+					})
+				// User cancelled the picker
+				} else {
+					Toast.show({
+						type: 'error',
+						text1: 'Failed to pick document',
+					})
+				}
+			}
+		};
 
 	return (
 		<View style={[styles.flexRow, styles.uploadSection]}>

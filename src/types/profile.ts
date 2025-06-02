@@ -1,8 +1,9 @@
 // ----- Type Definitions -----
 export type Route = {
-    key: string;
-    title: string;
-    icon: string;
+    key?: string;
+    title?: string;
+    icon?: string;
+    count?: any;
 };
 
 export type AccordionItem = {

@@ -19,6 +19,7 @@ import * as Yup from 'yup';
 import { TextStyle } from '../../../components/common/Text';
 import { ProfileScreenHeader } from "../../../components/features/ProfileScreenHeader";
 import { SaveButton } from "../../../components/features/SaveButton";
+import { Checkbox } from "../../../components/common/Checkbox";
 // import DocumentPicker from 'react-native-document-picker';
 
 interface EducationFormValues {
@@ -174,11 +175,11 @@ export const AddEducationForm: React.FC<AddEducationProps> = ({ setShowForm }) =
                     open={values.levelOfEducationOpen}
                     setOpen={(open) => setFieldValue('levelOfEducationOpen', open)}
                     items={[
-                      { label: 'S-School', value: 'school' },
-                      { label: 'D-Diploma', value: 'diploma' },
-                      { label: 'B-Bachelors', value: 'bachelors' },
-                      { label: 'M-Masters', value: 'masters' },
-                      { label: 'P-Doctorate', value: 'doctorate' },
+                      { label: 'School', value: 'school' },
+                      { label: 'Diploma', value: 'diploma' },
+                      { label: 'Bachelors', value: 'bachelors' },
+                      { label: 'Masters', value: 'masters' },
+                      { label: 'Doctorate', value: 'doctorate' },
                     ]}
                     value={values.levelOfEducation}
                     setValue={(callback) => setFieldValue('levelOfEducation', callback(values.levelOfEducation))}
@@ -198,9 +199,9 @@ export const AddEducationForm: React.FC<AddEducationProps> = ({ setShowForm }) =
                     open={values.modeOfEducationOpen}
                     setOpen={(open) => setFieldValue('modeOfEducationOpen', open)}
                     items={[
-                      { label: 'F-Full Time', value: 'full_time' },
-                      { label: 'P-Part Time', value: 'part_time' },
-                      { label: 'D-Distant Education', value: 'distant' },
+                      { label: 'Full Time', value: 'full_time' },
+                      { label: 'Part Time', value: 'part_time' },
+                      { label: 'Distant Education', value: 'distant' },
                     ]}
                     value={values.modeOfEducation}
                     setValue={(callback) => setFieldValue('modeOfEducation', callback(values.modeOfEducation))}
@@ -269,13 +270,17 @@ export const AddEducationForm: React.FC<AddEducationProps> = ({ setShowForm }) =
 
                   {/* Currently Studying Checkbox */}
                   <View style={styles.checkboxContainer}>
-                    <TouchableOpacity
-                      style={styles.squareCheckbox}
-                      onPress={() => setFieldValue('currentlyStudying', !values.currentlyStudying)}
-                    >
-                      {values.currentlyStudying && <View style={styles.checkboxSelected} />}
-                    </TouchableOpacity>
-                    <Text style={styles.checkboxLabel}>I am currently studying here</Text>
+                    <Checkbox
+                      checked={values.currentlyStudying}
+                      onChange={() => {
+                        setFieldValue('currentlyStudying', !values.currentlyStudying);
+                        // Clear end date when checking "currently studying"
+                        if (!values.currentlyStudying) {
+                          setFieldValue('endDate', '');
+                        }
+                      }}
+                      label="I am currently studying here"
+                    />
                   </View>
 
                   {/* End Date */}
@@ -580,8 +585,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   saveButton: {
-    backgroundColor: '#fff', 
-    paddingHorizontal: 16, 
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
     paddingBottom: 16,
     flexDirection: 'row',
     justifyContent: 'flex-end',

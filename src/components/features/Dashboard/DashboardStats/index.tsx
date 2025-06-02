@@ -47,7 +47,7 @@ export const DashboardStats = () => {
     {
       icon: <Icon name="bookmark-outline" size={12} />,
       label: 'Saved',
-      count: dashboardStats.totalSavedJobs,
+      count: dashboardStats.totalSavedJobs || 0,
       bgColor: '#d9f3e3',
       ScreenName: '',
       navigateToTab: 'saved', // Specify target tab
@@ -55,7 +55,7 @@ export const DashboardStats = () => {
     {
       icon: <Icon name="briefcase-outline" size={12} />,
       label: 'Applied',
-      count: dashboardStats.totalAppliedJobs,
+      count: dashboardStats.totalAppliedJobs || 0,
       bgColor: '#d6e8fa',
       ScreenName: '',
       navigateToTab: 'applications', // Specify target tab

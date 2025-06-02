@@ -1,5 +1,6 @@
 export type RootStackParamList = {
     AuthNavigator: undefined;
+    MainStack: undefined;
     AppNavigator: { screen: keyof BottomTabsParamsList };
     JobPreviewScreen: { jobId: string };
     SearchJobs: undefined;
@@ -20,6 +21,9 @@ export type RootStackParamList = {
     PersonalDetailsScreen: undefined;
     WorkHistorySection: undefined;
     EducationSection: undefined;
+    SkillsChecklistScreen: undefined;
+    ScreeningsScreen: undefined;
+    SettingsScreen: undefined;
 }
 
 export type AuthStackParamList = {

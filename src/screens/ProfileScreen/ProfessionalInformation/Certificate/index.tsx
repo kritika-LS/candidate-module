@@ -3,8 +3,6 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  SafeAreaView,
-  ScrollView,
   StyleSheet,
 } from 'react-native';
 import { Formik } from 'formik';
@@ -17,7 +15,6 @@ import { TextStyle } from '../../../../components/common/Text';
 import Icon from '../../../../components/common/Icon/Icon';
 import { UploadButton } from '../../../../components/features/UploadButton';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
-import { SaveButton } from '../../../../components/features/SaveButton';
 
 interface CertificateFormValues {
   certificateName: string;
@@ -84,8 +81,6 @@ const Certificate = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.body}>
           <ProfileScreenHeader
             headerIcon='certificate-outline'
@@ -224,19 +219,10 @@ const Certificate = () => {
                     handleDelete={handleDeleteUploadedFile}
                   />
                 </View>
-                <View style={styles.saveButton}>
-                  <SaveButton
-                    title="Save"
-                    onPress={handleSubmit}
-                    disabled={!isValid || !dirty}
-                  />
-                </View>
               </>
             )}
           </Formik>
         </View>
-      </ScrollView>
-    </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
@@ -244,7 +230,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     body: {
-      margin: 16,
+      marginVertical: 16,
       padding: 16,
       borderRadius: 8,
       borderWidth: 1,
@@ -271,11 +257,6 @@ const styles = StyleSheet.create({
         padding: 12,
         backgroundColor: '#fff',
       },
-      saveButton: {
-        backgroundColor: '#fff', 
-        paddingHorizontal: 16, 
-        paddingBottom: 16
-      },
       errorTextStyle: {
         color: 'red',
         fontSize: 12,
@@ -287,18 +268,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginTop: 4,
     },
-    saveBtn: {
-        marginTop: 24,
-        backgroundColor: '#0A47E9',
-        borderRadius: 8,
-        paddingVertical: 14,
-        alignItems: 'center',
-      },
-      saveBtnTextStyle: {
-        color: '#fff',
-        fontWeight: '600',
-        fontSize: 16,
-      },
       error: {
         color: 'red',
         fontSize: 14,
