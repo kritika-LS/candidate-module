@@ -32,4 +32,7 @@ export const ENDPOINTS = {
     parseJobSearchQuery: '/api/v1/utils/parse-job-search-query',
     matchingJobs: '/api/v1/candidate/jobs/matching',
   },
+  SKILL_CHECKLIST: {
+    getResponses: '/api/v1/skill-checklist/get-responses',
+  },
 } as const;

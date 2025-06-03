@@ -10,6 +10,7 @@ import candidateProfessionalInfoReducer from './slices/candidateProfessionalInfo
 import candidateResumeReducer from './slices/candidateResume.slice';
 import onboardingReducer from './slices/onboarding.slice';
 import onboardReducer from './slices/onboard.slice';
+import skillChecklistReducer from './slices/skillChecklist.slice';
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     candidateResume: candidateResumeReducer,
     onboarding: onboardingReducer,
     onboard: onboardReducer,
+    skillChecklist: skillChecklistReducer,
   },
 });
 
