@@ -22,6 +22,7 @@ export const ENDPOINTS = {
     references: '/api/v1/candidate/references',
     resume: '/api/v1/candidate/resume',
     searchCriteria: '/api/v1/candidate/search-criteria',
+    getScreening: '/api/v1/candidate/interview/screening',
   },
   MYJOBS: {
     candidatePoolJobs: '/api/v1/candidate-pool/jobs',
@@ -34,5 +35,6 @@ export const ENDPOINTS = {
   },
   SKILL_CHECKLIST: {
     getResponses: '/api/v1/skill-checklist/get-responses',
+    saveResponses: '/api/v1/skill-checklist/save-responses',
   },
 } as const;

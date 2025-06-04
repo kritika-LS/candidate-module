@@ -96,7 +96,7 @@ export const styles = StyleSheet.create({
 		marginLeft: 10,
 	},
 	filterButtonText: {
-		color: theme.colors.primary.main,
+		color: theme.colors.text.white,
 		fontWeight: '600',
 		fontSize: 15,
 		marginLeft: 8,
@@ -106,5 +106,15 @@ export const styles = StyleSheet.create({
 		padding: 6,
 		borderRadius: 16,
 		backgroundColor: '#F2F6FF',
+	},
+	searchInputContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		position: 'relative',
+	},
+	crossIconContainer: {
+		position: 'absolute',
+		right: 60,
+		padding: 4,
 	},
 }); 

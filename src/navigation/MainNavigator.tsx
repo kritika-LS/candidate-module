@@ -22,6 +22,8 @@ import BackgroundInformation from '../screens/ProfileScreen/ProfessionalInformat
 import { PersonalDetailsScreen } from '../screens/ProfileScreen/PersonalDetails/PersonalDetailsScreen';
 import WorkHistorySection from '../screens/ProfileScreen/WorkHistory/WorkHistory';
 import EducationSection from '../screens/ProfileScreen/Education';
+import { SingleSkillChecklist } from '../screens/SkillsChecklistScreen/SingleSkillChecklist';
+import { MyScreenings } from '../screens/MyScreenings';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -49,6 +51,8 @@ const MainStack = () => {
       <Stack.Screen name="BackgroundInformationScreen" component={BackgroundInformation} />
       <Stack.Screen name="PersonalDetailsScreen" component={PersonalDetailsScreen} />
       <Stack.Screen name="EducationSection" component={EducationSection} />
+      <Stack.Screen name="SingleSkillChecklist" component={SingleSkillChecklist} />
+      <Stack.Screen name="MyScreenings" component={MyScreenings} />
     </Stack.Navigator>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Dimensions, Pressable, ScrollView, Text, View } from "react-native";
 import { Header } from "../../components/common/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,8 +11,11 @@ import { styles } from "./styles";
 import { Route } from "../../types/profile";
 import { SkillsChecklistMenuCard } from "../../components/common/SkillsChecklistMenuCard";
 import { AllChecklists } from "./AllChecklists";
-import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 import { fetchSkillChecklistResponses } from "../../store/thunk/fetchSkillChecklistResponses.thunk";
+import { AssignedChecklists } from "./AssignedChecklists";
+import { DraftsChecklists } from "./DraftsChecklists";
+import { CompletedChecklists } from "./CompletedChecklists";
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -20,16 +23,35 @@ export const SkillsChecklistScreen = () => {
 
 	const dispatch = useAppDispatch();
 
+	const allListCount = useAppSelector(state => state?.skillChecklist?.all?.totalResults);
+	const assignedListCount = useAppSelector(state => state?.skillChecklist?.approved?.totalResults);
+	const draftsListCount = useAppSelector(state => state?.skillChecklist?.draft?.totalResults);
+	const completedListCount = useAppSelector(state => state?.skillChecklist?.submitted?.totalResults);
+
 	const [searchValue, setSearchValue] = useState("");
-	const [chips, setChips] = useState<string[]>([]);
 	const [index, setIndex] = useState(0);
 
 	const [routes] = useState<Route[]>([
-		{ key: 'All', title: 'All', count: 3 },
-		{ key: 'Assigned', title: 'Assigned', count: 0 },
-		{ key: 'Drafts', title: 'Drafts', count: 2 },
-		{ key: 'Completed', title: 'Completed', count: 0 },
+		{ key: 'All', title: 'All', count: allListCount },
+		{ key: 'Assigned', title: 'Assigned', count: assignedListCount },
+		{ key: 'Drafts', title: 'Drafts', count: draftsListCount },
+		{ key: 'Completed', title: 'Completed', count: completedListCount },
 	]);
+
+	const getTabColor = (tabName: string) => {
+		switch (tabName.toLowerCase()) {
+			case 'all':
+				return theme.colors.primary.main;
+			case 'assigned':
+				return theme.colors.accent.dark;
+			case 'drafts':
+				return theme.colors.status.error;
+			case 'completed':
+				return '#15803d';
+			default:
+				return theme.colors.primary.main;
+		}
+	};
 
 	const renderScene = ({ route }: { route: any }) => {
 		switch (route.key) {
@@ -39,15 +61,15 @@ export const SkillsChecklistScreen = () => {
 				);
 			case 'Assigned':
 				return (
-					<TextStyle>Assigned</TextStyle>
+					<AssignedChecklists />
 				);
 			case 'Drafts':
 				return (
-					<TextStyle>Drafts</TextStyle>
+					<DraftsChecklists />
 				);
 			case 'Completed':
 				return (
-					<TextStyle>Completed</TextStyle>
+					<CompletedChecklists />
 				);
 			default:
 				return null;
@@ -67,7 +89,7 @@ export const SkillsChecklistScreen = () => {
 				<View style={styles.tabBarContainer}>
 					{navigationState.routes.map((route: any, index: number) => {
 						const focused = navigationState.index === index;
-						const color = focused ? theme.colors.primary.main : theme.colors.text.light;
+						const color = focused ? getTabColor(route.title) : theme.colors.text.light;
 
 						return (
 							<Pressable
@@ -78,7 +100,7 @@ export const SkillsChecklistScreen = () => {
 								<View>
 									{/* <Icon name={route.icon} color={color} size={16} /> */}
 									<TextStyle size="sm" style={[{ color }, styles.iconSpacing]}>{route.title}</TextStyle>
-									<TextStyle size="sm" style={[{ color }, styles.iconSpacing]}>{`(${route.count})`}</TextStyle>
+									<TextStyle size="sm" style={[{ color, textAlign: 'center' }, styles.iconSpacing]}>{`(${route.count})`}</TextStyle>
 								</View>
 							</Pressable>
 						);
@@ -88,75 +110,80 @@ export const SkillsChecklistScreen = () => {
 		);
 	};
 
+	const handleSearch = useCallback(() => {
+		if (searchValue.trim()) {
+			fetchAllChecklistsData(searchValue.trim());
+		} else {
+			fetchAllChecklistsData("");
+		}
+	}, [searchValue]); // Depend on searchValue
 
+	// Modified fetchAllChecklistsData to accept a checklistName
+	const fetchAllChecklistsData = useCallback(async (query: string = "") => {
+		try {
+			// Dispatch fetches for all relevant statuses with the search query
+			// The AllChecklists component will then pick up this data from Redux
+			await Promise.all([
+				dispatch(fetchSkillChecklistResponses({
+					checklistName: query, // Pass the query here
+					pageFrom: 0,
+					pageSize: 10,
+					sortBy: "TITLE",
+					status: null, // For 'All'
+				})).unwrap(),
 
-  useEffect(() => {
-    const fetchAllChecklistsData = async () => {
-      try {
-        // Use .unwrap() to correctly await the thunk's promise and catch rejections
-        const result = await Promise.all([
-          dispatch(fetchSkillChecklistResponses({
-            checklistName: "",
-            pageFrom: 0,
-            pageSize: 10,
-            sortBy: "TITLE",
-            status: null, // For 'All'
-          })).unwrap(), // <--- ADDED .unwrap()
+				dispatch(fetchSkillChecklistResponses({
+					checklistName: query, // Pass the query here
+					pageFrom: 0,
+					pageSize: 10,
+					sortBy: "TITLE",
+					status: "S", // For 'Completed'
+				})).unwrap(),
 
-          dispatch(fetchSkillChecklistResponses({
-            checklistName: "",
-            pageFrom: 0,
-            pageSize: 10,
-            sortBy: "TITLE",
-            status: "S", // For 'Submitted'
-          })).unwrap(), // <--- ADDED .unwrap()
+				dispatch(fetchSkillChecklistResponses({
+					checklistName: query, // Pass the query here
+					pageFrom: 0,
+					pageSize: 10,
+					sortBy: "TITLE",
+					status: "D", // For 'Drafts'
+				})).unwrap(),
 
-          dispatch(fetchSkillChecklistResponses({
-            checklistName: "",
-            pageFrom: 0,
-            pageSize: 10,
-            sortBy: "TITLE",
-            status: "D", // For 'Drafts'
-          })).unwrap(), // <--- ADDED .unwrap()
+				dispatch(fetchSkillChecklistResponses({
+					checklistName: query, // Pass the query here
+					pageFrom: 0,
+					pageSize: 10,
+					sortBy: "TITLE",
+					status: "A", // For 'Assigned'
+				})).unwrap(),
+			]);
+		} catch (err) {
+			console.error("Failed to fetch one or more checklist categories:", err);
+		}
+	}, [dispatch]);
 
-          dispatch(fetchSkillChecklistResponses({
-            checklistName: "",
-            pageFrom: 0,
-            pageSize: 10,
-            sortBy: "TITLE",
-            status: "A", // For 'Approved'
-          })).unwrap(), // <--- ADDED .unwrap()
-        ]);
-				console.log("All checklist data fetched successfully:", result);
-      } catch (err) {
-        console.error("Failed to fetch one or more checklist categories:", err);
-        // Toast messages for errors are handled by the thunk's failure action
-      }
-    };
+	const handleClearAll = useCallback(() => {
+		setSearchValue("");
+		fetchAllChecklistsData(""); // Call fetch with empty query
+}, []);
 
-    fetchAllChecklistsData();
-
-    // Cleanup: Clear errors or data when component unmounts if necessary
-    // return () => {
-    //   dispatch(clearSkillChecklistError('all'));
-    //   dispatch(clearSkillChecklistData('all'));
-    // };
-  }, [dispatch]);
+	useEffect(() => {
+		// Initial fetch when component mounts, with an empty search query
+		fetchAllChecklistsData("");
+	}, [fetchAllChecklistsData]);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
-			{/* <Header title="Skills Checklist" showBackButton /> */}
+			<Header title="Skills Checklist" showBackButton />
 			<SearchSection
 				title={'Skills Checklist'}
 				subTitle={'Manage and track your skill assessments'}
+				placeholder={'Search for checklists...'}
 				searchValue={searchValue}
-				onSearchValueChange={() => { }}
-				onSearch={() => { }}
-				chips={chips}
-				onRemoveChip={() => { }}
-				onClearAll={() => { }}
-				onFilterPress={() => { }}
+				onSearchValueChange={setSearchValue}
+				onSearch={handleSearch}
+				onClearAll={handleClearAll}
 				showFilter={false}
+				showCrossIcon={true}
 			/>
 
 			<TabView

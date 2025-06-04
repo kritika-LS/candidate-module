@@ -6,7 +6,8 @@ const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 44 : StatusBar.currentHeight ||
 export const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: theme.colors.primary.main,
-    paddingVertical: 16
+    paddingTop: 16,
+    paddingHorizontal: 16,
     // paddingTop: Platform.OS === 'ios' ? 0 : STATUSBAR_HEIGHT,
   },
   container: {

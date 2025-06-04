@@ -6,7 +6,7 @@ import { theme } from '../../../theme';
 import Icon from '../Icon/Icon';
 
 interface CheckboxProps {
-  label: string;
+  label?: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;

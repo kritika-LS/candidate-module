@@ -10,7 +10,7 @@ interface ChecklistCategoryState {
 }
 
 // Define the overall state for the skillChecklist slice
-export interface SkillChecklistState {
+interface SkillChecklistState {
  all: ChecklistCategoryState;
  submitted: ChecklistCategoryState;
  draft: ChecklistCategoryState;
@@ -57,9 +57,7 @@ const skillChecklistSlice = createSlice({
      state,
      action: PayloadAction<{ items: SkillChecklistItem[]; totalResults: number; status: 'S' | 'D' | 'A' | null }>
    ) => {
-    console.log(action.payload, "-------------------------------")
      const { items, totalResults, status } = action.payload;
-     console.log({items, totalResults, status})
      if (status === 'S') {
        state.submitted.loading = false;
        state.submitted.items = items;
@@ -143,7 +141,6 @@ const skillChecklistSlice = createSlice({
      }
    },
  },
- 
 });
 
 export const {

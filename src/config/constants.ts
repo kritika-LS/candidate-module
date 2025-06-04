@@ -1,6 +1,6 @@
 export const APP_CONSTANTS = {
   APP_NAME: 'Hummingbird',
-  API_TIMEOUT: 30000,
+  API_TIMEOUT: 90000,
   STORAGE_KEYS: {
     AUTH_TOKEN: '@auth_token',
     USER_DATA: '@user_data',

@@ -4,7 +4,6 @@ import { theme } from '../../../theme';
 export const styles = StyleSheet.create({
   body: {
     padding: 16,
-    backgroundColor: '#fff',
     flex: 1,
   },
   loadingContainer: {

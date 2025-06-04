@@ -13,6 +13,8 @@ export type SkillsChecklistMenuCardProps = {
   isSelected?: boolean;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
+  data?: any;
+  completed?: boolean;
 };
 
 export const SkillsChecklistMenuCard: React.FC<SkillsChecklistMenuCardProps> = ({
@@ -22,24 +24,41 @@ export const SkillsChecklistMenuCard: React.FC<SkillsChecklistMenuCardProps> = (
   isSelected = false,
   onPress,
   style,
+  data,
+  completed,
 }) => {
+  console.log({data});
   return (
     <TouchableOpacity
       style={[
         styles.menuCard,
         isDraft && styles.menuCardDraft,
-        isSelected && styles.menuCardSelected,
+        completed && styles.menuCardCompleted,
         style,
       ]}
       activeOpacity={0.85}
       onPress={onPress}
       accessibilityRole="button"
     >
-      <View style={[styles.iconContainer, {borderColor: isSelected ? theme.colors.primary.main : theme.colors.grey[300]}]}>
+      <View style={[
+          styles.iconContainer, 
+          {borderColor: isDraft 
+            ? theme.colors.accent.main 
+            : completed 
+              ? theme.colors.status.success 
+              : theme.colors.grey[300]
+          }
+        ]}>
         <Icon
           size={20}
           name="file-document-outline"
-          color={isDraft ? theme.colors.accent.main : theme.colors.grey[400]}
+          color={
+            isDraft 
+              ? theme.colors.accent.main 
+              : completed 
+                ? theme.colors.status.success 
+                : theme.colors.grey[400]
+          }
         />
       </View>
       <View style={styles.textContainer}>
@@ -51,11 +70,14 @@ export const SkillsChecklistMenuCard: React.FC<SkillsChecklistMenuCardProps> = (
           {title || 'xe4rctvybuhnij'}
         </TextStyle>
         <TextStyle size="xs" color={theme.colors.text.light}>
-          {isDraft ? "Draft assessment" : status || "Ready to complete"}
+          {isDraft ? "Draft assessment" : completed ? 'Assessment Completed' : "Ready to complete"}
         </TextStyle>
       </View>
-      {!isDraft && (
-        <Chip chipName="Draft" status="warning" />
+      {(isDraft || completed) && (
+        <Chip 
+          chipName={isDraft ? "Draft" : "Completed"}
+          status={isDraft ? "warning" : "success"}
+        />
       )}
     </TouchableOpacity>
   );

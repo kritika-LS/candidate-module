@@ -3,7 +3,7 @@
   pageFrom: number;
   pageSize: number;
   sortBy: 'TITLE' | 'DATE' | string; // Add other sort options if known
-  status: 'S' | 'D' | 'A' | null; // S: Submitted, D: Draft, A: Approved (based on curl examples)
+  status: 'S' | 'D' | 'A' | null; // S: Submitted/Completed, D: Draft, A: Approved/Assigned (based on curl examples)
  }
 
  // actual API response structure

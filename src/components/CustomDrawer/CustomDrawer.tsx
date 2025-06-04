@@ -18,7 +18,7 @@ import { useAppSelector } from '../../hooks/useAppDispatch';
 import moment from 'moment';
 
 const drawerItems = [
-  { label: 'My Screenings', icon: 'account-search-outline', route: 'My Screenings' },
+  { label: 'My Screenings', icon: 'account-search-outline', route: 'MyScreenings' },
   { label: 'Skills Checklist', icon: 'format-list-checks', route: 'SkillsChecklistScreen' },
   // { label: 'References', icon: 'person-add', route: 'References' },
   // { label: 'Documents', icon: 'assignment', route: 'Documents' },

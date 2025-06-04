@@ -20,6 +20,8 @@ import withdrawApplicationReducer from './slices/withdrawApplication.slice';
 import parseJobSearchQueryReducer from './slices/parseJobSearchQuery.slice';
 import jobsMatchingReducer from './slices/jobsMatching.slice';
 import recommendedJobsWithFiltersReducer from './slices/recommendedJobsWithFilters.slice';
+import skillChecklistReducer from './slices/skillChecklist.slice';
+import saveSkillChecklistResponseReducer from './slices/saveSkillChecklistResponse.slice'; 
 
 export const store = configureStore({
   reducer: {
@@ -44,8 +46,11 @@ export const store = configureStore({
     parseJobSearchQuery: parseJobSearchQueryReducer,
     jobsMatching: jobsMatchingReducer,
     recommendedJobsWithFilters: recommendedJobsWithFiltersReducer,
+    skillChecklist: skillChecklistReducer,
+    saveSkillChecklistResponse: saveSkillChecklistResponseReducer,
     
   },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch; 

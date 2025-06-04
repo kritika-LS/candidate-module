@@ -8,6 +8,8 @@ interface TextStyleProps extends TextProps {
   size?: keyof typeof theme.typography.fontSize;
   color?: string;
   leftIcon?: string;
+  iconColor?: string;
+  rotationAngle?: string;
 }
 
 export const TextStyle: React.FC<TextStyleProps> = ({
@@ -17,6 +19,8 @@ export const TextStyle: React.FC<TextStyleProps> = ({
   color = theme.colors.text.primary,
   style,
   leftIcon,
+  iconColor,
+  rotationAngle,
   ...props
 }) => {
   const fontStyle: RNTextStyle = {
@@ -36,9 +40,9 @@ export const TextStyle: React.FC<TextStyleProps> = ({
       {leftIcon && (
         <Icon
           name={leftIcon}
-          color={theme.colors.text.light}
+          color={iconColor ? iconColor : theme.colors.text.light}
           size={theme.typography.fontSize[size]}
-          style={styles.iconSpacing}
+          style={[styles.iconSpacing, rotationAngle && {transform: [{ rotate: rotationAngle }]}]}
         />
       )}
       <Text style={[fontStyle, style]} {...props}>

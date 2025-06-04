@@ -1,23 +1,23 @@
 import React from "react";
 import { FlatList, SafeAreaView, View } from "react-native";
 import { SkillsChecklistMenuCard } from "../../../components/common/SkillsChecklistMenuCard";
-import { styles } from "./styles";
 import { useAppSelector } from "../../../hooks/useAppDispatch";
 import { TextStyle } from "../../../components/common/Text";
 import { theme } from "../../../theme";
+import { styles } from "./styles";
 import { SkillsChecklistMenuCardSkeleton } from "../../../components/common/SkillsChecklistMenuCard/SkeletonLoader";
 import { EmptyChecklist } from "../../../components/features/EmptyChecklist";
 import { useNavigation } from "@react-navigation/native";
 
-export const AllChecklists = () => {
+export const CompletedChecklists = () => {
 
   const navigation = useNavigation();
 
-  const {items, loading} = useAppSelector(state => state?.skillChecklist?.all);
+  const { items, loading } = useAppSelector(state => state?.skillChecklist?.submitted);
 
   if (loading) {
     return (
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.body}>
           {[1, 2, 3, 4, 5, 6, 7, 8].map((_, index) => (
             <SkillsChecklistMenuCardSkeleton key={index} />
@@ -46,7 +46,7 @@ export const AllChecklists = () => {
   }
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.body}>
         <FlatList
           data={items}

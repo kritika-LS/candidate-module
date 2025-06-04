@@ -24,6 +24,8 @@ export type RootStackParamList = {
     SkillsChecklistScreen: undefined;
     ScreeningsScreen: undefined;
     SettingsScreen: undefined;
+    SingleSkillChecklist: {checklistId:any, checklistData:any};
+    MyScreenings: undefined;
 }
 
 export type AuthStackParamList = {

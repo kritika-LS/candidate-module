@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   chipText: {
     fontSize: 12,
-    fontWeight: '500',
+    // fontWeight: '500',
   },
 });
 

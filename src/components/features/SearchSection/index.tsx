@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ImageBackground, TextInput, Keyboard } from 'react-native';
-import { SearchBar } from '../../common/SearchBar';
+import { View, Text, TouchableOpacity, ImageBackground, TextInput, Keyboard } from 'react-native';
 import Icon from '../../common/Icon/Icon';
-import { theme } from '../../../theme';
 import { TextStyle } from '../../common/Text';
 import { styles } from './styles';
+import { theme } from '../../../theme';
 
 interface SearchSectionProps {
   title: string;
@@ -12,11 +11,13 @@ interface SearchSectionProps {
   searchValue: string;
   onSearchValueChange: (val: string) => void;
   onSearch: () => void;
-  chips: string[];
-  onRemoveChip: (chip: string) => void;
+  chips?: string[];
+  onRemoveChip?: (chip: string) => void;
   onClearAll: () => void;
-  onFilterPress: () => void;
+  onFilterPress?: () => void;
   showFilter?: boolean;
+  placeholder?: string;
+  showCrossIcon?: boolean;
 }
 
 export const SearchSection: React.FC<SearchSectionProps> = ({
@@ -25,11 +26,13 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
   searchValue,
   onSearchValueChange,
   onSearch,
-  chips,
+  chips=[],
   onRemoveChip,
   onClearAll,
   onFilterPress,
   showFilter=true,
+  placeholder,
+  showCrossIcon = false,
 }) => {
   // Handle Enter key in TextInput
   const handleSubmitEditing = () => {
@@ -37,6 +40,11 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
       onSearch();
       Keyboard.dismiss();
     }
+  };
+
+  const handleClearSearch = () => {
+    onSearchValueChange('');  // Clear the search value
+    onSearch();  // Trigger search with empty value to reset results
   };
 
   return (
@@ -55,13 +63,21 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           <View style={styles.searchRow}>
             <TextInput
               style={[styles.searchInput, { fontSize: 14 }]}
-              placeholder="Search by job title, job reference number"
+              placeholder={placeholder || "Search by job title, reference number"}
               value={searchValue}
               onChangeText={onSearchValueChange}
               onSubmitEditing={handleSubmitEditing}
               returnKeyType="search"
               placeholderTextColor="#888"
             />
+            {(showCrossIcon && searchValue.length > 0) && (
+              <TouchableOpacity 
+                onPress={handleClearSearch}
+                style={styles.crossIconContainer}
+              >
+                <Icon name="close" size={20} color={theme.colors.grey[400]} />
+              </TouchableOpacity>
+            )}
             <TouchableOpacity style={styles.searchButton} onPress={handleSubmitEditing}>
               <Icon name='magnify' color='#fff' />
             </TouchableOpacity>
@@ -70,13 +86,20 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           </TouchableOpacity>}
           </View>
 
-          {chips.length > 0 && (
+          {(chips && chips.length) > 0 && (
             <View style={styles.chipRowWrapper}>
               <View style={styles.chipList}>
                 {chips.map((chip, idx) => (
                   <TouchableOpacity onPress={onSearch} key={idx} style={styles.chip}>
                     <TextStyle variant="regular" size='sm'>{chip}</TextStyle>
-                    <TouchableOpacity style={styles.crossIcon} onPress={() => onRemoveChip(chip)}>
+                    <TouchableOpacity 
+                      style={styles.crossIcon} 
+                      onPress={() => {
+                        if (onRemoveChip) {
+                          onRemoveChip(chip);
+                        }
+                      }}
+                    >
                       <Icon name="close" size={16} color="#1976D2" />
                     </TouchableOpacity>
                   </TouchableOpacity>
@@ -87,12 +110,6 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
               </TouchableOpacity>
             </View>
           )}
-          {/* Divider */}
-          {/* <View style={styles.divider} />
-          <TouchableOpacity style={styles.filterButton} onPress={onFilterPress}>
-            <Icon name="filter-variant" size={20} color={theme.colors.primary.main} />
-            <Text style={styles.filterButtonText}>Filter</Text>
-          </TouchableOpacity> */}
         </View>
       </View>
     </ImageBackground>
