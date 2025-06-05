@@ -4,6 +4,7 @@ import Icon from '../../common/Icon/Icon';
 import { TextStyle } from '../../common/Text';
 import { styles } from './styles';
 import { theme } from '../../../theme';
+import { useNavigation } from '@react-navigation/native';
 
 interface SearchSectionProps {
   title: string;
@@ -18,6 +19,7 @@ interface SearchSectionProps {
   showFilter?: boolean;
   placeholder?: string;
   showCrossIcon?: boolean;
+  showBackButton?: boolean;
 }
 
 export const SearchSection: React.FC<SearchSectionProps> = ({
@@ -33,7 +35,9 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
   showFilter=true,
   placeholder,
   showCrossIcon = false,
+  showBackButton,
 }) => {
+  const navigation = useNavigation();
   // Handle Enter key in TextInput
   const handleSubmitEditing = () => {
     if (searchValue.trim()) {
@@ -54,7 +58,10 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
       resizeMode="cover"
     >
       <View style={styles.container}>
+        <View style={{flexDirection: 'row'}}>
+        {showBackButton && <TouchableOpacity onPress={() => navigation.goBack()}><Icon name='arrow-left' color='#fff' /></TouchableOpacity>}
         <Text style={styles.header}>{title}</Text>
+        </View>
         <Text style={styles.description}>
           {subTitle}
         </Text>

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Dimensions, Pressable, ScrollView, Text, View } from "react-native";
 import { Header } from "../../components/common/Header";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -31,12 +31,7 @@ export const SkillsChecklistScreen = () => {
 	const [searchValue, setSearchValue] = useState("");
 	const [index, setIndex] = useState(0);
 
-	const [routes] = useState<Route[]>([
-		{ key: 'All', title: 'All', count: allListCount },
-		{ key: 'Assigned', title: 'Assigned', count: assignedListCount },
-		{ key: 'Drafts', title: 'Drafts', count: draftsListCount },
-		{ key: 'Completed', title: 'Completed', count: completedListCount },
-	]);
+	const [routes, setRoutes] = useState<Route[]>([]);
 
 	const getTabColor = (tabName: string) => {
 		switch (tabName.toLowerCase()) {
@@ -169,11 +164,20 @@ export const SkillsChecklistScreen = () => {
 	useEffect(() => {
 		// Initial fetch when component mounts, with an empty search query
 		fetchAllChecklistsData("");
-	}, [fetchAllChecklistsData]);
+	}, [fetchAllChecklistsData, dispatch]);
+
+	useEffect(() => {
+		setRoutes([
+			{ key: 'All', title: 'All', count: allListCount },
+			{ key: 'Assigned', title: 'Assigned', count: assignedListCount },
+			{ key: 'Drafts', title: 'Drafts', count: draftsListCount },
+			{ key: 'Completed', title: 'Completed', count: completedListCount },
+		]);
+	}, [allListCount, assignedListCount, draftsListCount, completedListCount]);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
-			<Header title="Skills Checklist" showBackButton />
+			{/* <Header title="Skills Checklist" showBackButton /> */}
 			<SearchSection
 				title={'Skills Checklist'}
 				subTitle={'Manage and track your skill assessments'}
@@ -184,6 +188,7 @@ export const SkillsChecklistScreen = () => {
 				onClearAll={handleClearAll}
 				showFilter={false}
 				showCrossIcon={true}
+				// showBackButton
 			/>
 
 			<TabView

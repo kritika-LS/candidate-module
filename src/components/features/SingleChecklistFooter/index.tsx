@@ -26,7 +26,7 @@ export const SingleChecklistFooter: React.FC<SingleChecklistFooterProps> = ({
     <TouchableOpacity onPress={onToggleAttestation} style={styles.attestationContainer} activeOpacity={0.7}>
       <Checkbox
         checked={attested}
-        onChange={() => {}}
+        onChange={onToggleAttestation}
       />
       <TextStyle color="#92400e">
         <TextStyle variant="bold" color="#92400e"> Attestation:</TextStyle> I attest that the information I have provided is true and accurate to the best of my knowledge, and that it accurately reflects the education I have received and my experience in each of the clinical areas identified within the last 2 years.

@@ -31,14 +31,13 @@ export class SkillChecklistService {
 
   try {
     const response = await apiClient.put<SaveSkillChecklistResponseApiResponse>(endpoint, requestBody);
-    console.log("******************* API Response: ****************", response);
 
-    if (response.data.status === 'OK') {
-      return response.data; // Axios wraps the actual response in .data
+    if (response?.status === 'OK') {
+      return response; // Axios wraps the actual response in .data
     } else {
       // Log the full error response for debugging
-      console.error("API Error during saveResponses:", response.data);
-      throw new Error(response.data.errorMessages || 'Failed to save skill checklist responses.');
+      console.error("API Error during saveResponses:", response);
+      throw new Error(response?.errorMessages || 'Failed to save skill checklist responses.');
     }
   } catch (error) {
     // Re-throw the error after logging or handling
