@@ -1,38 +1,13 @@
-import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { View, TextInput } from 'react-native';
 import { styles } from './styles';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 
 const MAX_CHAR_LENGTH = 256;
 
-const PortfolioScreen: React.FC = () => {
-  const [portfolioUrl1, setPortfolioUrl1] = useState('');
-  const [portfolioUrl2, setPortfolioUrl2] = useState('');
-  const [portfolioUrl3, setPortfolioUrl3] = useState('');
-  const [portfolioUrl4, setPortfolioUrl4] = useState('');
-  const navigation = useNavigation();
-
-  const handleSave = () => {
-    if (
-      portfolioUrl1.length > MAX_CHAR_LENGTH ||
-      portfolioUrl2.length > MAX_CHAR_LENGTH ||
-      portfolioUrl3.length > MAX_CHAR_LENGTH ||
-      portfolioUrl4.length > MAX_CHAR_LENGTH
-    ) {
-      Alert.alert('Validation Error', `Each portfolio URL cannot exceed ${MAX_CHAR_LENGTH} characters.`);
-      return;
-    }
-
-    // In a real application, you would save the portfolio URLs here.
-    console.log('Portfolio URLs saved:', {
-      portfolioUrl1,
-      portfolioUrl2,
-      portfolioUrl3,
-      portfolioUrl4,
-    });
-    Alert.alert('Success', 'Portfolio details saved!');
-    // Optionally navigate to another screen: navigation.goBack();
+const PortfolioScreen: React.FC<{ initialValues: any; updateValues: (updatedValues: any) => void }> = ({ initialValues, updateValues }) => {
+  const handleChange = (key: string, value: string) => {
+    updateValues({ [key]: value });
   };
 
   return (
@@ -46,29 +21,29 @@ const PortfolioScreen: React.FC = () => {
         <TextInput
           style={styles.input}
           placeholder="Enter portfolio url 1"
-          value={portfolioUrl1}
-          onChangeText={setPortfolioUrl1}
+          value={initialValues.portfolioUrl1}
+          onChangeText={(text) => handleChange('portfolioUrl1', text)}
           maxLength={MAX_CHAR_LENGTH}
         />
         <TextInput
           style={styles.input}
           placeholder="Enter portfolio url 2"
-          value={portfolioUrl2}
-          onChangeText={setPortfolioUrl2}
+          value={initialValues.portfolioUrl2}
+          onChangeText={(text) => handleChange('portfolioUrl2', text)}
           maxLength={MAX_CHAR_LENGTH}
         />
         <TextInput
           style={styles.input}
           placeholder="Enter portfolio url 3"
-          value={portfolioUrl3}
-          onChangeText={setPortfolioUrl3}
+          value={initialValues.portfolioUrl3}
+          onChangeText={(text) => handleChange('portfolioUrl3', text)}
           maxLength={MAX_CHAR_LENGTH}
         />
         <TextInput
           style={styles.input}
           placeholder="Enter portfolio url 4"
-          value={portfolioUrl4}
-          onChangeText={setPortfolioUrl4}
+          value={initialValues.portfolioUrl4}
+          onChangeText={(text) => handleChange('portfolioUrl4', text)}
           maxLength={MAX_CHAR_LENGTH}
         />
       </View>

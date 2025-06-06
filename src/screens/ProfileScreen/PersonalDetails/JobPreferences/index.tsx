@@ -1,69 +1,38 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/Ionicons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from './styles';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
-import { useAppDispatch, useAppSelector } from '../../../../hooks/useAppDispatch';
-import { updateCandidatePersonalDetails } from '../../../../store/thunk/candidatePersonalDetails.thunk';
-import Toast from 'react-native-toast-message';
+import { defaultEmploymentTypeItems, defaultShiftItems, defaultTimeZoneItems, defaultWageExpectationItems } from '../../../../config/constants';
 
-// Validation schema using Yup
-const JobPreferenceSchema = Yup.object().shape({
-  availabilityDate: Yup.date().required('Availability date is required'),
-  shiftStartTime: Yup.date().required('Shift start time is required'),
-  shiftEndTime: Yup.date().required('Shift end time is required'),
-});
-
-const JobPreferencesScreen = () => {
+const JobPreferencesScreen: React.FC<{ initialValues: any; updateValues: (updatedValues: any) => void }> = ({ initialValues, updateValues }) => {
   const [showDatePicker, setShowDatePicker] = useState({
     availabilityDate: false,
     shiftStartTime: false,
     shiftEndTime: false,
   });
-  const [isCompleted, setIsCompleted] = useState(false);
-  const dispatch = useAppDispatch();
-  const candidatePersonalDetails = useAppSelector((state) => state?.candidatePersonalDetails?.personalDetails?.responsePayload) || {};
+  const [employmentTypeOpen, setEmploymentTypeOpen] = useState(false);
+  const [shiftOpen, setShiftOpen] = useState(false);
+  const [wageExpectationOpen, setWageExpectationOpen] = useState(false);
+  const [timeZoneOpen, setTimeZoneOpen] = useState(false);
 
-  const defaultShiftItems = [
-    { label: 'Morning', value: 'morning' },
-    { label: 'Afternoon', value: 'afternoon' },
-    { label: 'Night', value: 'night' },
-  ];
+  const formatDate = (date: string): string => {
+    if (date) {
+      const parsedDate = new Date(date);
+      const year = parsedDate.getFullYear();
+      const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(parsedDate.getDate()).padStart(2, '0');
+      return `${month}/${day}/${year}`;
+    }
+    return '';
+  };
 
-  const defaultWageExpectationItems = [
-    { label: 'Low', value: 'low' },
-    { label: 'Medium', value: 'medium' },
-    { label: 'High', value: 'high' },
-  ];
-
-  const handleSave = async (values: any) => {
-    try {
-      const payload = {
-        ...candidatePersonalDetails,
-        availabilityDate: values.availabilityDate,
-        shiftStartTime: values.shiftStartTime,
-        shiftEndTime: values.shiftEndTime,
-        employmentType: values.employmentTypeValue,
-        shift: values.shiftValue,
-        wageExpectation: values.wageExpectationValue,
-        timeZone: values.timeZoneValue,
-      };
-
-      await dispatch(updateCandidatePersonalDetails(payload)).unwrap();
-      setIsCompleted(true);
-      Toast.show({
-        type: 'success',
-        text1: 'Job preferences saved successfully',
-      });
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Failed to save job preferences',
-      });
+  const onChangeDate = (field: string, event: any, selectedDate: Date | undefined) => {
+    setShowDatePicker({ ...showDatePicker, [field]: false });
+    if (selectedDate) {
+      updateValues({ ...initialValues, [field]: selectedDate.toISOString() });
     }
   };
 
@@ -72,203 +41,125 @@ const JobPreferencesScreen = () => {
       <ProfileScreenHeader
         headerIcon='cog-outline'
         headerTitle='Job Preferences'
-        completedStatus={isCompleted}
+        completedStatus={true}
       />
-      <Formik
-        initialValues={{
-          availabilityDate: '',
-          shiftStartTime: '',
-          shiftEndTime: '',
-          shiftItems: defaultShiftItems,
-          shiftValue: '',
-          wageExpectationItems: defaultWageExpectationItems,
-          wageExpectationValue: '',
-          employmentTypeOpen: false,
-          employmentTypeValue: '',
-          shiftOpen: false,
-          wageExpectationOpen: false,
-          timeZoneOpen: false,
-          timeZoneValue: 'utc+0',
-        }}
-        validationSchema={JobPreferenceSchema}
-        onSubmit={(values) => {
-          console.log('Form values:', values);
-        }}
-        style={styles.body}
-      >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setFieldValue, isSubmitting, isValid, dirty }) => {
-          return (
-            <>
-              <View style={styles.container}>
-                <Text style={styles.label}>Employment Type</Text>
-                <DropDownPicker
-                  open={values.employmentTypeOpen}
-                  setOpen={(open) => setFieldValue('employmentTypeOpen', open)}
-                  items={[
-                    { label: 'Full-time', value: 'full_time' },
-                    { label: 'Part-time', value: 'part_time' },
-                    { label: 'Contract', value: 'contract' },
-                    { label: 'Temporary', value: 'temporary' },
-                    { label: 'Internship', value: 'internship' },
-                  ]}
-                  value={values.employmentTypeValue}
-                  setValue={(callback) => setFieldValue('employmentTypeValue', callback(values.employmentTypeValue))}
-                  placeholder="Select employment type"
-                  searchable={false}
-                  listMode="SCROLLVIEW"
-                  style={[styles.dropdown, { zIndex: values.employmentTypeOpen ? 10 : 1 }]}
-                  dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
-                />
+      <View style={styles.container}>
+        <Text style={styles.label}>Employment Type</Text>
+        <DropDownPicker
+          open={employmentTypeOpen}
+          setOpen={setEmploymentTypeOpen}
+          items={defaultEmploymentTypeItems}
+          value={initialValues.employmentTypeValue?.toLowerCase()}
+          setValue={(callback) => updateValues({ ...initialValues, employmentTypeValue: callback(initialValues.employmentTypeValue) })}
+          placeholder="Select employment type"
+          searchable={false}
+          listMode="SCROLLVIEW"
+          style={[styles.dropdown, { zIndex: employmentTypeOpen ? 10 : 1 }]}
+          dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+        />
 
-                <Text style={styles.label}>Shift</Text>
-                <DropDownPicker
-                  open={values.shiftOpen}
-                  setOpen={(open) => setFieldValue('shiftOpen', open)}
-                  items={values.shiftItems}
-                  value={values.shiftValue}
-                  setValue={(callback) => setFieldValue('shiftValue', callback(values.shiftValue))}
-                  placeholder="Select shift"
-                  searchable={false}
-                  listMode="SCROLLVIEW"
-                  style={[styles.dropdown, { zIndex: values.shiftOpen ? 10 : 1 }]}
-                  dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
-                />
+        <Text style={styles.label}>Shift</Text>
+        <DropDownPicker
+          open={shiftOpen}
+          setOpen={setShiftOpen}
+          items={defaultShiftItems}
+          value={initialValues.shiftValue}
+          setValue={(callback) => updateValues({ ...initialValues, shiftValue: callback(initialValues.shiftValue) })}
+          placeholder="Select shift"
+          searchable={false}
+          listMode="SCROLLVIEW"
+          style={[styles.dropdown, { zIndex: shiftOpen ? 10 : 1 }]}
+          dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+        />
 
-                <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Availability Date</Text>
-                  <TouchableOpacity
-                    style={styles.datePickerButton}
-                    onPress={() => setShowDatePicker({ ...showDatePicker, availabilityDate: true })}>
-                    <Text style={styles.input}>
-                      {values.availabilityDate ? values.availabilityDate.toString() : 'Select availability date'}
-                    </Text>
-                    <Icon name="calendar-outline" size={20} color="#ccc" />
-                  </TouchableOpacity>
-                  {showDatePicker.availabilityDate && (
-                    <DateTimePicker
-                      value={values.availabilityDate ? new Date(values.availabilityDate) : new Date()}
-                      mode="date"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        setShowDatePicker({ ...showDatePicker, availabilityDate: false });
-                        setFieldValue('availabilityDate', selectedDate);
-                      }}
-                    />
-                  )}
-                  {touched.availabilityDate && errors.availabilityDate && (
-                    <Text style={styles.error}>{errors.availabilityDate}</Text>
-                  )}
-                </View>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Availability Date</Text>
+          <TouchableOpacity
+            style={styles.datePickerButton}
+            onPress={() => setShowDatePicker({ ...showDatePicker, availabilityDate: true })}>
+            <Text style={styles.input}>
+              {initialValues.availabilityDate ? formatDate(initialValues.availabilityDate) : 'Select availability date'}
+            </Text>
+            <Icon name="calendar-outline" size={20} color="#ccc" />
+          </TouchableOpacity>
+          {showDatePicker.availabilityDate && (
+            <DateTimePicker
+              value={initialValues.availabilityDate ? new Date(initialValues.availabilityDate) : new Date()}
+              mode="date"
+              display="default"
+              onChange={(event, selectedDate) => onChangeDate('availabilityDate', event, selectedDate)}
+            />
+          )}
+        </View>
 
-                <Text style={styles.label}>Wage Expectation Category</Text>
-                <DropDownPicker
-                  open={values.wageExpectationOpen}
-                  setOpen={(open) => setFieldValue('wageExpectationOpen', open)}
-                  items={values.wageExpectationItems}
-                  value={values.wageExpectationValue}
-                  setValue={(callback) => setFieldValue('wageExpectationValue', callback(values.wageExpectationValue))}
-                  placeholder="Select wage expectation category"
-                  searchable={false}
-                  listMode="SCROLLVIEW"
-                  style={[styles.dropdown, { zIndex: values.wageExpectationOpen ? 10 : 1 }]}
-                  dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
-                />
+        <Text style={styles.label}>Wage Expectation Category</Text>
+        <DropDownPicker
+          open={wageExpectationOpen}
+          setOpen={setWageExpectationOpen}
+          items={defaultWageExpectationItems}
+          value={initialValues.wageExpectationValue?.toLowerCase()}
+          setValue={(callback) => updateValues({ ...initialValues, wageExpectationValue: callback(initialValues.wageExpectationValue) })}
+          placeholder="Select wage expectation category"
+          searchable={false}
+          listMode="SCROLLVIEW"
+          style={[styles.dropdown, { zIndex: wageExpectationOpen ? 10 : 1 }]}
+          dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+        />
 
-                <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Shift Start Time</Text>
-                  <TouchableOpacity
-                    style={styles.datePickerButton}
-                    onPress={() => setShowDatePicker({ ...showDatePicker, shiftStartTime: true })}>
-                    <Text style={styles.input}>
-                      {values.shiftStartTime ? values.shiftStartTime.toString() : 'Select shift start time'}
-                    </Text>
-                    <Icon name="time-outline" size={20} color="#ccc" />
-                  </TouchableOpacity>
-                  {showDatePicker.shiftStartTime && (
-                    <DateTimePicker
-                      value={values.shiftStartTime ? new Date(values.shiftStartTime) : new Date()}
-                      mode="time"
-                      display="default"
-                      onChange={(event, selectedTime) => {
-                        setShowDatePicker({ ...showDatePicker, shiftStartTime: false });
-                        setFieldValue('shiftStartTime', selectedTime);
-                      }}
-                    />
-                  )}
-                  {touched.shiftStartTime && errors.shiftStartTime && (
-                    <Text style={styles.error}>{errors.shiftStartTime}</Text>
-                  )}
-                </View>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Shift Start Time</Text>
+          <TouchableOpacity
+            style={styles.datePickerButton}
+            onPress={() => setShowDatePicker({ ...showDatePicker, shiftStartTime: true })}>
+            <Text style={styles.input}>
+              {initialValues.shiftStartTime ? initialValues.shiftStartTime.toString() : 'Select shift start time'}
+            </Text>
+            <Icon name="time-outline" size={20} color="#ccc" />
+          </TouchableOpacity>
+          {showDatePicker.shiftStartTime && (
+            <DateTimePicker
+              value={initialValues.shiftStartTime ? new Date(initialValues.shiftStartTime) : new Date()}
+              mode="time"
+              display="default"
+              onChange={(event, selectedTime) => onChangeDate('shiftStartTime', event, selectedTime)}
+            />
+          )}
+        </View>
 
-                <View style={styles.inputGroup}>
-                  <Text style={styles.label}>Shift End Time</Text>
-                  <TouchableOpacity
-                    style={styles.datePickerButton}
-                    onPress={() => setShowDatePicker({ ...showDatePicker, shiftEndTime: true })}>
-                    <Text style={styles.input}>
-                      {values.shiftEndTime ? values.shiftEndTime.toString() : 'Select shift end time'}
-                    </Text>
-                    <Icon name="time-outline" size={20} color="#ccc" />
-                  </TouchableOpacity>
-                  {showDatePicker.shiftEndTime && (
-                    <DateTimePicker
-                      value={values.shiftEndTime ? new Date(values.shiftEndTime) : new Date()}
-                      mode="time"
-                      display="default"
-                      onChange={(event, selectedTime) => {
-                        setShowDatePicker({ ...showDatePicker, shiftEndTime: false });
-                        setFieldValue('shiftEndTime', selectedTime);
-                      }}
-                    />
-                  )}
-                  {touched.shiftEndTime && errors.shiftEndTime && (
-                    <Text style={styles.error}>{errors.shiftEndTime}</Text>
-                  )}
-                </View>
-                <Text style={styles.label}>Time Zone</Text>
-                <DropDownPicker
-                  open={values.timeZoneOpen}
-                  setOpen={(open) => setFieldValue('timeZoneOpen', open)}
-                  items={[
-                    { label: 'UTC-12:00', value: 'utc-12' },
-                    { label: 'UTC-11:00', value: 'utc-11' },
-                    { label: 'UTC-10:00', value: 'utc-10' },
-                    { label: 'UTC-09:00', value: 'utc-9' },
-                    { label: 'UTC-08:00', value: 'utc-8' },
-                    { label: 'UTC-07:00', value: 'utc-7' },
-                    { label: 'UTC-06:00', value: 'utc-6' },
-                    { label: 'UTC-05:00', value: 'utc-5' },
-                    { label: 'UTC-04:00', value: 'utc-4' },
-                    { label: 'UTC-03:00', value: 'utc-3' },
-                    { label: 'UTC-02:00', value: 'utc-2' },
-                    { label: 'UTC-01:00', value: 'utc-1' },
-                    { label: 'UTC+00:00', value: 'utc+0' },
-                    { label: 'UTC+01:00', value: 'utc+1' },
-                    { label: 'UTC+02:00', value: 'utc+2' },
-                    { label: 'UTC+03:00', value: 'utc+3' },
-                    { label: 'UTC+04:00', value: 'utc+4' },
-                    { label: 'UTC+05:00', value: 'utc+5' },
-                    { label: 'UTC+06:00', value: 'utc+6' },
-                    { label: 'UTC+07:00', value: 'utc+7' },
-                    { label: 'UTC+08:00', value: 'utc+8' },
-                    { label: 'UTC+09:00', value: 'utc+9' },
-                    { label: 'UTC+10:00', value: 'utc+10' },
-                    { label: 'UTC+11:00', value: 'utc+11' },
-                    { label: 'UTC+12:00', value: 'utc+12' },
-                  ]}
-                  value={values.timeZoneValue || 'utc+0'}
-                  setValue={(callback) => setFieldValue('timeZoneValue', callback(values.timeZoneValue))}
-                  placeholder="Select time zone"
-                  searchable={false}
-                  listMode="SCROLLVIEW"
-                  style={[styles.dropdown, { zIndex: values.timeZoneOpen ? 10 : 1 }]}
-                  dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
-                />
-              </View>
-            </>
-          );
-        }}
-      </Formik>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Shift End Time</Text>
+          <TouchableOpacity
+            style={styles.datePickerButton}
+            onPress={() => setShowDatePicker({ ...showDatePicker, shiftEndTime: true })}>
+            <Text style={styles.input}>
+              {initialValues.shiftEndTime ? initialValues.shiftEndTime.toString() : 'Select shift end time'}
+            </Text>
+            <Icon name="time-outline" size={20} color="#ccc" />
+          </TouchableOpacity>
+          {showDatePicker.shiftEndTime && (
+            <DateTimePicker
+              value={initialValues.shiftEndTime ? new Date(initialValues.shiftEndTime) : new Date()}
+              mode="time"
+              display="default"
+              onChange={(event, selectedTime) => onChangeDate('shiftEndTime', event, selectedTime)}
+            />
+          )}
+        </View>
+
+        <Text style={styles.label}>Time Zone</Text>
+        <DropDownPicker
+          open={timeZoneOpen}
+          setOpen={setTimeZoneOpen}
+          items={defaultTimeZoneItems}
+          value={initialValues.timeZoneValue}
+          setValue={(callback) => updateValues({ ...initialValues, timeZoneValue: callback(initialValues.timeZoneValue) })}
+          placeholder="Select time zone"
+          searchable={false}
+          listMode="SCROLLVIEW"
+          style={[styles.dropdown, { zIndex: timeZoneOpen ? 10 : 1 }]}
+          dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
+        />
+      </View>
     </View>
   );
 };
