@@ -11,6 +11,7 @@ interface ChipProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   showDot?: boolean;
+  showBorder?: boolean;
 }
 
 const getStatusStyles = (status: ChipStatus) => {
@@ -42,8 +43,8 @@ const getStatusStyles = (status: ChipStatus) => {
     default:
       return {
         color: theme.colors.text.primary,
-        backgroundColor: theme.colors.background.default,
-        borderColor: '',
+        backgroundColor: theme.colors.grey[100],
+        borderColor: theme.colors.grey[300],
       };
   }
 };

@@ -22,6 +22,8 @@ import jobsMatchingReducer from './slices/jobsMatching.slice';
 import recommendedJobsWithFiltersReducer from './slices/recommendedJobsWithFilters.slice';
 import skillChecklistReducer from './slices/skillChecklist.slice';
 import saveSkillChecklistResponseReducer from './slices/saveSkillChecklistResponse.slice'; 
+import screeningInterviewsReducer from './slices/screeningInterviews.slice';
+import interviewRescheduleReducer from './slices/interviewReschedule.slice';
 
 export const store = configureStore({
   reducer: {
@@ -48,6 +50,8 @@ export const store = configureStore({
     recommendedJobsWithFilters: recommendedJobsWithFiltersReducer,
     skillChecklist: skillChecklistReducer,
     saveSkillChecklistResponse: saveSkillChecklistResponseReducer,
+    screeningInterviews: screeningInterviewsReducer,
+    interviewReschedule: interviewRescheduleReducer,
     
   },
 });

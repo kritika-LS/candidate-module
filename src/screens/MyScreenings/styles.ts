@@ -7,16 +7,9 @@ export const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.default,
   },
   headerCard: {
-    backgroundColor: theme.colors.primary.main,
     padding: 20,
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
-    marginBottom: 32,
-  },
-  headerTitle: {
-    color: theme.colors.text.white,
-    fontSize: 20,
-    fontWeight: 'bold',
   },
   headerSubtitle: {
     color: theme.colors.text.white,

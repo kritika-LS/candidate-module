@@ -23,6 +23,7 @@ export const ENDPOINTS = {
     resume: '/api/v1/candidate/resume',
     searchCriteria: '/api/v1/candidate/search-criteria',
     getScreening: '/api/v1/candidate/interview/screening',
+    reSchedule: '/api/v1/candidate/interview/screening/re-schedule',
   },
   MYJOBS: {
     candidatePoolJobs: '/api/v1/candidate-pool/jobs',
