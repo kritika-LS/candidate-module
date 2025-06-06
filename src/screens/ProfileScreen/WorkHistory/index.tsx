@@ -24,11 +24,9 @@ const WorkHistorySection:React.FC = () => {
         setShowForm(true);
     };
 
-    console.log({WorkHistoryData})
-
     return (
         <ScrollView style={styles.sectionContainer}>
-            {showHistoryList || WorkHistoryData.length ? (
+            {WorkHistoryData.length ? (
                         <>
                             {/* <HistoryListCard
                                 listIcon={'briefcase-outline'}
@@ -77,7 +75,7 @@ const WorkHistorySection:React.FC = () => {
                                 <TextStyle color={theme.colors.primary.main} style={styles.addWorkHistoryText} size='sm'>Add Work History</TextStyle>
                             </TouchableOpacity>}
                         </>
-            ) : null
+            ) : (<AddWorkHistory setShowForm={setShowForm} />)
             }
             { showForm &&
                 <AddWorkHistory setShowForm={setShowForm} />

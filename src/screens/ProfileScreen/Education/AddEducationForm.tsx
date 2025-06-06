@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    marginVertical: 16,
+    marginBottom: 25,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,

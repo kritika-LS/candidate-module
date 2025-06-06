@@ -199,9 +199,9 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = () => {
       const body = JSON.stringify({
         candidateId: '26640abb-a24b-4b73-bf93-f2f94ba6a5fe',
         emailAddress: 'kumar.akshay@lancesoft.com',
-        firstName: 'Akshay',
-        middleName: 'middle',
-        lastName: 'Rastogi',
+        firstName: 'John',
+        middleName: '',
+        lastName: 'Doe',
         mediaFile:
           'candidates/26640abb-a24b-4b73-bf93-f2f94ba6a5fe/profile-pictures/2151100226.jpg',
         mediaFilePresignedUrl:

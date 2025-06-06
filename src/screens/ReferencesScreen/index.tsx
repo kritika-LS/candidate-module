@@ -27,7 +27,7 @@ export const ReferencesScreen = () => {
 				</View>
 			</View> */}
 
-            {showHistoryList || ReferencesData.length > 0 ?
+            {ReferencesData.length > 0 ?
                 <>
                     {ReferencesData.map((item: any, index: number) => {
 
@@ -57,7 +57,7 @@ export const ReferencesScreen = () => {
                     </TouchableOpacity>
                     }
                 </>
-                : null
+                : <ReferenceSection setShowForm={setShowForm} />
             }
             {showForm &&
                 <ReferenceSection setShowForm={setShowForm} />

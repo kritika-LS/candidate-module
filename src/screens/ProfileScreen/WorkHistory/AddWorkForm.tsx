@@ -762,7 +762,7 @@ const styles = StyleSheet.create({
     // backgroundColor: '#fff',
   },
   body: {
-    marginVertical: 16,
+    marginBottom: 25,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
@@ -770,7 +770,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   formSection: {
-    marginBottom: theme.spacing.lg,
     paddingBottom: theme.spacing.md,
   },
   inputArea: {
@@ -786,18 +785,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontSize: 14,
     fontWeight: '500',
-  },
-  saveBtn: {
-    marginTop: 24,
-    backgroundColor: '#0A47E9',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  saveBtnText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
   },
   error: {
     color: 'red',
@@ -875,7 +862,6 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: '#fff', 
     paddingHorizontal: 16, 
-    paddingBottom: 16,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',

@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { TextStyle } from '../../components/common/Text';
 import Chip from '../../components/common/Chip';
 import { theme } from '../../theme';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Screening } from '.';
 
 interface ScreeningCardProps {
@@ -21,7 +21,8 @@ const ScreeningCard: React.FC<ScreeningCardProps> = ({ screening, onReschedule }
   const { jobTitle, screeningStatus, jobCity, jobState, jobCountry, preferredScreeningDate, clientEnterpriseName } = screening;
   //@ts-ignore
   const statusProps = statusMap[screeningStatus];
-  const formattedDate = moment(preferredScreeningDate).format('MMM DD, YYYY [at] hh:mm A');
+  const formattedDate = moment.utc(preferredScreeningDate).tz('Asia/Kolkata').format('MMM DD, YYYY [at] hh:mm A');
+
 
   console.log({formattedDate})
 

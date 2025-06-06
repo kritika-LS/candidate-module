@@ -21,7 +21,7 @@ const EducationSection = () => {
 
     return (
         <ScrollView style={styles.sectionContainer}>
-            {showHistoryList || EducationHistoryData.length > 0 ?
+            {EducationHistoryData.length > 0 ?
                 <>
                     {EducationHistoryData.map((item: any, index: number) => {
                         const startDate = moment(item?.joinedWhen).format('MMM, YYYY');
@@ -57,7 +57,9 @@ const EducationSection = () => {
                     </TouchableOpacity>
                     }
                 </>
-                : null
+                : (
+                    <AddEducationForm setShowForm={setShowForm} />
+                )
             }
             {showForm &&
                 <AddEducationForm setShowForm={setShowForm} />
