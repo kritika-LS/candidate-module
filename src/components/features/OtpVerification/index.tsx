@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AuthStackParamList } from "../../../types/navigation";
 import { OTPInput } from "../../common/OtpInput";
-import { confirmSignUp, resendSignUpCode } from "aws-amplify/auth";
+import { confirmSignUp, resendSignUpCode, confirmUserAttribute, sendUserAttributeVerificationCode } from "aws-amplify/auth";
 import { SaveButton } from "../SaveButton";
 import { useAuth } from "../../../context/AuthContext";
 import { useAppDispatch } from "../../../hooks/useAppDispatch";
@@ -29,7 +29,7 @@ const OTP_LENGTH = 6;
 
 export const OtpVerification = ({ email, onCodeChange, setOtpSent, password }: OtpVerificationProps) => {
 	const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
-	const { login } = useAuth();
+	const { login, logout } = useAuth();
 	const dispatch = useAppDispatch();
 
 	const [timer, setTimer] = useState(RESEND_INTERVAL);
@@ -60,36 +60,47 @@ export const OtpVerification = ({ email, onCodeChange, setOtpSent, password }: O
 			} else if (typeof otpCode !== 'string') {
 				confirmationCodeString = String(otpCode);
 			}
-			const response = await confirmSignUp({
-				username: email,
-				confirmationCode: confirmationCodeString,
-			});
-			if (response?.nextStep?.signUpStep === "DONE" && password) {
-				await login(email, password);
-				
-				// Check candidate authorization
-				try {
-					const candidateResponse = await dispatch(fetchCandidate()).unwrap();
-					// Check if the response has a status key and it's not 401
-					if (candidateResponse?.status && candidateResponse.status !== 401) {
-						navigation.navigate(ScreenNames.HomeScreen);
-					} else {
+			if(password) {
+				const response = await confirmSignUp({
+					username: email,
+					confirmationCode: confirmationCodeString,
+				});
+				if (response?.nextStep?.signUpStep === "DONE" && password) {
+					await login(email, password);
+					
+					// Check candidate authorization
+					try {
+						const candidateResponse = await dispatch(fetchCandidate()).unwrap();
+						// Check if the response has a status key and it's not 401
+						if (candidateResponse?.status && candidateResponse.status !== 401) {
+							navigation.navigate(ScreenNames.HomeScreen);
+						} else {
+							navigation.navigate(ScreenNames.UploadResumeScreen);
+						}
+					} catch (error: any) {
+						// If API call fails or returns 401, navigate to upload resume screen
 						navigation.navigate(ScreenNames.UploadResumeScreen);
+						Toast.show({
+							type: 'error',
+							text1: 'Please complete your profile by uploading your resume'
+						});
 					}
-				} catch (error: any) {
-					// If API call fails or returns 401, navigate to upload resume screen
-					navigation.navigate(ScreenNames.UploadResumeScreen);
-					Toast.show({
-						type: 'error',
-						text1: 'Please complete your profile by uploading your resume'
-					});
 				}
+			} else {
+				await confirmUserAttribute({
+          userAttributeKey: "email",
+          confirmationCode: confirmationCodeString,
+        });
+				Toast.show({
+					type: 'success',
+					text1: 'Email verified successfully'
+				});
+				logout();
 			}
 		} catch (error) {
-			console.error('Confirmation error:', error);
 			Toast.show({
 				type: 'error',
-				text1: 'Failed to verify OTP. Please try again.'
+				text1: `${error?.message || 'Failed to verify OTP. Please try again.'}`
 			});
 		}
 	};

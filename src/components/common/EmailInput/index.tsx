@@ -5,12 +5,13 @@ interface EmailInputProps {
   value: string;
   onChange: (text: string) => void;
   error: string;
+  title?: string;
 }
 
-export const EmailInput = ({ value, onChange, error }: EmailInputProps) => {
+export const EmailInput = ({ value, onChange, error, title }: EmailInputProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Email Address
+      <Text style={styles.label}>{title || 'Email Address'}
         <Text style={styles.mandatory}>{` *`}</Text>
       </Text>
       <TextInput

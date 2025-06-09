@@ -7,11 +7,12 @@ import Toast from 'react-native-toast-message';
 import { toastConfig } from '../components/common/Toast';
 import { store } from '../store';
 import {Provider} from 'react-redux';
+import { navigationRef } from '../navigation/navigationRef';
 
 const App = () => (
   <Provider store={store}>
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
       <AuthProvider>
         <RootNavigator />
         <Toast config={toastConfig} />

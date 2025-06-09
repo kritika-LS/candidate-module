@@ -27,7 +27,6 @@ export const MyScreenings = () => {
   const { items: screenings, loading, error } = useAppSelector(
     (state) => state.screeningInterviews
   );
-  console.log({screenings})
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedScreening, setSelectedScreening] = useState<Screening | null>(null);

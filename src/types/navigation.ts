@@ -26,12 +26,13 @@ export type RootStackParamList = {
     SettingsScreen: undefined;
     SingleSkillChecklist: {checklistId:any, checklistData:any};
     MyScreenings: undefined;
+    EmailVerificationScreen: { email: string, password: string; };
 }
 
 export type AuthStackParamList = {
     LoginScreen: undefined;
     SignUpScreen: undefined;
-    EmailVerificationScreen: undefined;
+    EmailVerificationScreen: { email: string, password: string; };
     UploadResumeScreen: undefined;
     ForgetPasswordScreen: undefined;
     MultiStepRegistrationScreen: undefined;

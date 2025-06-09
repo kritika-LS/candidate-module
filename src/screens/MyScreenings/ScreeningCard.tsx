@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { TextStyle } from '../../components/common/Text';
 import Chip from '../../components/common/Chip';
 import { theme } from '../../theme';
 import moment from 'moment-timezone';
 import { Screening } from '.';
+import { useAppSelector } from '../../hooks/useAppDispatch';
 
 interface ScreeningCardProps {
   screening: Screening;
@@ -19,12 +20,14 @@ const statusMap = {
 
 const ScreeningCard: React.FC<ScreeningCardProps> = ({ screening, onReschedule }) => {
   const { jobTitle, screeningStatus, jobCity, jobState, jobCountry, preferredScreeningDate, clientEnterpriseName } = screening;
+
+  const { loading, error } = useAppSelector(
+    (state) => state.screeningInterviews
+  );
+
   //@ts-ignore
   const statusProps = statusMap[screeningStatus];
   const formattedDate = moment.utc(preferredScreeningDate).tz('Asia/Kolkata').format('MMM DD, YYYY [at] hh:mm A');
-
-
-  console.log({formattedDate})
 
   return (
     <View style={styles.card}>
@@ -55,7 +58,10 @@ const ScreeningCard: React.FC<ScreeningCardProps> = ({ screening, onReschedule }
       </View>
       {(screeningStatus === 'CR' || screeningStatus === 'no_response') && (
         <TouchableOpacity style={styles.rescheduleBtn} onPress={() => onReschedule?.(screening)}>
-          <TextStyle size="md" variant="bold" color="#fff">Reschedule</TextStyle>
+          {loading ? 
+            <ActivityIndicator />
+            : <TextStyle size="md" variant="bold" color="#fff">Reschedule</TextStyle>
+          }
         </TouchableOpacity>
       )}
     </View>

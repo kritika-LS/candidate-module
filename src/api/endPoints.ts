@@ -24,6 +24,8 @@ export const ENDPOINTS = {
     searchCriteria: '/api/v1/candidate/search-criteria',
     getScreening: '/api/v1/candidate/interview/screening',
     reSchedule: '/api/v1/candidate/interview/screening/re-schedule',
+    doNotDisturb: '/api/v1/candidate/do-not-disturb',
+    reverify: '/api/v1/candidate/reverify',
   },
   MYJOBS: {
     candidatePoolJobs: '/api/v1/candidate-pool/jobs',

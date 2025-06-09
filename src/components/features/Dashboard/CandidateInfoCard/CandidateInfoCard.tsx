@@ -23,8 +23,6 @@ const CandidateInfoCard: React.FC<CandidateInfoCardProps> = ({
     // const candidateData = useAppSelector((state) => state?.candidate?.candidate?.responsePayload);
     const personalDetails = useAppSelector((state) => state?.candidatePersonalDetails?.personalDetails?.responsePayload);
 
-    console.log({ personalDetails })
-
     // Safely extract data with default empty strings
     const firstName = personalDetails?.firstName || '';
     const lastName = personalDetails?.lastName || '';

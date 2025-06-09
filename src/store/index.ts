@@ -24,6 +24,8 @@ import skillChecklistReducer from './slices/skillChecklist.slice';
 import saveSkillChecklistResponseReducer from './slices/saveSkillChecklistResponse.slice'; 
 import screeningInterviewsReducer from './slices/screeningInterviews.slice';
 import interviewRescheduleReducer from './slices/interviewReschedule.slice';
+import doNotDisturbReducer from './slices/doNotDisturb.slice';
+import candidateReverifyReducer from './slices/candidateReverify.slice';
 
 export const store = configureStore({
   reducer: {
@@ -52,6 +54,8 @@ export const store = configureStore({
     saveSkillChecklistResponse: saveSkillChecklistResponseReducer,
     screeningInterviews: screeningInterviewsReducer,
     interviewReschedule: interviewRescheduleReducer,
+    doNotDisturb: doNotDisturbReducer,
+    candidateReverify: candidateReverifyReducer,
     
   },
 });

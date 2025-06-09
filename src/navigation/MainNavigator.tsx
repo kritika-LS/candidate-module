@@ -24,6 +24,7 @@ import WorkHistorySection from '../screens/ProfileScreen/WorkHistory/WorkHistory
 import EducationSection from '../screens/ProfileScreen/Education';
 import { SingleSkillChecklist } from '../screens/SkillsChecklistScreen/SingleSkillChecklist';
 import { MyScreenings } from '../screens/MyScreenings';
+import { EmailVerificationScreen } from '../screens/auth/EmailVerificationScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -53,6 +54,7 @@ const MainStack = () => {
       <Stack.Screen name="EducationSection" component={EducationSection} />
       <Stack.Screen name="SingleSkillChecklist" component={SingleSkillChecklist} />
       <Stack.Screen name="MyScreenings" component={MyScreenings} />
+      <Stack.Screen name="EmailVerificationScreen" component={EmailVerificationScreen} />
     </Stack.Navigator>
   );
 };

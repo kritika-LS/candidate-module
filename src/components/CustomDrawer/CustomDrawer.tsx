@@ -22,7 +22,7 @@ const drawerItems = [
   { label: 'Skills Checklist', icon: 'format-list-checks', route: 'SkillsChecklistScreen' },
   // { label: 'References', icon: 'person-add', route: 'References' },
   // { label: 'Documents', icon: 'assignment', route: 'Documents' },
-  // { label: 'Settings', icon: 'cog-outline', route: 'Settings' },
+  { label: 'Settings', icon: 'cog-outline', route: 'SettingsScreen' },
 ];
 
 const CustomDrawer = ({ navigation }: any) => {

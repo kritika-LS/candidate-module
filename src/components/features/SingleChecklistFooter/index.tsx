@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { TextStyle } from "../../common/Text";
 import { Checkbox } from "../../common/Checkbox";
 import { theme } from "../../../theme";
@@ -11,6 +11,7 @@ type SingleChecklistFooterProps = {
   onSubmit: () => void;
   attested: boolean;
   onToggleAttestation: () => void;
+  loading?: boolean;
 };
 
 export const SingleChecklistFooter: React.FC<SingleChecklistFooterProps> = ({
@@ -19,6 +20,7 @@ export const SingleChecklistFooter: React.FC<SingleChecklistFooterProps> = ({
   onSubmit,
   attested,
   onToggleAttestation,
+  loading = false,
 }) => {
   return(
 
@@ -36,26 +38,32 @@ export const SingleChecklistFooter: React.FC<SingleChecklistFooterProps> = ({
     <View style={styles.footerButtonContainer}>
 
       <TouchableOpacity style={styles.footerButton} onPress={onSave}>
-        <TextStyle 
-          leftIcon="floppy" 
-          iconColor={theme.colors.primary.main} 
-          color={theme.colors.primary.main} 
-          size="sm"
-        >
-          Save Draft
-        </TextStyle>
+        {loading ? 
+          <ActivityIndicator /> : 
+          <TextStyle 
+            leftIcon="floppy" 
+            iconColor={theme.colors.primary.main} 
+            color={theme.colors.primary.main} 
+            size="sm"
+          >
+            Save Draft
+          </TextStyle>
+        }
       </TouchableOpacity>
 
       <TouchableOpacity style={[styles.footerButton, !attested && styles.disabledButton]} onPress={onSubmit} disabled={!attested}>
-        <TextStyle 
-          leftIcon="send-outline" 
-          rotationAngle={'300deg'}
-          iconColor={attested ? theme.colors.primary.main : theme.colors.grey[300]} 
-          color={attested ? theme.colors.primary.main : theme.colors.grey[300]} 
-          size="sm"
-        >
-          Submit Checklist
-        </TextStyle>
+        {loading ? 
+          <ActivityIndicator /> : 
+          <TextStyle 
+            leftIcon="send-outline" 
+            rotationAngle={'300deg'}
+            iconColor={attested ? theme.colors.primary.main : theme.colors.grey[300]} 
+            color={attested ? theme.colors.primary.main : theme.colors.grey[300]} 
+            size="sm"
+          >
+            Submit Checklist
+          </TextStyle>
+        }
       </TouchableOpacity>
 
     </View>

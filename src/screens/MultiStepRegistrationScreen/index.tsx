@@ -35,7 +35,8 @@ import { AuthStackParamList } from '../../types/navigation';
 import { RootState } from '../../store/store';
 import Toast from 'react-native-toast-message';
 import moment from 'moment';
-import RNFetchBlob from 'react-native-blob-util';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ENV } from '../../config/env';
 
 // Types
 interface ParentScreenRef {
@@ -403,9 +404,7 @@ export const MultiStepRegistrationScreen = () => {
     }
 
     try {
-      console.log("-------------")
       const onboardingFormData = new FormData();
-      console.log({formData});
       const onboardingDetails = {
         firstName: formData.personal.firstName,
         lastName: formData.personal.lastName,
@@ -441,8 +440,9 @@ export const MultiStepRegistrationScreen = () => {
         ],
       };
       console.log({onboardingDetails})
-      onboardingFormData.append('onboardingDetails', JSON.stringify(onboardingDetails));
-      console.log({resumeFile})
+      onboardingFormData.append(
+        'onboardingDetails', 
+        JSON.stringify(onboardingDetails));
       if (resumeFile) {
         onboardingFormData.append('resume', {
           uri: resumeFile.uri,
@@ -450,7 +450,31 @@ export const MultiStepRegistrationScreen = () => {
           name: resumeFile.name || 'resume.pdf',
         });
       }
-      await dispatch(submitOnboarding(onboardingFormData)).unwrap();
+      try {
+        const token = await AsyncStorage.getItem('auth_token');
+        const response = await fetch(ENV.DEV_API_URL + '/api/v1/candidate/onboard', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`
+            // Include token if required
+            // Authorization: `Bearer ${authToken}`,
+          },
+          body: onboardingFormData,
+        });
+      
+        const responseJson = await response.json();
+      
+        if (response.ok) {
+          console.log('Upload successful:', responseJson);
+        } else {
+          console.error('Upload failed:', responseJson);
+        }
+      } catch (error) {
+        console.error('API error:', error);
+      }
+
+      // await dispatch(submitOnboarding(onboardingFormData)).unwrap();
       navigation.navigate(ScreenNames.RegistrationASuccessScreen);
     } catch (error: any) {
       console.error('Error', error.message || 'Failed to submit registration');

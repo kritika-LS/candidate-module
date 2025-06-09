@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
     button: {
       paddingVertical: 6,
       paddingHorizontal: theme.spacing.lg,
-      borderRadius: theme.spacing.lg,
+      borderRadius: theme.spacing.sm,
     },
     primaryButton: {
       backgroundColor: theme.colors.blue.light,

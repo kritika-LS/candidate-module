@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.blue.light,
     paddingVertical: 10,
     paddingHorizontal: 32,
-    borderRadius: 24,
+    borderRadius: 8,
 		gap: 10,
     alignItems: 'center',
 		marginVertical: 16,
@@ -42,6 +42,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   saveBtnTextDisabled: {
-    color: theme.colors.grey[600],
+    color: theme.colors.text.white,
   },
 });

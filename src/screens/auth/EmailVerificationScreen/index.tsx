@@ -33,9 +33,17 @@ export const EmailVerificationScreen = () => {
     // Call resend OTP API here
   };
 
+  const handleBackPress = () => {
+    if(password) {
+      navigation.navigate("SignUpScreen");
+    } else {
+      navigation.goBack();
+    }
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <Header title="Email Address Verification" showBackButton onBackPress={() => navigation.navigate("SignUpScreen")} />
+      <Header title="Email Address Verification" showBackButton onBackPress={handleBackPress} />
       <View style={styles.body}>
         {otpSent ? (
           <OtpVerification

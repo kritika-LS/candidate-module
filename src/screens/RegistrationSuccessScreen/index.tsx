@@ -9,35 +9,55 @@ import { useNavigation } from "@react-navigation/native";
 import LottieView from 'lottie-react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
+import { navigationRef } from "../../navigation/navigationRef";
 
 export const RegistrationASuccessScreen = () => {
 
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+  const handleSearchJobsPress = () => {
+    navigationRef.current?.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'MainStack',
+          state: {
+            routes: [
+              {
+                name: 'AppNavigator',
+                state: {
+                  routes: [
+                    {
+                      name: 'Search Jobs'
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    });
+  };
+
   return (
     <SafeAreaView style={styles.mainScreen}>
 
       <View style={styles.body}>
-        {/* Container for Lottie and foreground image */}
         <View style={styles.animationImageContainer}>
-          {/* Lottie animation for success celebration (background) */}
           <LottieView
-            source={require('../../../assets/animations/celebration.json')} // **MAKE SURE TO UPDATE THIS PATH** to your actual Lottie JSON file
-            autoPlay // Starts the animation automatically
-            loop // Keeps the animation looping
+            source={require('../../../assets/animations/celebration.json')}
+            autoPlay
+            loop
             style={styles.lottieAnimation}
           />
           {/* Foreground image (on top of Lottie) */}
 					<LottieView
-            source={require('../../../assets/animations/Success.json')} // **MAKE SURE TO UPDATE THIS PATH** to your actual Lottie JSON file
-            autoPlay // Starts the animation automatically
-            loop // Keeps the animation looping
+            source={require('../../../assets/animations/Success.json')}
+            autoPlay
+            loop
             style={styles.foregroundImage}
           />
-          {/* <Image
-            source={require('../../../assets/images/SuccessIcon.png')} // **MAKE SURE TO UPDATE THIS PATH** to your actual foreground image
-            style={styles.foregroundImage}
-          /> */}
         </View>
 
         <TextStyle size="md" variant="bold" style={[styles.textStyle, styles.title]}>Registration Successful</TextStyle>
@@ -46,7 +66,7 @@ export const RegistrationASuccessScreen = () => {
 
       <Button
         title="Search Jobs"
-        onPress={() => navigation.navigate("AppNavigator", { screen: "Search Jobs" })}
+        onPress={handleSearchJobsPress}
         style={styles.searchJobsBtn}
       />
       <View style={styles.footer}>
@@ -68,22 +88,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   animationImageContainer: {
-    width: 196, // Match the Lottie animation's width
-    height: 158, // Match the Lottie animation's height
-    justifyContent: 'center', // Center content vertically
-    alignItems: 'center', // Center content horizontally
-    position: 'relative', // Allows absolute positioning of children
+    width: 196,
+    height: 158,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
   },
   lottieAnimation: {
-    width: '100%', // Make Lottie fill its container
-    height: '100%', // Make Lottie fill its container
-    position: 'absolute', // Position absolutely within the container
-    zIndex: 0, // Ensure it's in the background
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    zIndex: 0,
   },
   foregroundImage: {
-    height: "100%", // Adjust size as needed for your foreground image
-    width: "100%", // Adjust size as needed for your foreground image
-    zIndex: 1, // Ensure it's on top of the Lottie animation
+    height: "100%",
+    width: "100%",
+    zIndex: 1,
   },
   textStyle: {
     marginTop: 8,

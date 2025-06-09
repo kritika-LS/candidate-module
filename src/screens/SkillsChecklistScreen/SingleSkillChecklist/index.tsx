@@ -22,6 +22,7 @@ export const SingleSkillChecklist = () => {
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
   const [isFormSaving, setIsFormSaving] = useState(false);
   const [attested, setAttested] = useState(false);
+  const [loading, setLoading] = useState(false);
   const webViewRef = useRef(null);
 
   const htmlContent = `
@@ -162,14 +163,17 @@ export const SingleSkillChecklist = () => {
 
   const fetchAllChecklistsData = useCallback(async (query: string = "") => {
     try {
+      setLoading(true);
       await Promise.all([
         dispatch(fetchSkillChecklistResponses({ checklistName: query, pageFrom: 0, pageSize: 10, sortBy: "TITLE", status: null })).unwrap(),
         dispatch(fetchSkillChecklistResponses({ checklistName: query, pageFrom: 0, pageSize: 10, sortBy: "TITLE", status: "S" })).unwrap(),
         dispatch(fetchSkillChecklistResponses({ checklistName: query, pageFrom: 0, pageSize: 10, sortBy: "TITLE", status: "D" })).unwrap(),
         dispatch(fetchSkillChecklistResponses({ checklistName: query, pageFrom: 0, pageSize: 10, sortBy: "TITLE", status: "A" })).unwrap(),
       ]);
+      setLoading(false);
     } catch (err) {
       console.error("Failed to fetch checklist categories:", err);
+      setLoading(false);
     }
   }, [dispatch]);
 
@@ -206,6 +210,7 @@ export const SingleSkillChecklist = () => {
         onSubmit={handleSubmit}
         attested={attested}
         onToggleAttestation={handleToggleAttestation}
+        loading={loading}
       />
     </SafeAreaView>
   );
