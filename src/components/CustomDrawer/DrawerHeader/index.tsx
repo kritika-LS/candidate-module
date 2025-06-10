@@ -23,6 +23,11 @@ const DrawerHeader = () => {
 		navigation.navigate('Search Jobs');
 	};
 
+	const handleNotificationsPress = () => {
+		//@ts-ignore
+		navigation.navigate('NotificationsScreen');
+	};
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<TouchableOpacity onPress={handleMenuPress}>
@@ -34,7 +39,7 @@ const DrawerHeader = () => {
 			{/* <TouchableOpacity>
 				<Icon name='chat-outline' color={theme.colors.text.light} />
 			</TouchableOpacity> */}
-			<TouchableOpacity>
+			<TouchableOpacity onPress={handleNotificationsPress}>
 				<Icon name='bell-outline' color={theme.colors.text.light} />
 			</TouchableOpacity>
 		</SafeAreaView>

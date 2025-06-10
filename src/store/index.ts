@@ -26,6 +26,11 @@ import screeningInterviewsReducer from './slices/screeningInterviews.slice';
 import interviewRescheduleReducer from './slices/interviewReschedule.slice';
 import doNotDisturbReducer from './slices/doNotDisturb.slice';
 import candidateReverifyReducer from './slices/candidateReverify.slice';
+import notificationsReducer from './slices/notifications.slice';
+import notificationsReadAllReducer from './slices/notificationsReadAll.slice';
+import unreadNotificationsCountReducer from './slices/unreadNotificationsCount.slice';
+import notificationsReadOneReducer from './slices/notificationsReadOne.slice';
+import screeningDetailsReducer from './slices/screeningDetails.slice';
 
 export const store = configureStore({
   reducer: {
@@ -56,6 +61,11 @@ export const store = configureStore({
     interviewReschedule: interviewRescheduleReducer,
     doNotDisturb: doNotDisturbReducer,
     candidateReverify: candidateReverifyReducer,
+    notifications: notificationsReducer,
+    notificationsReadAll: notificationsReadAllReducer,
+    unreadNotificationsCount: unreadNotificationsCountReducer,
+    notificationsReadOne: notificationsReadOneReducer,
+    screeningDetails: screeningDetailsReducer,
     
   },
 });

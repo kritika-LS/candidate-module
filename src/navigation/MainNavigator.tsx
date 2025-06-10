@@ -1,6 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../types/navigation';
+import { MainStackParamList, RootStackParamList } from '../types/navigation';
 import BottomTabs from './BottomTabs/BottomTabs';
 import { SkillsChecklistScreen } from '../screens/SkillsChecklistScreen';
 import { ScreeningsScreen } from '../screens/ScreeningsScreen';
@@ -25,8 +25,10 @@ import EducationSection from '../screens/ProfileScreen/Education';
 import { SingleSkillChecklist } from '../screens/SkillsChecklistScreen/SingleSkillChecklist';
 import { MyScreenings } from '../screens/MyScreenings';
 import { EmailVerificationScreen } from '../screens/auth/EmailVerificationScreen';
+import NotificationsScreen from '../screens/NotificationsScreen';
+import { ScreeningScheduler } from '../screens/ScreeningScheduler';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<MainStackParamList>();
 
 const MainStack = () => {
   return (
@@ -55,6 +57,8 @@ const MainStack = () => {
       <Stack.Screen name="SingleSkillChecklist" component={SingleSkillChecklist} />
       <Stack.Screen name="MyScreenings" component={MyScreenings} />
       <Stack.Screen name="EmailVerificationScreen" component={EmailVerificationScreen} />
+      <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} />
+      <Stack.Screen name="ScreeningScheduler" component={ScreeningScheduler} />
     </Stack.Navigator>
   );
 };

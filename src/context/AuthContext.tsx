@@ -205,6 +205,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       setIsAuthenticated(true);
       setIsRegistered(userRegistered);
+      await AsyncStorage.setItem('@auth:isAuthenticated', 'true');
 
       return {
         idToken,

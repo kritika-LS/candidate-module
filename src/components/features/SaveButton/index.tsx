@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, StyleSheet, GestureResponderEvent } from 'react-native';
+import { TouchableOpacity, StyleSheet, GestureResponderEvent, ActivityIndicator } from 'react-native';
 import { TextStyle } from '../../common/Text';
 import { theme } from '../../../theme';
 
@@ -7,9 +7,16 @@ interface SaveButtonProps {
   onPress: any;
   title?: string;
   disabled?: boolean;
+  loading?: boolean;
 }
 
-export const SaveButton: React.FC<SaveButtonProps> = ({ onPress, title='Save', disabled = false }) => {
+export const SaveButton: React.FC<SaveButtonProps> = ({ 
+  onPress, 
+  title='Save', 
+  disabled = false,
+  loading = false, 
+}) => {
+
   return (
     <TouchableOpacity
       style={[styles.saveBtn, disabled && styles.saveBtnDisabled]}
@@ -18,7 +25,12 @@ export const SaveButton: React.FC<SaveButtonProps> = ({ onPress, title='Save', d
       activeOpacity={0.7}
       disabled={disabled}
     >
-      <TextStyle style={[styles.saveBtnTextStyle, disabled && styles.saveBtnTextDisabled]}>{title}</TextStyle>
+      {
+        loading ?
+        <ActivityIndicator color={'#fff'} /> 
+        :
+        <TextStyle style={[styles.saveBtnTextStyle, disabled && styles.saveBtnTextDisabled]}>{title}</TextStyle>
+      }
     </TouchableOpacity>
   );
 };

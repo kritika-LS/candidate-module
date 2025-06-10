@@ -26,6 +26,11 @@ export const ENDPOINTS = {
     reSchedule: '/api/v1/candidate/interview/screening/re-schedule',
     doNotDisturb: '/api/v1/candidate/do-not-disturb',
     reverify: '/api/v1/candidate/reverify',
+    notifications: '/api/v1/candidate/notifications',
+    markAllNotificationsAsRead: '/api/v1/candidate/notifications/read-all',
+    unreadNotificationsCount: '/api/v1/candidate/notifications/unread-count',
+    markNotificationAsRead: '/api/v1/candidate/notifications/read',
+    getScreeningDetails: '/public/api/v1/candidate/interview/screening/details',
   },
   MYJOBS: {
     candidatePoolJobs: '/api/v1/candidate-pool/jobs',

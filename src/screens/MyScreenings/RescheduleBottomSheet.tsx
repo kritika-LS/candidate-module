@@ -10,25 +10,29 @@ import Toast from 'react-native-toast-message';
 import { useAppDispatch } from '../../hooks/useAppDispatch';
 import { rescheduleInterview } from '../../store/thunk/rescheduleInterview.thunk';
 import { fetchScreeningInterviews } from '../../store/thunk/fetchScreeningInterviews.thunk';
+import { useNavigation } from '@react-navigation/native';
+import { fetchNotifications } from '../../store/thunk/fetchNotifications.thunk';
 
 interface RescheduleBottomSheetProps {
   screening: {
-    jobTitle: string;
-    screeningStatus: 'CR' | 'CS' | 'CC' | 'no_response';
-    jobCity: string;
-    jobState: string;
-    jobCountry: string;
-    preferredScreeningDate: string;
-    clientEnterpriseName: string;
-    screeningConsentStatus: 'Y' | 'N';
-    candidatePoolId: any;
+    jobTitle?: string;
+    screeningStatus?: 'CR' | 'CS' | 'CC' | 'no_response';
+    jobCity?: string;
+    jobState?: string;
+    jobCountry?: string;
+    preferredScreeningDate?: string;
+    clientEnterpriseName?: string;
+    screeningConsentStatus?: 'Y' | 'N';
+    candidatePoolId?: any;
   };
-  onClose: () => void;
+  onClose?: () => void;
+  candidatePoolId?: string;
 }
 
-const RescheduleBottomSheet: React.FC<RescheduleBottomSheetProps> = ({ screening, onClose }) => {
+const RescheduleBottomSheet: React.FC<RescheduleBottomSheetProps> = ({ screening, onClose = () => {}, candidatePoolId = '' }) => {
 
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
   const [dateTime, setDateTime] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -41,8 +45,7 @@ const RescheduleBottomSheet: React.FC<RescheduleBottomSheetProps> = ({ screening
     if (!selectedDate) {
       Toast.show({
         type: 'error',
-        text1: 'Missing Date/Time',
-        text2: 'Please select a preferred date and time.',
+        text1: 'Please select a preferred date and time.',
       });
       return;
     }
@@ -52,8 +55,8 @@ const RescheduleBottomSheet: React.FC<RescheduleBottomSheetProps> = ({ screening
     const requestBody = {
       preferredScreeningDate: preferredScreeningDateISO,
       screeningConsentIpAddress: null,
-      screeningConsentStatus: screening?.screeningConsentStatus,
-      candidatePoolId: screening?.candidatePoolId,
+      screeningConsentStatus: screening?.screeningConsentStatus || 'Y',
+      candidatePoolId: screening?.candidatePoolId || candidatePoolId,
     };
 
     try {
@@ -64,15 +67,19 @@ const RescheduleBottomSheet: React.FC<RescheduleBottomSheetProps> = ({ screening
       });
       // Optionally, re-fetch all screenings in the parent component to update the list
       dispatch(fetchScreeningInterviews({ pageFrom: 0, pageSize: 10 }));
-      onClose(); // Close the bottom sheet on success
+      dispatch(fetchNotifications()).unwrap(),
+      onClose();
     } catch (err) {
       console.error("Reschedule failed:", err);
       Toast.show({
         type: 'error',
-        text1: 'Reschedule Failed',
-        text2: (err as Error).message || 'An unexpected error occurred during reschedule.',
+        text1: (err as Error).message || 'Reschedule Failed',
       });
     }
+  };
+
+  const handleSceduleLater = () => {
+    navigation.goBack();
   };
 
   return (
@@ -82,10 +89,10 @@ const RescheduleBottomSheet: React.FC<RescheduleBottomSheetProps> = ({ screening
           Screening - {screening.jobTitle}
         </TextStyle>
         <View style={styles.infoRow}>
-          <TextStyle leftIcon="office-building-outline" iconColor={theme.colors.green.accent} size="xs" color={theme.colors.green.accent}>
+          <TextStyle style={{marginRight: 8}} leftIcon="office-building-outline" iconColor={theme.colors.green.accent} size="xs" color={theme.colors.green.accent}>
             {screening.clientEnterpriseName}
           </TextStyle>
-          <TextStyle leftIcon="map-marker-outline" size="xs" color={theme.colors.text.secondary} style={{ marginLeft: 8 }}>
+          <TextStyle leftIcon="map-marker-outline" size="xs" color={theme.colors.text.secondary} style={{  }}>
             {`${screening.jobCity}, ${screening.jobState}, ${screening.jobCountry}`}
           </TextStyle>
         </View>
@@ -114,9 +121,14 @@ const RescheduleBottomSheet: React.FC<RescheduleBottomSheetProps> = ({ screening
           style={{ fontSize: 14 }}
         />
       </View>
-      <TouchableOpacity onPress={handleSchedule} style={styles.scheduleBtn}>
-        <TextStyle size="sm" variant="bold" color="#fff">Schedule</TextStyle>
-      </TouchableOpacity>
+      <View style={styles.flexRow}>
+        <TouchableOpacity onPress={handleSceduleLater} style={styles.scheduleBtn}>
+          <TextStyle size="sm" variant="bold" color="#fff">Schedule Later</TextStyle>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleSchedule} style={styles.scheduleBtn}>
+          <TextStyle size="sm" variant="bold" color="#fff">Schedule</TextStyle>
+        </TouchableOpacity>
+      </View>
 
       {showDatePicker && (
         <DateTimePicker
@@ -197,14 +209,19 @@ const styles = StyleSheet.create({
   },
   scheduleBtn: {
     backgroundColor: theme.colors.primary.main,
-    borderRadius: 24,
+    borderRadius: 8,
     // alignSelf: 'center',
     // justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
     paddingVertical: 12,
-    marginHorizontal: 16
+    marginRight: 12,
   },
+  flexRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  }
 });
 
 export default RescheduleBottomSheet; 

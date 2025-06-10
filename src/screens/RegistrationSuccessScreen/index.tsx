@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView, StyleSheet, View, Image } from "react-native"; // Import Image
 import { TermsPolicies } from "../../components/common/TermsPolicies";
 import { CopyrightFooter } from "../../components/common/CopyrightFooter";
@@ -10,34 +10,40 @@ import LottieView from 'lottie-react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../types/navigation';
 import { navigationRef } from "../../navigation/navigationRef";
+import { useAuth } from "../../context/AuthContext";
+import Toast from "react-native-toast-message";
+import { SaveButton } from "../../components/features/SaveButton";
 
 export const RegistrationASuccessScreen = () => {
 
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { getAuthDetails } = useAuth();
+  const navigation = useNavigation();
 
-  const handleSearchJobsPress = () => {
-    navigationRef.current?.reset({
-      index: 0,
-      routes: [
-        {
-          name: 'MainStack',
-          state: {
-            routes: [
-              {
-                name: 'AppNavigator',
-                state: {
-                  routes: [
-                    {
-                      name: 'Search Jobs'
-                    }
-                  ]
-                }
-              }
-            ]
-          }
+  const [loading, setLoading] = useState(false);
+
+  const handleSearchJobsPress = async () => {
+    try {
+      setLoading(true);
+      // Update auth state to mark user as registered
+      // const result = await getAuthDetails();
+      // console.log({result})
+
+      // Navigate to main app with search jobs tab
+      navigation.navigate('MainStack', {
+        screen: 'AppNavigator',
+        params: {
+          screen: 'Search Jobs' // This matches the key in BottomTabsParamsList
         }
-      ]
-    });
+      });
+      setLoading(false);
+    } catch (error) {
+      console.error('Error updating auth state:', error);
+      setLoading(false);
+      Toast.show({
+        type: 'error',
+        text1: 'Failed to complete registration. Please try again.'
+      });
+    }
   };
 
   return (
@@ -64,10 +70,15 @@ export const RegistrationASuccessScreen = () => {
         <TextStyle size="xs" style={[styles.textStyle, styles.subText]}>You have successfully registered! You can now start searching for jobs.</TextStyle>
       </View>
 
-      <Button
+      {/* <Button
         title="Search Jobs"
         onPress={handleSearchJobsPress}
         style={styles.searchJobsBtn}
+      /> */}
+      <SaveButton
+        title="Search Jobs"
+        onPress={handleSearchJobsPress}
+        loading={loading}
       />
       <View style={styles.footer}>
         <TermsPolicies />

@@ -30,6 +30,8 @@ import { convertJobToJobDetails } from '../SearchJobs';
 import { useSearchJobs } from '../../hooks/useSearchJobs';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { fetchNotifications } from '../../store/thunk/fetchNotifications.thunk';
+import { fetchUnreadNotificationsCount } from '../../store/thunk/fetchUnreadNotificationsCount.thunk';
 
 type Props = DrawerScreenProps<DrawerParamList, 'HomeScreen'>;
 type SearchJobsNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SearchJobs'>;
@@ -179,6 +181,8 @@ const HomeScreen: React.FC<Props> = () => {
         dispatch(fetchDashboardStatistics()),
         dispatch(fetchCandidate()),
         dispatch(fetchCandidatePersonalDetails()),
+        dispatch(fetchNotifications()).unwrap(),
+        await dispatch(fetchUnreadNotificationsCount()).unwrap(),
       ]);
     } catch (error) {
       console.error('Error fetching data:', error);
