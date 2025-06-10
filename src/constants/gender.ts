@@ -1,0 +1,16 @@
+export const genderOptions = [
+  { label: "Male", value: "male" },
+  { label: "Female", value: "female" },
+  { label: "Transgender", value: "transgender" },
+  { label: "Gender Neutral", value: "gender_neutral" },
+  { label: "Non-Binary", value: "non_binary" },
+  { label: "Agender", value: "agender" },
+  { label: "Pangender", value: "pangender" },
+  { label: "Genderqueer", value: "genderqueer" },
+  { label: "Two-Spirit", value: "two_spirit" },
+  { label: "Third Gender", value: "third_gender" },
+  { label: "All", value: "all" },
+  { label: "Combination of These", value: "combination_of_these" },
+  { label: "None", value: "none" },
+  { label: "Prefer Not to Say", value: "prefer_not_to_say" },
+];

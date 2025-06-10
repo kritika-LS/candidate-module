@@ -1,0 +1,18 @@
+export const chartingSystemsConstants = [
+  // "All Scripts",
+  "GE Healthcare",
+  "Matrix",
+  "Oasis",
+  "Centricity",
+  "Health Connect",
+  "McKesson",
+  "PointClickCare",
+  "Cerner",
+  "Home Care/HomeBase",
+  "MediHost",
+  "Siemens",
+  "Epic",
+  "Horizon",
+  "Meditech",
+  "Sunrise",
+];

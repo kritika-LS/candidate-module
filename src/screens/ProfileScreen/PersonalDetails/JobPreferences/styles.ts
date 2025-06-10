@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { theme } from '../../../../theme';
 
 export const styles = StyleSheet.create({
   container: {
@@ -48,12 +49,63 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   dropdownContainer: {
-    maxHeight: 200,
-    zIndex: 1000,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 8,
+    backgroundColor: '#fff',
   },
   error: {
     color: 'red',
     fontSize: 14,
     marginTop: 4,
   },
+    suggestionsContainer: {
+      backgroundColor: '#fff',
+      borderColor: '#ddd',
+      borderWidth: 1,
+      maxHeight: 200,
+      borderRadius: 4,
+      marginTop: 4,
+    },
+    suggestionItem: {
+      padding: 12,
+      borderBottomColor: '#eee',
+      borderBottomWidth: 1,
+    },
+    suggestionsList: {
+      maxHeight: 150,
+    },
+    savedSearchChip: {
+      flexDirection: 'row',
+      backgroundColor: theme.colors.primary.main,
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 16,
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      marginTop: 8,
+    },
+    savedSearchChipText: {
+      marginRight: 8,
+    },
+    trashIcon: {
+      padding: 2,
+    },
+    autocompleteLoadingContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing.xs,
+      marginTop: theme.spacing.xs,
+    },
+    zipCodeContainer: {
+      position: 'relative',
+      zIndex: 10,
+    },
+    cityContainer: {
+      position: 'relative',
+      zIndex: 9,
+    },
+    loadingFieldText: {
+      marginLeft: theme.spacing.sm,
+    },
 });

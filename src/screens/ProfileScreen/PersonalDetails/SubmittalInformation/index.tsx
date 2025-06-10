@@ -3,6 +3,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  Text,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { styles } from './styles';
@@ -11,8 +12,47 @@ import { theme } from '../../../../theme';
 import { TextStyle } from '../../../../components/common/Text';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 
-const SubmittalInformationScreen: React.FC<{ initialValues: any; updateValues: (updatedValues: any) => void }> = ({ initialValues, updateValues }) => {
+const SubmittalInformationScreen: React.FC<{ 
+  initialValues: any; 
+  updateValues: (updatedValues: any) => void;
+  errors: any;
+  touched: any;
+  updateErrors: (updatedErrors: any) => void;
+  updateTouched: (updatedTouched: any) => void;
+ }> = ({ initialValues, updateValues, errors, touched, updateErrors, updateTouched }) => {
   const [showDatePicker, setShowDatePicker] = React.useState(false);
+
+  const validateField = (fieldName: string, value: any) => {
+    let error = '';
+    switch (fieldName) {
+      case 'socialSecurityNumber':
+        if (!value) error = 'Social Security Number is required';
+        break;
+      case 'dateOfBirth':
+        if (!value) error = 'Date of Birth is required';
+        else if (new Date(value) > new Date()) error = 'Date of Birth cannot be in the future';
+        break;
+      default:
+        break;
+    }
+    return error;
+  };
+
+  const handleChange = (fieldName: string, value: any) => {
+    const updatedValues = { ...initialValues, [fieldName]: value };
+    updateValues(updatedValues);
+    if (touched[fieldName]) {
+      const error = validateField(fieldName, value);
+      updateErrors({ [fieldName]: error });
+    }
+  };
+
+  const handleBlur = (fieldName: string) => {
+    updateTouched({ [fieldName]: true });
+    const error = validateField(fieldName, initialValues[fieldName]);
+    updateErrors({ [fieldName]: error });
+  };
+
 
   const formatSSN = (value: string) => {
     const digits = value.replace(/\D/g, '');
@@ -40,7 +80,7 @@ const SubmittalInformationScreen: React.FC<{ initialValues: any; updateValues: (
   const onChangeDate = (event: any, selectedDate: Date | undefined) => {
     setShowDatePicker(false);
     if (selectedDate) {
-      updateValues({ ...initialValues, dateOfBirth: selectedDate.toISOString() });
+      handleChange('dateOfBirth', selectedDate.toISOString());
     }
   };
 
@@ -55,7 +95,9 @@ const SubmittalInformationScreen: React.FC<{ initialValues: any; updateValues: (
         <TextStyle size='sm' style={styles.label}>Date of Birth</TextStyle>
         <TouchableOpacity
           style={styles.datePickerButton}
-          onPress={() => setShowDatePicker(true)}>
+          onPress={() => setShowDatePicker(true)}
+          onBlur={() => handleBlur('dateOfBirth')}
+          >
           <TextStyle size='sm' color={theme.colors.text.light}>
             {initialValues.dateOfBirth ? formatDate(initialValues.dateOfBirth) : 'Select date of birth'}
           </TextStyle>
@@ -80,11 +122,15 @@ const SubmittalInformationScreen: React.FC<{ initialValues: any; updateValues: (
           value={initialValues.socialSecurityNumber}
           onChangeText={(text) => {
             const formattedSSN = formatSSN(text);
-            updateValues({ ...initialValues, socialSecurityNumber: formattedSSN });
+            handleChange('socialSecurityNumber', formattedSSN);
           }}
           maxLength={11}
           keyboardType="number-pad"
+          onBlur={() => handleBlur('socialSecurityNumber')}
         />
+        {touched.socialSecurityNumber && errors.socialSecurityNumber && (
+          <Text style={styles.errorText}>{errors.socialSecurityNumber}</Text>
+        )}
       </View>
 
     </View>

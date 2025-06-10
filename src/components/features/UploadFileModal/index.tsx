@@ -64,18 +64,12 @@ const UploadFileModal: React.FC<Props> = ({
 					],
 					destination: 'cachesDirectory',
 				});
-				// Simulate upload
-				setTimeout(() => {
-					// setIsUploading(false);
-					// navigation.navigate(ScreenNames.MultiStepRegistrationScreen);
-					// You can proceed to the next screen or step here
-				}, 2000);
-				console.log("tag here localcopy", localCopy)
-				// navigation.navigate(ScreenNames.MultiStepRegistrationScreen);
+				onUpload(localCopy);
 			} else {
 				console.error(result);
 			}
 		} catch (err) {
+			console.error(err);
 			// setFileName(null);
 			// setIsUploading(false);
 		}

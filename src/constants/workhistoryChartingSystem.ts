@@ -1,0 +1,18 @@
+export const workHistoryChartingSystem = [
+  // { label: "All Scripts", value: "All Scripts" },
+  { label: "GE Healthcare", value: "GE Healthcare" },
+  { label: "Matrix", value: "Matrix" },
+  { label: "Oasis", value: "Oasis" },
+  { label: "Centricity", value: "Centricity" },
+  { label: "Health Connect", value: "Health Connect" },
+  { label: "McKesson", value: "McKesson" },
+  { label: "PointClickCare", value: "PointClickCare" },
+  { label: "Cerner", value: "Cerner" },
+  { label: "Home Care/HomeBase", value: "Home Care/HomeBase" },
+  { label: "MediHost", value: "MediHost" },
+  { label: "Siemens", value: "Siemens" },
+  { label: "Epic", value: "Epic" },
+  { label: "Horizon", value: "Horizon" },
+  { label: "Meditech", value: "Meditech" },
+  { label: "Sunrise", value: "Sunrise" },
+];

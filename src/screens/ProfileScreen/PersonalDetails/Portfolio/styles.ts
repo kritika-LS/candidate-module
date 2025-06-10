@@ -30,4 +30,9 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: '#fff',
   },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginBottom: 10,
+  },
 });
