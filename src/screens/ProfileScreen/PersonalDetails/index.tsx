@@ -194,39 +194,34 @@ export const PersonalDetails: React.FC<PersonalDetailsProps> = () => {
     const newErrors: any = {};
     const newTouched: any = {};
 
-    const fieldsToValidate = [
-      'emailAddress',
-      'firstName',
-      'middleName',
-      'lastName',
-      'profileTitle',
-      'brief',
-      'overallExperience',
-      'alternateEmailAddress',
-      'mobileNumber',
-      'alternateMobileNumber',
-      'knownAs',
-      'otherName',
-      'gender',
-      'nationality',
-      'ethnicity',
-      'military',
-      'workplacePreference',
-      'currentAddress',
-      'permanentAddress',
-      'ProfessionalDetails',
-      'jobPreferences',
-      'submittalInformation',
+    const fieldToValidate = [
+      initialValues.basicInformation.firstName,
+      initialValues.basicInformation.lastName,
+      initialValues.basicInformation.emailAddress,
+      initialValues.basicInformation.profileTitle,
+      initialValues.basicInformation.overallExperience,
+      initialValues.basicInformation.mobileNumber,
+      initialValues.addressDetails.currentAddress.address,
+      initialValues.addressDetails.currentAddress.city,
+      initialValues.addressDetails.currentAddress.zipCode,
+      initialValues.addressDetails.currentAddress.stateCode,
+      initialValues.addressDetails.currentAddress.countryCode,
+      initialValues.ProfessionalDetails.professionValue,
+      initialValues.ProfessionalDetails.primarySpecialtyValue,
+      initialValues.ProfessionalDetails.totalExperience,
+      initialValues.jobPreferences.employmentTypeValue,
+      initialValues.jobPreferences.availabilityDate,
+      initialValues.submittalInformation.dateOfBirth,
+      initialValues.submittalInformation.socialSecurityNumber,
     ];
 
-    fieldsToValidate.forEach(field => {
-      const value = initialValues?.basicInformation?.[field] || initialValues?.addressDetails?.[field] || initialValues?.professionalDetails?.[field] || initialValues?.portfolio?.[field] || initialValues?.jobPreferences?.[field] || initialValues?.submittalInformation?.[field] || initialValues?.emergencyContact?.[field];
+    fieldToValidate.forEach((value, index) => {
       if (value === '' || value === null) {
-        newErrors[field] = `${field} is required`;
-        newTouched[field] = true;
+        newErrors[index] = `Field ${index + 1} is required`;
+        newTouched[index] = true;
         isValid = false;
       } else {
-        newTouched[field] = false;
+        newTouched[index] = false;
       }
     });
 

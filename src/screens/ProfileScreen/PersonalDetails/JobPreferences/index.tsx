@@ -141,7 +141,7 @@ const JobPreferencesScreen: React.FC<{
         completedStatus={true}
       />
       <View style={styles.container}>
-        <Text style={styles.label}>Employment Type</Text>
+        <Text style={styles.label}>Employment Type <Text style={styles.asterisk}>*</Text></Text>
         <DropDownPicker
           open={employmentTypeOpen}
           setOpen={setEmploymentTypeOpen}
@@ -170,7 +170,7 @@ const JobPreferencesScreen: React.FC<{
         />
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Availability Date</Text>
+          <Text style={styles.label}>Availability Date <Text style={styles.asterisk}>*</Text></Text>
           <TouchableOpacity
             style={styles.datePickerButton}
             onPress={() => setShowDatePicker({ ...showDatePicker, availabilityDate: true })}>
@@ -192,7 +192,6 @@ const JobPreferencesScreen: React.FC<{
         <View>
         <Input
           label="State"
-          required
           value={initialValues.searchStates}
           onChangeText={(text) => {
             updateValues({ ...initialValues, searchStates: text });

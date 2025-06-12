@@ -32,7 +32,7 @@ const ScreeningCard: React.FC<ScreeningCardProps> = ({ screening, onReschedule }
   return (
     <View style={styles.card}>
       <View style={styles.rowBetween}>
-        <TextStyle variant="bold" size="md">{jobTitle}</TextStyle>
+        <TextStyle variant="bold" size="md" style={{width: '60%'}}>{jobTitle}</TextStyle>
         <Chip
           chipName={statusProps.chipName}
           status={statusProps.status}

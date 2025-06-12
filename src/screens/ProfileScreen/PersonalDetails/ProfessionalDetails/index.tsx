@@ -12,6 +12,7 @@ import UploadFileModal from '../../../../components/features/UploadFileModal';
 import { ProfileScreenHeader } from '../../../../components/features/ProfileScreenHeader';
 import { workHistory, workHistoryProfessions } from '../../../../constants/workHistoryProfessions';
 import { workHistorySpeciality } from '../../../../constants/workHistorySpecilaity';
+import { theme } from '../../../../theme';
 
 const ProfessionalDetailsScreen: React.FC<{ 
   initialValues: any; 
@@ -32,9 +33,6 @@ const ProfessionalDetailsScreen: React.FC<{
     switch (fieldName) {
       case 'totalExperience':
         if (!value) error = 'Total Experience is required';
-        break;
-      case 'summary':
-        if (!value) error = 'Professional Summary is required';
         break;
       default:
         break;
@@ -83,16 +81,10 @@ const ProfessionalDetailsScreen: React.FC<{
       errorsToUpdate.totalExperience = 'Total Experience must be a number between 0 and 100';
       touchedToUpdate.totalExperience = true;
     }
-
-    if (!initialValues.summary) {
-      errorsToUpdate.summary = 'Professional Summary is required';
-      touchedToUpdate.summary = true;
-    }
-
     updateErrors(errorsToUpdate);
     updateTouched(touchedToUpdate);
     const allFieldsCompleted = Object.keys(initialValues).every(
-      (key) => initialValues[key] && !errors[key]
+      (key) => initialValues?.[key] && !errors?.[key]
     );
     setIsCompleted(allFieldsCompleted);
   }, [initialValues]);
@@ -111,11 +103,11 @@ const ProfessionalDetailsScreen: React.FC<{
       <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.uploadBtn}>
         <Text style={styles.uploadBtnText}>Upload Resume</Text>
       </TouchableOpacity>
-      {initialValues.resume?.localUri && <Text style={styles.fileName}>{initialValues.resume?.localUri || 'Uploaded Resume'}</Text>}
+      {initialValues?.resume?.localUri && <Text style={styles.fileName}>{initialValues.resume?.localUri || 'Uploaded Resume'}</Text>}
       <Text style={styles.note}>Accepted file formats: PDF, DOC, DOCX</Text>
       <Text style={styles.note}>Max file size: 10 MB</Text>
 
-      <Text style={styles.label}>Total Experience *</Text>
+      <Text style={styles.label}>Total Experience <Text style={styles.asterisk}>*</Text></Text>
       <TextInput
         style={styles.input}
         placeholder="Enter experience"
@@ -126,10 +118,10 @@ const ProfessionalDetailsScreen: React.FC<{
         }}
         onBlur={() => handleBlur('totalExperience')}
       />
-        {touched.totalExperience && errors.totalExperience && (
+        {touched?.totalExperience && errors?.totalExperience && (
           <Text style={styles.errorText}>{errors.totalExperience}</Text>
         )}
-      <Text style={styles.label}>Profession *</Text>
+      <Text style={styles.label}>Profession <Text style={styles.asterisk}>*</Text></Text>
       <DropDownPicker
         open={professionOpen}
         setOpen={(open) => setProfessionOpen(open)}
@@ -144,7 +136,7 @@ const ProfessionalDetailsScreen: React.FC<{
         dropDownContainerStyle={[styles.dropdownContainer, { zIndex: 1000 }]}
       />
 
-      <Text style={styles.label}>Primary Specialty *</Text>
+      <Text style={styles.label}>Primary Specialty <Text style={styles.asterisk}>*</Text></Text>
       <DropDownPicker
         open={specialtyOpen}
         setOpen={setSpecialtyOpen}
@@ -170,7 +162,7 @@ const ProfessionalDetailsScreen: React.FC<{
         onChangeText={(text) => handleChange('summary', text)}
         onBlur={() => handleBlur('summary')}
       />
-       {touched.summary && errors.summary && (
+       {touched?.summary && errors?.summary && (
           <Text style={styles.errorText}>{errors.summary}</Text>
         )}
       <UploadFileModal
@@ -268,4 +260,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 10,
   },
+  asterisk: {
+      color: theme.colors.status.error,
+    },
 });

@@ -110,7 +110,7 @@ const mapJobToJobDetails = (job: Job): JobDetails => ({
 
 const HomeScreen: React.FC<Props> = () => {
     const navigation = useNavigation<SearchJobsNavigationProp>();
-    const scrollViewRef = useRef();
+    const scrollViewRef = useRef(null);
   const {isRegistered } = useAuth();
   const dispatch = useAppDispatch();
   const {jobsObject, jobs} = useAppSelector((state) => state?.jobs) as unknown as CandidatePoolJobsApiResponse;

@@ -122,9 +122,9 @@ const RescheduleBottomSheet: React.FC<RescheduleBottomSheetProps> = ({ screening
         />
       </View>
       <View style={styles.flexRow}>
-        <TouchableOpacity onPress={handleSceduleLater} style={styles.scheduleBtn}>
+        {candidatePoolId && <TouchableOpacity onPress={handleSceduleLater} style={styles.scheduleBtn}>
           <TextStyle size="sm" variant="bold" color="#fff">Schedule Later</TextStyle>
-        </TouchableOpacity>
+        </TouchableOpacity>}
         <TouchableOpacity onPress={handleSchedule} style={styles.scheduleBtn}>
           <TextStyle size="sm" variant="bold" color="#fff">Schedule</TextStyle>
         </TouchableOpacity>

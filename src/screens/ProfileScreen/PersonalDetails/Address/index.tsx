@@ -303,27 +303,19 @@ const AddressDetailsScreen: React.FC<{
           </TextStyle>
           <Input
             label="Address"
-            required
             value={initialValues.permanentAddress.address}
             onChangeText={(value) => handleChange('address', value, 'permanentAddress')}
-            onBlur={() => handleBlur('address', 'permanentAddress')}
-            error={errors?.permanentAddress?.address}
-            touched={touched?.permanentAddress?.address}
             placeholder="Enter address"
           />
           <View>
             <Input
               label="Zip Code"
-              required
               value={initialValues?.permanentAddress.zipCode}
               onChangeText={(text) => {
                 handleChange('zipCode', text, 'permanentAddress');
                 setIsTypingPhysicalZip(true);
                 setIsTypingCurrentZip(false);
               }}
-              onBlur={() => handleBlur('zipCode', 'permanentAddress')}
-              error={errors?.permanentAddress?.zipCode}
-              touched={touched?.permanentAddress?.zipCode}
               keyboardType="numeric"
               placeholder="Enter ZIP code to find address"
             />
@@ -365,32 +357,20 @@ const AddressDetailsScreen: React.FC<{
           </View>
           <Input
             label="City"
-            required
             value={initialValues?.permanentAddress.city}
             onChangeText={(value) => handleChange('city', value, 'permanentAddress')}
-            onBlur={() => handleBlur('city', 'permanentAddress')}
-            error={errors?.permanentAddress?.city}
-            touched={touched?.permanentAddress?.city}
             placeholder="Enter city"
           />
           <Input
             label="State"
-            required
             value={initialValues?.permanentAddress.stateCode}
             onChangeText={(value) => handleChange('stateCode', value, 'permanentAddress')}
-            onBlur={() => handleBlur('stateCode', 'permanentAddress')}
-            error={errors?.permanentAddress?.stateCode}
-            touched={touched?.permanentAddress?.stateCode}
             placeholder="Enter state"
           />
           <Input
             label="Country"
-            required
             value={initialValues?.permanentAddress.countryCode}
             onChangeText={(value) => handleChange('countryCode', value, 'permanentAddress')}
-            onBlur={() => handleBlur('countryCode', 'permanentAddress')}
-            error={errors?.permanentAddress?.countryCode}
-            touched={touched?.permanentAddress?.countryCode}
             placeholder="Enter country"
           />
           <Text style={styles.label}>Address Notes</Text>

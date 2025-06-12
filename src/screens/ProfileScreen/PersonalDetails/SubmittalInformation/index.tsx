@@ -119,7 +119,7 @@ const SubmittalInformationScreen: React.FC<{
         <TextInput
           style={styles.input}
           placeholder="XXX-XX-XXXX"
-          value={initialValues.socialSecurityNumber}
+          value={initialValues?.socialSecurityNumber}
           onChangeText={(text) => {
             const formattedSSN = formatSSN(text);
             handleChange('socialSecurityNumber', formattedSSN);
@@ -128,7 +128,7 @@ const SubmittalInformationScreen: React.FC<{
           keyboardType="number-pad"
           onBlur={() => handleBlur('socialSecurityNumber')}
         />
-        {touched.socialSecurityNumber && errors.socialSecurityNumber && (
+        {touched?.socialSecurityNumber && errors?.socialSecurityNumber && (
           <Text style={styles.errorText}>{errors.socialSecurityNumber}</Text>
         )}
       </View>

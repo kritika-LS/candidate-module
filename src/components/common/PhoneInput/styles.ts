@@ -50,4 +50,7 @@ export const styles = StyleSheet.create({
   //   borderRightWidth: 0, // Example: to remove right border of country picker
   //   backgroundColor: 'transparent',
   // },
+  asterisk: {
+    color: theme.colors.status.error,
+  },
 });

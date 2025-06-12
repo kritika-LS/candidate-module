@@ -21,12 +21,12 @@ export const styles = StyleSheet.create({
 		marginBottom: 16,
 	},
 	searchBody: {
-		backgroundColor: theme.colors.text.white,
-		paddingHorizontal: 14,
+		// backgroundColor: theme.colors.text.white,
+		// paddingHorizontal: 14,
 		paddingVertical: 20,
 		borderRadius: 8,
-		borderWidth: 1,
-		borderColor: theme.colors.grey[40]
+		// borderWidth: 1,
+		// borderColor: theme.colors.grey[40]
 	},
 	searchRow: {
 		flexDirection: 'row',
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
 		flex: 1,
 		color: '#222',
 		marginRight: 12,
-		backgroundColor: 'transparent',
+		backgroundColor: theme.colors.text.white,
 		borderWidth: 1,
 		borderColor: theme.colors.grey.EDEF,
 		borderRadius: 8,

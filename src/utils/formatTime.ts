@@ -14,7 +14,7 @@ export const formatTime = (isoTime: string) => {
   }
 
   if (nowUtc.clone().subtract(1, 'day').isSame(timeUtc, 'day')) {
-    return `Yesterday at ${timeUtc.format('hh:mm A')} UTC`;
+    return `Yesterday at ${timeUtc.format('hh:mm A')}`;
   }
 
   return timeUtc.format('MMM DD, YYYY');

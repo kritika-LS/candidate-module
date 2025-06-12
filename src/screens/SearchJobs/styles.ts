@@ -4,6 +4,7 @@ import { theme } from "../../theme";
   export const styles = StyleSheet.create({
     screen: {
       flex: 1,
+      paddingBottom: 250,
     },
     scrollContent: {
       flex: 1,

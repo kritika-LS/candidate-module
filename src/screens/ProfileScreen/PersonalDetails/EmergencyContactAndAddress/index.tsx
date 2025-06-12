@@ -29,72 +29,8 @@ const EmergencyContactAddressScreen: React.FC<{
   const [showPhysicalZipSuggestions, setShowPhysicalZipSuggestions] = useState(false);
   const [isCompleted, setIsCompleted] = React.useState(false);
 
-  const validateField = (fieldName: string, value: any) => {
-    let error = '';
-    switch (fieldName) {
-      case 'zipCode':
-        if (!value) error = 'zipCode is required';
-        break;
-      case 'city':
-        if (!value) error = 'City is required';
-        break;
-      case 'state':
-        if (!value) error = 'State is required';
-        break;
-      case 'country':
-        if (!value) error = 'Country is required';
-        break;
-      case 'firstName':
-        if (!value) error = 'First Name is required';
-        break;
-      case 'lastName':
-        if (!value) error = 'Last Name is required';
-        break;
-      case 'relationship':
-        if (!value) error = 'Relationship is required';
-        break;
-      case 'primaryMobileNumber':
-        if (!value) error = 'Primary Mobile Number is required';
-        break;
-      case 'secondaryMobileNumber':
-        if (!value) error = 'Secondary Mobile Number is required';
-        break;
-      case 'workPhoneNumber':
-        if (!value) error = 'Work Phone Number is required';
-        break;
-      case 'workPhoneExtensionNumber':
-        if (!value) error = 'Work Phone Extension Number is required';
-        break;
-      case 'address':
-        if (!value) error = 'Address is required';
-        break;
-      case 'notes':
-        if (!value) error = 'Notes are required';
-        break;
-      default:
-        break;
-    }
-    return error;
-  };
-
-  
-
-  const handleValidate = (fieldName: string, value: any) => {
-    if (touched[fieldName]) {
-      const error = validateField(fieldName, value);
-      updateErrors({ [fieldName]: error });
-    }
-  };
-
   const handleChangeText = (fieldName: string, value: string) => {
     updateValues({ ...initialValues, [fieldName]: value });
-    handleValidate(fieldName, value);
-  };
-
-  const handleBlur = (fieldName: string) => {
-    updateTouched({ [fieldName]: true });
-    const error = validateField(fieldName, initialValues[fieldName]);
-    updateErrors({ [fieldName]: error });
   };
 
   const handlePhysicalAddressSelect = async (item: GetCityACResp) => {
@@ -105,10 +41,6 @@ const EmergencyContactAddressScreen: React.FC<{
     try {
       const addressDetails = await getGeoCoding(item.placeId);
       updateValues({ ...initialValues,country:addressDetails.countryName,state:addressDetails.stateName,city:addressDetails.city,zipCode:addressDetails.zipcode});
-      handleValidate('zipCode', addressDetails.zipcode);
-      handleValidate('city', addressDetails.city);
-      handleValidate('state', addressDetails.stateName);
-      handleValidate('country', addressDetails.countryName);
     } catch (error) {
       console.error('Error processing selected address:', error);
     } finally {
@@ -153,25 +85,13 @@ const EmergencyContactAddressScreen: React.FC<{
   ]);
 
   useEffect(() => {
-    const allFields = [
-      'firstName',
-      'lastName',
-      'relationship',
-      'primaryMobileNumber',
-      'secondaryMobileNumber',
-      'workPhoneNumber',
-      'workPhoneExtensionNumber',
-      'address',
-      'city',
-      'zipCode',
-      'state',
-      'country',
-      'notes'
-    ];
-    const allValid = allFields.every(field => !validateField(field, initialValues[field]));
-    setIsCompleted(allValid);
+    const allFilled = Object.values(initialValues).every(
+      (value) => value && value.trim() !== ''
+    );
+    setIsCompleted(allFilled);
   }
   , [initialValues]);
+
   return (
     <View style={styles.body}>
       <View style={styles.formSection}>
@@ -184,109 +104,72 @@ const EmergencyContactAddressScreen: React.FC<{
           label="First Name"
           value={initialValues.firstName}
           onChangeText={(text) => handleChangeText("firstName",text)}
-          onBlur={() => handleBlur("firstName")}
-          error={errors?.firstName}
-          touched={touched?.firstName}
           placeholder='Enter First Name'
         />
          <Input
           label="Middle Name"
           value={initialValues.middleName}
           onChangeText={(text) => handleChangeText("middleName",text)}
-          onBlur={() => handleBlur("middleName")}
-          error={errors?.middleName}
-          touched={touched?.middleName}
           placeholder='Enter middleName Name'
         />
         <Input
           label="Last Name"
           value={initialValues.lastName}
           onChangeText={(text) => handleChangeText("lastName",text)}
-          onBlur={() => handleBlur("lastName")}
-          error={errors?.lastName}
-          touched={touched?.lastName}
           placeholder='Enter Last Name'
         />
         <Input
           label="Relationship"
           value={initialValues.relationship}
           onChangeText={(text) => handleChangeText("relationship",text)}
-          onBlur={() => handleBlur("relationship")}
-          error={errors?.relationship}
-          touched={touched?.relationship}
           placeholder='Enter Relationship'
         />
         <Input
           label="Primary Mobile Number"
           value={initialValues.primaryMobileNumber}
           onChangeText={(text) => handleChangeText("primaryMobileNumber",text)}
-          onBlur={() => handleBlur("primaryMobileNumber")}
-          error={errors?.primaryMobileNumber}
-          touched={touched?.primaryMobileNumber}
           placeholder='Enter Primary Mobile Number'
         />
         <Input
           label="Secondary Mobile Number"
           value={initialValues.secondaryMobileNumber}
           onChangeText={(text) => handleChangeText("secondaryMobileNumber",text)}
-          onBlur={() => handleBlur("secondaryMobileNumber")}
-          error={errors?.secondaryMobileNumber}
-          touched={touched?.secondaryMobileNumber}
           placeholder='Enter Secondary Mobile Number'
         />
         <Input
           label="Work Phone Number"
           value={initialValues.workPhoneNumber}
           onChangeText={(text) => handleChangeText("workPhoneNumber",text)}
-          onBlur={() => handleBlur("workPhoneNumber")}
-          error={errors?.workPhoneNumber}
-          touched={touched?.workPhoneNumber}
           placeholder='Enter Work Phone Number'
         />
         <Input
           label="Extension Number"
           value={initialValues.workPhoneExtensionNumber}
           onChangeText={(text) => handleChangeText("workPhoneExtensionNumber",text)}
-          onBlur={() => handleBlur("workPhoneExtensionNumber")}
-          error={errors?.workPhoneExtensionNumber}
-          touched={touched?.workPhoneExtensionNumber}
           placeholder='Enter Extension Number'
         />
         <Input
           label="Address"
           value={initialValues.address}
           onChangeText={(text) => handleChangeText("address",text)}
-          onBlur={() => handleBlur("address")}
-          error={errors?.address}
-          touched={touched?.address}
           placeholder='Enter Address'
         />
         <Input
           label="City"
           value={initialValues.city}
           onChangeText={(text) => handleChangeText("city",text)}
-          onBlur={() => handleBlur("city")}
-          error={errors?.city}
-          touched={touched?.city}
           placeholder='Enter City'
         />
         <View>
         <Input
           label="Zip Code"
-          required
           value={initialValues.zipCode}
           onChangeText={(text) => {
            handleChangeText("zipCode", text);
             setIsTypingPhysicalZip(true);
           }}
-          error={errors?.zipCode}
-          touched={touched?.zipCode}
           keyboardType="numeric"
           placeholder="Enter ZIP code to find address"
-          onBlur={() => {
-            handleBlur("zipCode");
-            setCityJustSelected(false);
-          }}
         />
         {loadingPhysicalZipSuggestions && (
             <View style={styles.autocompleteLoadingContainer}>
@@ -328,18 +211,12 @@ const EmergencyContactAddressScreen: React.FC<{
           label="State"
           value={initialValues.state}
           onChangeText={(text) => handleChangeText("state",text)}
-          onBlur={() => handleBlur("state")}
-          error={errors?.state}
-          touched={touched?.state}
           placeholder='Enter State'
         />
         <Input
           label="Country"
           value={initialValues.country}
           onChangeText={(text) => handleChangeText("country",text)}
-          onBlur={() => handleBlur("country")}
-          error={errors?.country}
-          touched={touched?.country}
           placeholder='Enter Country'
         />
         <Text>Notes</Text>
@@ -350,11 +227,7 @@ const EmergencyContactAddressScreen: React.FC<{
           maxLength={1024}
           value={initialValues.notes}
           onChangeText={text => handleChangeText("notes", text)}
-          onBlur={() => handleBlur("notes")}
         />
-        {errors?.notes && touched?.notes && (
-          <Text style={{ color: 'red', marginTop: 4 }}>{errors.notes}</Text>
-        )}
       </View>
     </View>
   );

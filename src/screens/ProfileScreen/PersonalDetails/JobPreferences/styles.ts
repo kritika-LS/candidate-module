@@ -108,4 +108,7 @@ export const styles = StyleSheet.create({
     loadingFieldText: {
       marginLeft: theme.spacing.sm,
     },
+    asterisk: {
+      color: theme.colors.status.error,
+    },
 });

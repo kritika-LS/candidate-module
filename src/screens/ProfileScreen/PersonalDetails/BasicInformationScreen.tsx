@@ -76,7 +76,7 @@ const BasicInformationScreen: React.FC<{
     );
     setIsCompleted(allFieldsCompleted);
   }
-  , [initialValues, errors]);
+  , [initialValues]);
   
   return (
     <View style={styles.body}>

@@ -15,7 +15,8 @@ export const fetchSkillChecklistResponses = createAsyncThunk(
      dispatch(fetchSkillChecklistResponsesSuccess({
        items: response.responsePayload,
        totalResults: response.totalResults,
-       status: payload.status // Pass the status here
+       status: payload.status,
+       page: payload.pageFrom
      }));
      return response;
    } catch (error) {
@@ -23,7 +24,7 @@ export const fetchSkillChecklistResponses = createAsyncThunk(
      // Pass the status along with the error message to the failure action
      dispatch(fetchSkillChecklistResponsesFailure({
        error: apiError.message || 'Failed to fetch skill checklist responses',
-       status: payload.status // Pass the status here
+       status: payload.status
      }));
      throw error;
    }

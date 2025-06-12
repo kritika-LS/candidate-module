@@ -31,9 +31,7 @@ const PortfolioScreen: React.FC<{
 
   const validateField = (key: string, value: string) => {
     let error = '';
-    if (!value) {
-      error = 'Portfolio URL is required';
-    } else if (!/^https?:\/\/[^\s]+$/.test(value)) {
+    if (!/^https?:\/\/[^\s]+$/.test(value)) {
       error = 'Invalid URL format';
     }
     return error;

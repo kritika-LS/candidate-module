@@ -86,7 +86,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
               </TouchableOpacity>
             )}
             <TouchableOpacity style={styles.searchButton} onPress={handleSubmitEditing}>
-              <Icon name='magnify' color='#fff' />
+              <Icon name='magnify' color={'#fff'} />
             </TouchableOpacity>
           {showFilter && <TouchableOpacity style={styles.filterButton} onPress={onFilterPress}>
             <Icon name="filter-outline" color={'#fff'} />

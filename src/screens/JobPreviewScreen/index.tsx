@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Header } from '../../components/common/Header';
 import JobCard from '../../components/features/JobCard';
-import { Button } from '../../components/common/Button';
 import JobDescriptionCard from './JobDescriptionCard';
 import JobOverviewCard from './JobOverviewCard';
 import SkillsChecklistCard from './SkillsChecklistCard';
@@ -11,7 +10,6 @@ import SocialMediaCard from './SocialMediaCard';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { fetchJobDetails } from '../../store/thunk/jobDetails.thunk';
 import { RootState } from '../../store';
-import { JobDetails } from '../../models/types/jobDetails';
 import { ApiError } from '../../models/types/common';
 import { TextStyle } from '../../components/common/Text';
 import { theme } from '../../theme';
@@ -22,7 +20,9 @@ import { withdrawApplication } from '../../store/thunk/withdrawApplication.thunk
 import { fetchDashboardStatistics } from '../../store/thunk/dashboardStats.thunk';
 import { fetchCandidatePoolJobs } from '../../store/thunk/candidatePoolJobs.thunk';
 import Toast from 'react-native-toast-message';
-import { CandidatePoolJobsApiResponse } from '../../models/types/candidatePoolJobs';
+import { fetchSkillChecklistResponses } from '../../store/thunk/fetchSkillChecklistResponses.thunk';
+import { applyForJob } from '../../store/thunk/applyJob.thunk';
+import { fetchRecommendedJobs } from '../../store/thunk/jobs.thunk';
 import JobPreviewSkeleton from './JobPreviewSkeleton';
 
 type JobPreviewScreenRouteParams = {
@@ -35,13 +35,17 @@ type JobPreviewScreenRouteProp = RouteProp<{ JobPreview: JobPreviewScreenRoutePa
 const JobPreviewScreen = () => {
   const route = useRoute<JobPreviewScreenRouteProp>();
   const navigation = useNavigation<any>();
-
   const { jobId } = route.params;
-
   const dispatch = useAppDispatch();
   const jobDetails = useAppSelector((state: RootState) => state?.jobDetails?.data);
+  const loading = useAppSelector((state: RootState) => state?.jobDetails?.loading);
+
+  const checklistData = useAppSelector(state => state.skillChecklist.all.items);
 
   const [isWithdrawModalVisible, setIsWithdrawModalVisible] = useState(false);
+  const [showChecklistModal, setShowChecklistModal] = useState(false);
+  const [hideApplyButton, setHideApplyButton] = useState(false);
+  const [modalJobTitle, setModalJobTitle] = useState<string>('');
 
   const refetchCurrentJobDetails = useCallback(() => {
     if (jobId) {
@@ -64,19 +68,12 @@ const JobPreviewScreen = () => {
       setIsWithdrawModalVisible(false);
       return;
     }
-
     try {
       await dispatch(withdrawApplication(jobId)).unwrap();
-      Toast.show({
-        type: 'success',
-        text1: 'Application withdrawn successfully!',
-      });
+      Toast.show({ type: 'success', text1: 'Application withdrawn successfully!' });
       setIsWithdrawModalVisible(false);
-
-      // After withdrawal, refresh dashboard stats and the applications tab
       dispatch(fetchDashboardStatistics());
-      dispatch(fetchCandidatePoolJobs({ page: 0, pageSize: 10, candidateProcessStatus: 'A' })); // Refresh applications tab
-
+      dispatch(fetchCandidatePoolJobs({ page: 0, pageSize: 10, candidateProcessStatus: 'A' }));
       navigation.goBack();
     } catch (err: unknown) {
       const apiError = err as ApiError;
@@ -86,25 +83,70 @@ const JobPreviewScreen = () => {
         text1: 'Withdrawal Failed',
         text2: apiError.message || 'Could not withdraw application.',
       });
-      setIsWithdrawModalVisible(false);
     }
   };
 
+  const handleApplyWithChecklist = useCallback((checklistId: string, jobTitle: string) => {
+    setModalJobTitle(jobTitle);
+    setShowChecklistModal(true);
+  }, []);
+
+  const handleSkipAndApply = async () => {
+    try {
+      setShowChecklistModal(false);
+      if (jobId) {
+        await dispatch(applyForJob(jobId));
+        await dispatch(fetchRecommendedJobs({ 
+          page: 0, 
+          pageSize: 10, 
+          sortBy: 'RELEVANCE',
+          job_category: 'Healthcare'
+        }));
+        Toast.show({ type: 'success', text1: `Successfully applied for "${jobDetails?.jobTitle || 'Unknown'}"!` });
+      }
+    } catch (error) {
+      console.error('Failed to apply for job:', error);
+    }
+  };
+
+  useEffect(() => {
+    if(jobDetails?.checklistId) {
+      dispatch(fetchSkillChecklistResponses({
+        pageFrom: 0,
+        pageSize: 10,
+        checklistId: jobDetails?.checklistId || '',
+      }))
+    }
+  }, [jobDetails?.checklistId, dispatch]);
+
+  if (loading) {
+    return (
+      <View style={{flex: 1}}>
+        <Header showBackButton title="Job Details" />
+        <JobPreviewSkeleton />
+      </View>
+    );
+  }
   if (!jobDetails) {
-    return <JobPreviewSkeleton />;
+    return (
+      <View style={{flex: 1}}>
+        <Header showBackButton title="Job Details" />
+        <EmptyJobs noJobsText="Job details not found." />
+      </View>
+    );
   }
 
-  // From this point onwards, jobDetails is guaranteed to be of type JobDetails
   return (
     <View style={{ flex: 1, backgroundColor: '#f7f7f7' }}>
       <Header showBackButton title="Job Details" />
-      <ScrollView contentContainerStyle={[styles.scrollViewContent, { paddingTop: 16 }]}>
+      <ScrollView contentContainerStyle={[styles.scrollViewContent, { paddingTop: 16 }]}> 
         <JobCard
           job={jobDetails}
           fetchJobs={refetchCurrentJobDetails}
           onPress={() => {}}
           screen={'JobPreviewScreen'}
-          currentTab={route?.params?.currentTab}
+          currentTab={route?.params?.currentTab as 'applications' | 'saved' | 'onboardings' | 'assignments' | undefined}
+          onApplyWithChecklist={handleApplyWithChecklist}
         />
         <JobDescriptionCard description={jobDetails?.jobDescriptionText || ''} />
         <JobOverviewCard jobData={jobDetails} />
@@ -130,6 +172,24 @@ const JobPreviewScreen = () => {
         onSecondaryPress={() => setIsWithdrawModalVisible(false)}
       >
         <TextStyle size='md'>Are you sure you want to withdraw your application?</TextStyle>
+      </CustomModal>
+
+      {/* Checklist Modal */}
+      <CustomModal
+        isVisible={showChecklistModal}
+        onClose={() => setShowChecklistModal(false)}
+        title={modalJobTitle}
+        primaryButtonText="Complete"
+        onPrimaryPress={() => {
+          setShowChecklistModal(false);
+          navigation.navigate('SingleSkillChecklist', { checklistId: jobDetails?.checklistId, checklistData: checklistData?.[0], hideDraftButton: true });
+        }}
+        secondaryButtonText="Skip"
+        onSecondaryPress={handleSkipAndApply}
+      >
+        <TextStyle size="md" style={{ marginBottom: 16 }}>
+          Boost your application with a quick skills checklist. Would you like to complete it now?
+        </TextStyle>
       </CustomModal>
     </View>
   );

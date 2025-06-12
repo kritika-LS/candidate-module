@@ -113,42 +113,37 @@ export const SkillsChecklistScreen = () => {
 		}
 	}, [searchValue]); // Depend on searchValue
 
-	// Modified fetchAllChecklistsData to accept a checklistName
 	const fetchAllChecklistsData = useCallback(async (query: string = "") => {
 		try {
-			// Dispatch fetches for all relevant statuses with the search query
-			// The AllChecklists component will then pick up this data from Redux
+			// Reset pagination when searching
 			await Promise.all([
 				dispatch(fetchSkillChecklistResponses({
-					checklistName: query, // Pass the query here
+					checklistName: query,
 					pageFrom: 0,
 					pageSize: 10,
 					sortBy: "TITLE",
-					status: null, // For 'All'
+					status: null
 				})).unwrap(),
-
 				dispatch(fetchSkillChecklistResponses({
-					checklistName: query, // Pass the query here
+					checklistName: query,
 					pageFrom: 0,
 					pageSize: 10,
 					sortBy: "TITLE",
-					status: "S", // For 'Completed'
+					status: "S"
 				})).unwrap(),
-
 				dispatch(fetchSkillChecklistResponses({
-					checklistName: query, // Pass the query here
+					checklistName: query,
 					pageFrom: 0,
 					pageSize: 10,
 					sortBy: "TITLE",
-					status: "D", // For 'Drafts'
+					status: "D"
 				})).unwrap(),
-
 				dispatch(fetchSkillChecklistResponses({
-					checklistName: query, // Pass the query here
+					checklistName: query,
 					pageFrom: 0,
 					pageSize: 10,
 					sortBy: "TITLE",
-					status: "A", // For 'Assigned'
+					status: "A"
 				})).unwrap(),
 			]);
 		} catch (err) {
@@ -159,7 +154,7 @@ export const SkillsChecklistScreen = () => {
 	const handleClearAll = useCallback(() => {
 		setSearchValue("");
 		fetchAllChecklistsData(""); // Call fetch with empty query
-}, []);
+	}, []);
 
 	useEffect(() => {
 		// Initial fetch when component mounts, with an empty search query

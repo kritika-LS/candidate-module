@@ -16,7 +16,7 @@ export const SingleSkillChecklist = () => {
   const navigation = useNavigation();
 
   // @ts-ignore
-  const { checklistId, checklistData } = route.params;
+  const { checklistId, checklistData, hideDraftButton } = route.params;
 
   const [updatedHtml, setUpdatedHtml] = useState<string>("");
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
@@ -24,6 +24,8 @@ export const SingleSkillChecklist = () => {
   const [attested, setAttested] = useState(false);
   const [loading, setLoading] = useState(false);
   const webViewRef = useRef(null);
+
+  console.log({checklistData}, "---------------- webview screen ---------------------")
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -211,6 +213,7 @@ export const SingleSkillChecklist = () => {
         attested={attested}
         onToggleAttestation={handleToggleAttestation}
         loading={loading}
+        hideDraftButton={hideDraftButton}
       />
     </SafeAreaView>
   );

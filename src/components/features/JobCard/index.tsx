@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { TextStyle } from '../../common/Text';
 import Icon from '../../common/Icon/Icon';
@@ -15,7 +15,8 @@ import moment from 'moment';
 import { JobDetails } from '../../../models/types/jobDetails';
 import { applyForJob } from '../../../store/thunk/applyJob.thunk';
 import { useNavigation } from '@react-navigation/native';
-import Chip from '../../common/Chip';
+import { formatTime } from '../../../utils/formatTime';
+import { fetchRecommendedJobs } from '../../../store/thunk/jobs.thunk';
 
 interface JobCardProps {
   job: JobDetails;
@@ -23,15 +24,14 @@ interface JobCardProps {
   currentTab?: 'saved' | 'applications' | 'onboardings' | 'assignments';
   fetchJobs: () => void;
   screen?: 'JobPreviewScreen' | 'MyJobsScreen';
+  onApplyWithChecklist?: (checklistId: string, jobTitle: string) => void;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, screen }) => {
+const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, screen, onApplyWithChecklist }) => {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
-
-  const { loading: applyLoading } = useAppSelector((state: RootState) => state.applyJob);
-  const { loading: saveLoading } = useAppSelector((state: RootState) => state.saveJob);
-  const { loading: unsaveLoading } = useAppSelector((state: RootState) => state.unsaveJob);
+  const [applyLoading, setApplyLoading] = useState(false);
+  const [bookmarkLoading, setBookmarkLoading] = useState(false);
 
   const formatLocation = () => {
     const parts = [];
@@ -56,29 +56,22 @@ const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, 
     return 'Payrate not specified';
   };
 
-  const handleToggleSaveJob = async () => {
+  const handleToggleSaveJob = useCallback(async () => {
     if (!job.jobId) {
-      Toast.show({
-        type: 'error',
-        text1: 'Job ID is missing',
-      });
+      Toast.show({ type: 'error', text1: 'Job ID is missing' });
       return;
     }
-
     const isCurrentlySaved = (job.candidateProcessStatus === 'S' || currentTab === 'saved');
-
-    if (saveLoading || unsaveLoading) return;
-
+    if (bookmarkLoading) return;
+    setBookmarkLoading(true);
     try {
       if (isCurrentlySaved) {
         await dispatch(unsaveJob(job.jobId)).unwrap();
         Toast.show({ type: 'success', text1: `Job "${job.jobTitle || 'Unknown'}" unsaved successfully!` });
-        // navigation.goBack();
       } else {
         await dispatch(saveJob(job.jobId)).unwrap();
         Toast.show({ type: 'success', text1: `Job "${job.jobTitle || 'Unknown'}" saved successfully!` });
       }
-
       fetchJobs();
       dispatch(fetchDashboardStatistics());
     } catch (err: unknown) {
@@ -88,29 +81,30 @@ const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, 
         text1: 'Action Failed',
         text2: apiError.message || `Could not ${isCurrentlySaved ? 'unsave' : 'save'} the job.`,
       });
+    } finally {
+      setBookmarkLoading(false);
     }
-  };
+  }, [job, currentTab, bookmarkLoading, dispatch, fetchJobs]);
 
-  const handleApply = async () => {
+  const handleApply = useCallback(async () => {
     if (!job.jobId) {
-      Toast.show({
-        type: 'error',
-        text1: 'Job ID is missing',
-        text2: 'Cannot apply for job without a valid ID.',
-      });
+      Toast.show({ type: 'error', text1: 'Job ID is missing', text2: 'Cannot apply for job without a valid ID.' });
       return;
     }
-
     if (applyLoading) return;
-
+    setApplyLoading(true);
     try {
       await dispatch(applyForJob(job.jobId)).unwrap();
-      Toast.show({
-        type: 'success',
-        text1: `Successfully applied for "${job.jobTitle || 'Unknown'}"!`,
-      });
+      Toast.show({ type: 'success', text1: `Successfully applied for "${job.jobTitle || 'Unknown'}"!` });
       fetchJobs();
       dispatch(fetchDashboardStatistics());
+      await dispatch(fetchRecommendedJobs({ 
+        page: 0, 
+        pageSize: 10, 
+        sortBy: 'RELEVANCE',
+        job_category: 'Healthcare'
+      }));
+      navigation.goBack();
     } catch (err: unknown) {
       const apiError = err as ApiError;
       Toast.show({
@@ -118,13 +112,14 @@ const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, 
         text1: 'Application Failed',
         text2: apiError.message || 'Could not apply for the job.',
       });
+    } finally {
+      setApplyLoading(false);
     }
-  };
-
-  const isSaveUnsaveInProgress = saveLoading || unsaveLoading;
-  const isApplyInProgress = applyLoading;
+  }, [job, applyLoading, dispatch, fetchJobs, navigation]);
 
   const shouldHideDetails = screen === 'JobPreviewScreen' && currentTab === 'applications';
+
+  console.log({job})
 
   const CardContent = (
     <View style={styles.card}>
@@ -139,8 +134,8 @@ const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, 
 
         <View style={styles.actionButtons}>
           {(currentTab === 'saved' || !currentTab) && (
-            <TouchableOpacity onPress={handleToggleSaveJob} disabled={isSaveUnsaveInProgress}>
-              {isSaveUnsaveInProgress ? (
+            <TouchableOpacity onPress={handleToggleSaveJob} disabled={bookmarkLoading}>
+              {bookmarkLoading ? (
                 <ActivityIndicator size="small" color={theme.colors.primary.main} />
               ) : (
                 <Icon
@@ -194,7 +189,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, 
               <View style={styles.labelContent}>
                 <Icon name='briefcase-variant-outline' size={12} color={theme.colors.green.success_100} />
                 <TextStyle size='xs' color={theme.colors.green.success_100} style={styles.labelText} numberOfLines={1}>
-                  Experience: {job.jobExperienceLevel || '-'}
+                  Experience: {job?.overallYearsOfExperienceMinimum + ' Years' || '-'}
                 </TextStyle>
               </View>
             </View>
@@ -238,7 +233,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, 
               <View style={styles.flexRow}>
                 <Icon name='clock-outline' size={12} color={theme.colors.grey[500]} />
                 <TextStyle size='xs' color={theme.colors.grey[500]} style={styles.iconSpacing} numberOfLines={1}>
-                  Posted {job.postedOn ? moment(job.postedOn).fromNow() : '-'}
+                  Posted {job?.refreshedOn ? formatTime(job?.refreshedOn) : '-'}
                 </TextStyle>
               </View>
               { currentTab === 'applications' &&
@@ -251,8 +246,8 @@ const JobCard: React.FC<JobCardProps> = ({ job, onPress, currentTab, fetchJobs, 
             </View>
 
             {currentTab !== 'applications' && (
-              <TouchableOpacity onPress={handleApply} style={styles.applyButton} disabled={isApplyInProgress}>
-                {isApplyInProgress ? (
+              <TouchableOpacity onPress={handleApply} style={styles.applyButton} disabled={applyLoading}>
+                {applyLoading ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
                   <TextStyle style={styles.applyText}>Apply</TextStyle>

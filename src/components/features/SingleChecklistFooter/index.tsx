@@ -12,6 +12,7 @@ type SingleChecklistFooterProps = {
   attested: boolean;
   onToggleAttestation: () => void;
   loading?: boolean;
+  hideDraftButton?: boolean
 };
 
 export const SingleChecklistFooter: React.FC<SingleChecklistFooterProps> = ({
@@ -21,6 +22,7 @@ export const SingleChecklistFooter: React.FC<SingleChecklistFooterProps> = ({
   attested,
   onToggleAttestation,
   loading = false,
+  hideDraftButton=false,
 }) => {
   return(
 
@@ -30,14 +32,14 @@ export const SingleChecklistFooter: React.FC<SingleChecklistFooterProps> = ({
         checked={attested}
         onChange={onToggleAttestation}
       />
-      <TextStyle color="#92400e">
+      <TextStyle color="#92400e" style={{width: '95%'}}>
         <TextStyle variant="bold" color="#92400e"> Attestation:</TextStyle> I attest that the information I have provided is true and accurate to the best of my knowledge, and that it accurately reflects the education I have received and my experience in each of the clinical areas identified within the last 2 years.
       </TextStyle>
     </TouchableOpacity>
     <TextStyle size="sm">* All fields are required</TextStyle>
     <View style={styles.footerButtonContainer}>
 
-      <TouchableOpacity style={styles.footerButton} onPress={onSave}>
+      {!hideDraftButton && <TouchableOpacity style={styles.footerButton} onPress={onSave}>
         {loading ? 
           <ActivityIndicator /> : 
           <TextStyle 
@@ -49,7 +51,7 @@ export const SingleChecklistFooter: React.FC<SingleChecklistFooterProps> = ({
             Save Draft
           </TextStyle>
         }
-      </TouchableOpacity>
+      </TouchableOpacity>}
 
       <TouchableOpacity style={[styles.footerButton, !attested && styles.disabledButton]} onPress={onSubmit} disabled={!attested}>
         {loading ? 

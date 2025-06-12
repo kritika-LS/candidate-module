@@ -4,7 +4,7 @@ import { theme } from '../../../theme';
 export const styles = StyleSheet.create({
   body: {
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.background.default,
     flex: 1,
   },
   loadingContainer: {
@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 8,
-    color: theme.colors.text.light,
+    color: theme.colors.text.primary,
   },
   errorContainer: {
     flex: 1,
@@ -23,7 +23,11 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   errorText: {
-    color: theme.colors.primary.main,
+    color: theme.colors.status.error,
     textAlign: 'center',
+  },
+  loaderContainer: {
+    padding: 16,
+    alignItems: 'center',
   },
 });

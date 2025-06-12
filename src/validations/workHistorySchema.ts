@@ -1,26 +1,13 @@
 import * as Yup from 'yup';
-import { professionsList, specialtiesMap } from '../constants';
 
 export const workHistorySchema = Yup.object().shape({
     facilityname: Yup.string()
       .required('Worked With/Facility Name is required')
       .max(128, 'Facility Name cannot exceed 128 characters'),
     profession: Yup.string()
-      .required('Profile title profession is required')
-      .oneOf(professionsList, 'Please choose from the list'),
+      .required('Profile title profession is required'),
     specialty: Yup.string()
-      .required('Skills worked/specialty is required')
-      .test(
-        'is-valid-specialty',
-        'Please choose from the list',
-        function (value) {
-          const { profession } = this.parent;
-          return (
-            !profession ||
-            (specialtiesMap[profession] && specialtiesMap[profession].includes(value as string))
-          );
-        }
-      ),
+      .required('Skills worked/specialty is required'),
     typeofBusiness: Yup.string()
       .required('Type of Business/facility is required'),
     startDate: Yup.string()
@@ -53,27 +40,12 @@ export const workHistorySchema = Yup.object().shape({
       stateCode: Yup.string().required('State is required'),
       countryCode: Yup.string().required('Country is required'),
     }),
-    mobileNumber: Yup.string()
-      .required('Employer Mobile Number is required')
-      .matches(/^\+\d{1,4}\d{7,12}$/, 'Please enter a valid mobile number'),
-    notes: Yup.string()
-      .required('Reason for Leaving is required')
-      .max(128, 'Reason for Leaving cannot exceed 128 characters'),
-    summaryOfWork: Yup.string()
-      .required('Summary of work is required'),
-    supervisorName: Yup.string()
-      .required('Supervisor Name is required')
-      .max(128, 'Supervisor Name cannot exceed 128 characters'),
-    numberOfFacilityBeds: Yup.string()
-      .required('Number of facility beds is required'),
-    numberOfBedsInUnit: Yup.string()
-      .required('Number of beds in unit is required'),
-    employmentType: Yup.string()
-      .required('Employment type is required'),
     nurseToPatientRatio: Yup.string()
       .required('Nurse to patient ratio is required'),
     shift: Yup.string()
       .required('Shift is required'),
     chargeExperience: Yup.string()
       .required('Charge experience is required'),
+    Chartingsystem: Yup.string()
+      .required('Charting system is required')
   });

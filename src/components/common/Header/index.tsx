@@ -16,12 +16,14 @@ interface HeaderProps {
   showBackButton?: boolean;
   title?: string;
   onBackPress?: () => void;
+  count?: any;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   showBackButton = false,
   title,
   onBackPress,
+  count = '',
 }) => {
   const navigation = useNavigation();
 
@@ -46,7 +48,8 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* {showBackButton ? ( */}
           <TextStyle variant="medium" size="lg" style={styles.title}>
-            {title}
+            {/* {title} {count && {count}} */}
+            {`${title} ${count && '(' + count +')'}`}
           </TextStyle>
         {/* ) : null
         // (

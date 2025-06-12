@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   greeting: {
     color: '#fff',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   subtext: {

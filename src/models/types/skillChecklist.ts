@@ -1,9 +1,10 @@
  export interface SkillChecklistRequestBody {
-  checklistName: string;
+  checklistName?: string;
   pageFrom: number;
   pageSize: number;
-  sortBy: 'TITLE' | 'DATE' | string; // Add other sort options if known
-  status: 'S' | 'D' | 'A' | null; // S: Submitted/Completed, D: Draft, A: Approved/Assigned (based on curl examples)
+  sortBy?: 'TITLE' | 'DATE' | string; // Add other sort options if known
+  status?: 'S' | 'D' | 'A' | null; // S: Submitted/Completed, D: Draft, A: Approved/Assigned (based on curl examples)
+  checklistId?: string | null;
  }
 
  // actual API response structure

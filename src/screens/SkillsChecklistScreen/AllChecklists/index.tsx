@@ -1,21 +1,47 @@
-import React from "react";
-import { FlatList, SafeAreaView, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import { ActivityIndicator, FlatList, SafeAreaView, View } from "react-native";
 import { SkillsChecklistMenuCard } from "../../../components/common/SkillsChecklistMenuCard";
 import { styles } from "./styles";
-import { useAppSelector } from "../../../hooks/useAppDispatch";
+import { useAppDispatch, useAppSelector } from "../../../hooks/useAppDispatch";
 import { TextStyle } from "../../../components/common/Text";
 import { theme } from "../../../theme";
 import { SkillsChecklistMenuCardSkeleton } from "../../../components/common/SkillsChecklistMenuCard/SkeletonLoader";
 import { EmptyChecklist } from "../../../components/features/EmptyChecklist";
 import { useNavigation } from "@react-navigation/native";
+import { fetchSkillChecklistResponses } from "../../../store/thunk/fetchSkillChecklistResponses.thunk";
 
 export const AllChecklists = () => {
-
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const {items, loading} = useAppSelector(state => state?.skillChecklist?.all);
+  const { items, loading, totalResults, page } = useAppSelector(state => state?.skillChecklist?.all);
 
-  if (loading) {
+  const loadMoreData = useCallback(async () => {
+    if (isLoadingMore || loading) return;
+    
+    const currentItems = items.length;
+    const totalItems = totalResults;
+    
+    if (currentItems >= totalItems) return;
+    
+    setIsLoadingMore(true);
+    try {
+      await dispatch(fetchSkillChecklistResponses({
+        checklistName: "",
+        pageFrom: page + 1,
+        pageSize: 10,
+        sortBy: "TITLE",
+        status: null
+      })).unwrap();
+    } catch (error) {
+      console.error('Error loading more data:', error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [dispatch, page, items.length, totalResults, isLoadingMore, loading]);
+
+  if (loading && items.length === 0) {
     return (
       <SafeAreaView style={{flex: 1}}>
         <View style={styles.body}>
@@ -61,6 +87,15 @@ export const AllChecklists = () => {
               onPress={() => handleSkillPress(item)}
             />
           )}
+          onEndReached={loadMoreData}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={() => 
+            isLoadingMore ? (
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator size="small" color={theme.colors.primary.main} />
+              </View>
+            ) : null
+          }
           showsVerticalScrollIndicator={false}
         />
       </View>

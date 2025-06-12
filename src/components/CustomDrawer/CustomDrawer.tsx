@@ -16,12 +16,15 @@ import Icon from '../common/Icon/Icon';
 import { useAuth } from '../../context/AuthContext';
 import { useAppSelector } from '../../hooks/useAppDispatch';
 import moment from 'moment';
+import { useNavigation } from '@react-navigation/native';
 
 const drawerItems = [
+  // { label: 'Home', icon: 'home-outline', route: 'Home' },
+  // { label: 'Search Jobs', icon: 'magnify', route: 'Search Jobs' },
+  // { label: 'My Jobs', icon: 'briefcase-outline', route: 'My Jobs' },
+  // { label: 'Profile', icon: 'account-outline', route: 'Profile' },
   { label: 'My Screenings', icon: 'account-search-outline', route: 'MyScreenings' },
   { label: 'Skills Checklist', icon: 'format-list-checks', route: 'SkillsChecklistScreen' },
-  // { label: 'References', icon: 'person-add', route: 'References' },
-  // { label: 'Documents', icon: 'assignment', route: 'Documents' },
   { label: 'Settings', icon: 'cog-outline', route: 'SettingsScreen' },
 ];
 
@@ -34,16 +37,14 @@ const CustomDrawer = ({ navigation }: any) => {
   const formattedDate = moment(lastActiveAccessLog?.date).format('MMM DD, YYYY HH:mm:ss');
 
   const handleNavigate = (route: string) => {
-    // navigation.navigate(route);
     navigation.closeDrawer();
-  // Navigate to the screen in the root stack
-  navigation.navigate(route);
+    navigation.navigate(route);
   }
 
   const handleLogout = async() => {
     try {
       await logout();
-      console.log("Successfuly signed out....")
+      console.log("Successfully signed out....")
     } catch (error) {
       console.error(error)
     }

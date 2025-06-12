@@ -16,17 +16,20 @@ type StatCardProps = {
   navigateToTab?: 'saved' | 'applications' | 'onboardings' | 'assignments'; // New prop for tab navigation
 };
 
-const StatCard = ({ icon, label, count, bgColor, navigateToTab }: StatCardProps) => {
+const StatCard = ({ icon, label, count, bgColor, navigateToTab, ScreenName }: StatCardProps) => {
   const navigation = useNavigation<any>(); // Initialize useNavigation hook
 
   const handlePress = () => {
     if (navigateToTab) {
       navigation.navigate('My Jobs', { initialTab: navigateToTab }); // Navigate to MyJobs with initialTab parameter
     }
+    if(ScreenName) {
+      navigation.navigate(ScreenName)
+    }
   };
 
   return (
-    <TouchableOpacity style={[styles.card, { backgroundColor: bgColor }]} activeOpacity={0.8} onPress={handlePress}>
+    <TouchableOpacity style={[styles.card, { backgroundColor: bgColor }]} activeOpacity={0.8}>
       <View style={styles.countsection}>
         <View style={[styles.iconCircle]}>{icon}</View>
         <Text style={styles.count}>{count}</Text>
@@ -81,7 +84,7 @@ export const DashboardStats = () => {
       label: 'Screenings',
       count: dashboardStats.totalOffersAccepted,
       bgColor: '#ffe9e7',
-      ScreenName: '',
+      ScreenName: 'MyScreenings',
       // No navigateToTab for 'Screenings' as per requirement
     },
   ];

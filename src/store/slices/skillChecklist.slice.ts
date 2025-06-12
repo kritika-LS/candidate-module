@@ -7,6 +7,7 @@ interface ChecklistCategoryState {
  loading: boolean;
  error: string | null;
  totalResults: number;
+ page: number;
 }
 
 // Define the overall state for the skillChecklist slice
@@ -22,6 +23,7 @@ const initialCategoryState: ChecklistCategoryState = {
  loading: false,
  error: null,
  totalResults: 0,
+ page: 0,
 };
 
 const initialState: SkillChecklistState = {
@@ -55,25 +57,29 @@ const skillChecklistSlice = createSlice({
    // Action to handle successful fetch for a specific status
    fetchSkillChecklistResponsesSuccess: (
      state,
-     action: PayloadAction<{ items: SkillChecklistItem[]; totalResults: number; status: 'S' | 'D' | 'A' | null }>
+     action: PayloadAction<{ items: SkillChecklistItem[]; totalResults: number; status: 'S' | 'D' | 'A' | null; page: number }>
    ) => {
-     const { items, totalResults, status } = action.payload;
+     const { items, totalResults, status, page } = action.payload;
      if (status === 'S') {
        state.submitted.loading = false;
-       state.submitted.items = items;
+       state.submitted.items = page === 0 ? items : [...state.submitted.items, ...items];
        state.submitted.totalResults = totalResults;
+       state.submitted.page = page;
      } else if (status === 'D') {
        state.draft.loading = false;
-       state.draft.items = items;
+       state.draft.items = page === 0 ? items : [...state.draft.items, ...items];
        state.draft.totalResults = totalResults;
+       state.draft.page = page;
      } else if (status === 'A') {
        state.approved.loading = false;
-       state.approved.items = items;
+       state.approved.items = page === 0 ? items : [...state.approved.items, ...items];
        state.approved.totalResults = totalResults;
+       state.approved.page = page;
      } else { // For null status (all)
        state.all.loading = false;
-       state.all.items = items;
+       state.all.items = page === 0 ? items : [...state.all.items, ...items];
        state.all.totalResults = totalResults;
+       state.all.page = page;
      }
    },
    // Action to handle failed fetch for a specific status
@@ -87,21 +93,25 @@ const skillChecklistSlice = createSlice({
        state.submitted.error = error;
        state.submitted.items = [];
        state.submitted.totalResults = 0;
+       state.submitted.page = 0;
      } else if (status === 'D') {
        state.draft.loading = false;
        state.draft.error = error;
        state.draft.items = [];
        state.draft.totalResults = 0;
+       state.draft.page = 0;
      } else if (status === 'A') {
        state.approved.loading = false;
        state.approved.error = error;
        state.approved.items = [];
        state.approved.totalResults = 0;
+       state.approved.page = 0;
      } else { // For null status (all)
        state.all.loading = false;
        state.all.error = error;
        state.all.items = [];
        state.all.totalResults = 0;
+       state.all.page = 0;
      }
    },
    // Clear error for a specific status or all
@@ -123,21 +133,28 @@ const skillChecklistSlice = createSlice({
      if (status === 'S') {
        state.submitted.items = [];
        state.submitted.totalResults = 0;
+       state.submitted.page = 0;
      } else if (status === 'D') {
        state.draft.items = [];
        state.draft.totalResults = 0;
+       state.draft.page = 0;
      } else if (status === 'A') {
        state.approved.items = [];
        state.approved.totalResults = 0;
+       state.approved.page = 0;
      } else if (status === null || status === 'all') {
        state.all.items = [];
        state.all.totalResults = 0;
+       state.all.page = 0;
        state.submitted.items = [];
        state.submitted.totalResults = 0;
+       state.submitted.page = 0;
        state.draft.items = [];
        state.draft.totalResults = 0;
+       state.draft.page = 0;
        state.approved.items = [];
        state.approved.totalResults = 0;
+       state.approved.page = 0;
      }
    },
  },

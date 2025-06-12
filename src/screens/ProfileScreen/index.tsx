@@ -151,10 +151,10 @@ const ProfileTabContent = () => {
 
     return (
         <SafeAreaView style={[styles.container, { flex: 1, backgroundColor: '#fff' }]}> {/* White background */}
-            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.primary.main, paddingHorizontal: 16, paddingTop: 50, paddingBottom: 20 }}>
-                <Pressable onPress={handleMenuPress} style={{ marginRight: 16 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.primary.main, paddingHorizontal: 16, paddingTop: 20, paddingBottom: 20 }}>
+                {/* <Pressable onPress={handleMenuPress} style={{ marginRight: 16 }}>
                     <Icon name="menu" color="#fff" size={28} />
-                </Pressable>
+                </Pressable> */}
                 <TextStyle size="lg" variant="bold" color="#fff">Profile</TextStyle>
             </View>
             <View style={styles.candidateInfoCard}>

@@ -6,11 +6,11 @@ import { SearchBar } from '../../common/SearchBar';
 import { theme } from '../../../theme';
 import { useNavigation } from '@react-navigation/native';
 
-// interface DrawerHeaderProps {
-//   onMenuPress: () => void;
-// }
+interface DrawerHeaderProps {
+	showSearchBar?: boolean;
+}
 
-const DrawerHeader = () => {
+const DrawerHeader: React.FC<DrawerHeaderProps> = ({ showSearchBar = true }) => {
 	const navigation = useNavigation();
 
 	const handleMenuPress = () => {
@@ -34,7 +34,9 @@ const DrawerHeader = () => {
 				<Icon name='menu' color={theme.colors.text.light} style={{right: 8}} />
 			</TouchableOpacity>
 
-			<SearchBar placeholder="Search for jobs" showSearchIcon />
+			{showSearchBar && (
+				<SearchBar placeholder="Search for jobs" showSearchIcon />
+			)}
 
 			{/* <TouchableOpacity>
 				<Icon name='chat-outline' color={theme.colors.text.light} />
@@ -50,11 +52,11 @@ export default DrawerHeader;
 
 const styles = StyleSheet.create({
 	container: {
-		justifyContent: 'space-around',
+		justifyContent: 'space-between',
 		paddingHorizontal: 16,
 		paddingVertical: 20,
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: 50,
+		marginTop: 30,
 	},
 });

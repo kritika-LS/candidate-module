@@ -23,6 +23,7 @@ import Icon from "../../components/common/Icon/Icon";
 import { fetchRecommendedJobs } from "../../store/thunk/jobs.thunk";
 import JobCardSkeleton from "../../components/features/JobCard/JobCardSkeleton";
 
+//@ts-ignore
 type SearchJobsNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SearchJobs'>;
 
 // Create a function to convert Job to JobDetails
@@ -257,35 +258,36 @@ export const SearchJobs = () => {
             )}
           </View>
           <View>
-          <FlatList
-            contentContainerStyle={styles.jobsSection}
-            data={jobDataToDisplay}
-            keyExtractor={(item, index) => item?.jobId?.toString() || index.toString()}
-            renderItem={({ item }) => (
-              <JobCard
-                key={item.jobId + 'search'}
-                job={convertJobToJobDetails(item)}
-                fetchJobs={() => {
-                  if (chips.length > 0) {
-                    executeSearch(chips[0]);
-                  } else {
-                    dispatch(fetchRecommendedJobs({
-                      page: 0,
-                      pageSize: PAGE_SIZE,
-                      sortBy: sortByOption,
-                      durationFrom: null,
-                      durationTo: null,
-                      job_category: "Healthcare"
-                    }));
-                  }
-                }}
-                onPress={() => navigation.navigate('JobPreviewScreen', { jobId: item.jobId })}
-              />
-            )}
-            onEndReached={hasMoreJobs && !isLoadingMore ? loadMoreJobs : null}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={renderFooter}
-          />
+            <FlatList
+              contentContainerStyle={styles.jobsSection}
+              data={jobDataToDisplay}
+              keyExtractor={(item, index) => item?.jobId?.toString() || index.toString()}
+              renderItem={({ item }) => (
+                <JobCard
+                  key={item.jobId + 'search'}
+                  job={convertJobToJobDetails(item)}
+                  fetchJobs={() => {
+                    if (chips.length > 0) {
+                      executeSearch(chips[0]);
+                    } else {
+                      dispatch(fetchRecommendedJobs({
+                        page: 0,
+                        pageSize: PAGE_SIZE,
+                        sortBy: sortByOption,
+                        durationFrom: null,
+                        durationTo: null,
+                        job_category: "Healthcare"
+                      }));
+                    }
+                  }}
+                  //@ts-ignore
+                  onPress={() => navigation.navigate('JobPreviewScreen', { jobId: item.jobId })}
+                />
+              )}
+              onEndReached={hasMoreJobs && !isLoadingMore ? loadMoreJobs : null}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={renderFooter}
+            />
           </View>
         </>
       )}

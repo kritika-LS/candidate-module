@@ -77,10 +77,16 @@ export interface JobDetailsPayload {
 }
 
 export interface JobDetailsApiResponse {
+  checklistId: string;
+  jobDescriptionText: string;
+  skillData: never[];
+  benefits: string;
+  socialMediaUrl: string;
   status: string;
   errorId: string | null;
   successMessage: string | null;
   errorMessages: string | null;
   totalResults: number | null;
   responsePayload: JobDetailsPayload;
+  jobTitle: string;
 }

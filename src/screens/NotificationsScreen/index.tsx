@@ -39,8 +39,6 @@ const NotificationsScreen = () => {
     }
   };
 
-  console.log({notifications})
-
   const extractCandidatePoolId = (url: string): string | null => {
     try {
       const parsedUrl = new URL(url);
@@ -61,17 +59,14 @@ const NotificationsScreen = () => {
   const handleReadNotification = async (notificationId: string) => {
     try {
       await dispatch(readNotification(notificationId)).unwrap();
-      Toast.show({ type: 'success', text1: 'Notification marked as read!' });
+      // Toast.show({ type: 'success', text1: 'Notification marked as read!' });
     } catch (err) {
       console.error(`Error marking notification ${notificationId} as read:`, err);
-      Toast.show({ type: 'error', text1: (err as Error).message || 'Failed to mark notification as read.' });
+      // Toast.show({ type: 'error', text1: (err as Error).message || 'Failed to mark notification as read.' });
     }
   };
 
   const renderNotification = ({ item }: any) => {
-
-    console.log({item})
-    console.log({unreadCount})
 
     const notificationTime = formatTime(item?.createdTimestamp);
     const notificationRead = item?.notificationStatus === 'R';
@@ -79,7 +74,6 @@ const NotificationsScreen = () => {
     const handleNotificationPress = async() => {
       if(!notificationRead) handleReadNotification(item.notificationId);
       const candidatePoolId = extractCandidatePoolId(item?.callToActionUrl || '');
-      console.log({candidatePoolId})
       if (candidatePoolId) {
         try {
           await dispatch(fetchScreeningDetails(candidatePoolId)).unwrap();
@@ -97,10 +91,10 @@ const NotificationsScreen = () => {
         }
       } else {
         console.warn("Could not extract candidatePoolId from URL:", item?.callToActionUrl);
-        Toast.show({
-          type: 'info',
-          text1: 'No specific details link available for this notification.'
-        });
+        // Toast.show({
+        //   type: 'info',
+        //   text1: 'No specific details link available for this notification.'
+        // });
       }
     }
 
@@ -125,7 +119,7 @@ const NotificationsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Header showBackButton title="Notifications" />
+      <Header showBackButton title="Notifications" count={unreadCount} />
       { unreadCount > 0 &&
         <View style={styles.markAllContainer}>
           <TouchableOpacity onPress={handleMarkAllAsRead}>

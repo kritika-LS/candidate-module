@@ -21,6 +21,7 @@ export const PhoneNumberInput = (props: any) => {
         countryPickerProps = {},
         variant = "",
         onBlur = () => {},
+        required = false,
     } = props;
 
     const errorState = error && touched;
@@ -36,7 +37,7 @@ export const PhoneNumberInput = (props: any) => {
 
     return (
         <View style={styles.inputWrapper}>
-            {label && <TextStyle style={[styles.labelStyle, labelStyle]}>{label}</TextStyle>}
+            {label && <TextStyle style={[styles.labelStyle, labelStyle]}>{label} {required && <TextStyle style={styles.asterisk}>*</TextStyle>}</TextStyle>}
             <PhoneInput
                 ref={phoneInput}
                 containerStyle={[
