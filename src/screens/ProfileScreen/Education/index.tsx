@@ -6,18 +6,57 @@ import { theme } from '../../../theme';
 import { TextStyle } from '../../../components/common/Text';
 import { styles } from './styles';
 import { AddEducationForm } from './AddEducationForm';
-import { useAppSelector } from '../../../hooks/useAppDispatch';
+import { useAppDispatch, useAppSelector } from '../../../hooks/useAppDispatch';
 import moment from 'moment';
 import EducationListCard from './EducationListCard';
+import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ENV } from '../../../config/env';
+import { ENDPOINTS } from '../../../api/endPoints';
+import { fetchCandidateEducations } from '../../../store/thunk/candidateEducation.thunk';
 
 const EducationSection = () => {
-
+    const dispatch = useAppDispatch();
     const EducationHistoryData = useAppSelector((state) => state?.candidateEducation?.educations?.responsePayload) || [];
 
-    const [showHistoryList, setShowHistoryList] = useState(true);
     const [showForm, setShowForm] = useState<boolean>(false);
 
-    console.log('EducationHistoryData', EducationHistoryData);
+    const deleteEducation = async (educationId:any) => {
+        try {
+          const token = await AsyncStorage.getItem('auth_token');
+          const apiUrl = `${ENV.DEV_API_URL}${ENDPOINTS.CANDIDATE.educationDelete}${educationId}`; 
+          const response = await fetch(apiUrl, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+          });
+      
+          const result = await response.json();
+          console.log('Delete Response:', result);
+      
+          if (response.ok) {
+            Toast.show({
+                type: 'success',
+                text1: 'Education deleted successfully',
+            });
+            dispatch(fetchCandidateEducations());
+          } else {
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to delete education',
+            });
+          }
+        } catch (error) {
+          console.error('Delete error:', error);
+          Toast.show({
+            type: 'error',
+            text1: 'Something went wrong',
+          });
+        }
+      };
 
     return (
         <ScrollView style={styles.sectionContainer}>
@@ -44,7 +83,7 @@ const EducationSection = () => {
                                 country={item.country}
                                 pillText={pillText}
                                 onEdit={() => console.log('Edit pressed', item)}
-                                onDelete={() => console.log('Delete pressed', item)}
+                                onDelete={() => deleteEducation(item?.educationId)}
                             />
                         )
                     })}

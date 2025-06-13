@@ -39,15 +39,17 @@ import {workHistoryTypeOfBusiness} from '../../../constants/workhistoryTypeOfBus
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ENV } from '../../../config/env';
 import { ENDPOINTS } from '../../../api/endPoints';
-import { useAppSelector } from '../../../hooks/useAppDispatch';
+import { useAppDispatch, useAppSelector } from '../../../hooks/useAppDispatch';
+import { fetchCandidateWorkHistory } from '../../../store/thunk/candidateWorkHistory.thunk';
 
 interface AddWorkHistoryProps {
   setShowForm?: any;
 }
 
 const AddWorkHistory: React.FC<AddWorkHistoryProps> = ({setShowForm}) => {
+  const dispatch = useAppDispatch();
   const WorkHistoryData = useAppSelector((state) => state?.candidateWorkHistory?.workHistory?.responsePayload) || [];
-  console.log("tag WorkHistoryData",WorkHistoryData);
+
   const [showDatePicker, setShowDatePicker] = useState({
     startDate: false,
     endDate: false,
@@ -149,7 +151,7 @@ const AddWorkHistory: React.FC<AddWorkHistoryProps> = ({setShowForm}) => {
       return;
     }    
       const payload = [
-        WorkHistoryData?.[0] ? {...WorkHistoryData[0]} : {},
+       ...WorkHistoryData,
         {
           workedWith: formData.facilityname,
           title: formData.profession,
@@ -201,6 +203,8 @@ const AddWorkHistory: React.FC<AddWorkHistoryProps> = ({setShowForm}) => {
             type: 'success',
             text1: 'Work history saved successfully',
           });
+          dispatch(fetchCandidateWorkHistory());
+          setShowForm(false);
         } else {
           console.error('Error saving work history:');
           Toast.show({
@@ -403,7 +407,7 @@ const AddWorkHistory: React.FC<AddWorkHistoryProps> = ({setShowForm}) => {
                   setShowDatePicker({...showDatePicker, startDate: true})
                 }>
                 <Text style={styles.input}>
-                  {moment(formData.startDate).format('DD/YYYY') ||
+                  {formData.startDate ? moment(formData.startDate).format('DD/YYYY') :
                     'Select start date'}
                 </Text>
               </TouchableOpacity>
@@ -458,7 +462,7 @@ const AddWorkHistory: React.FC<AddWorkHistoryProps> = ({setShowForm}) => {
                   disabled={formData.currentlyWorking} // Disable End Date if currently working
                 >
                   <Text style={styles.input}>
-                    {formData.endDate || 'Select end date'}
+                    {formData.endDate ?  moment(formData.endDate).format('DD/YYYY') : 'Select end date'}
                   </Text>
                 </TouchableOpacity>
                 {showDatePicker.endDate && (

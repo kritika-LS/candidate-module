@@ -2,21 +2,56 @@ import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { TextStyle } from "../../components/common/Text";
 import { styles } from "./styles";
-import { useAppSelector } from "../../hooks/useAppDispatch";
-import moment from "moment";
+import { useAppDispatch, useAppSelector } from "../../hooks/useAppDispatch";
 import ReferenceListCard from "./ReferenceListCard";
 import { theme } from "../../theme";
 import Icon from "../../components/common/Icon/Icon";
 import ReferenceSection from "../ProfileScreen/ProfessionalInformation/Reference";
+import Toast from "react-native-toast-message";
+import { fetchCandidateReferences } from "../../store/thunk/candidateReferences.thunk";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ENV } from "../../config/env";
+import { ENDPOINTS } from "../../api/endPoints";
 
 export const ReferencesScreen = () => {
-
+    const dispatch = useAppDispatch();
     const ReferencesData = useAppSelector((state) => state?.candidateReferences?.references?.responsePayload) || [];
-
-    const [showHistoryList, setShowHistoryList] = useState(true);
     const [showForm, setShowForm] = useState<boolean>(false);
 
-    console.log('EducationHistoryData', ReferencesData);
+    const deleteReference = async (referenceId:any) => {
+        try {
+          const token = await AsyncStorage.getItem('auth_token');
+          const apiUrl = `${ENV.DEV_API_URL}${ENDPOINTS.CANDIDATE.references}/${referenceId}`; 
+          const response = await fetch(apiUrl, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              }
+          });
+
+          if (response.ok) {
+            Toast.show({
+                type: 'success',
+                text1: 'Education deleted successfully',
+            });
+            dispatch(fetchCandidateReferences());
+          } else {
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to delete education',
+            });
+          }
+        } catch (error) {
+          console.error('Delete error:', error);
+          Toast.show({
+            type: 'error',
+            text1: 'Something went wrong',
+          });
+        }
+      };
+
     return(
         <ScrollView style={styles.container}>
 			{/* <View style={[styles.flexRow, styles.sectionHeader]}>
@@ -44,7 +79,7 @@ export const ReferencesScreen = () => {
                                 email={item?.emailAddress || ''}
                                 contactPermission={contactPermission || '-'}
                                 onEdit={() => console.log('Edit pressed', item)}
-                                onDelete={() => console.log('Delete pressed', item)}
+                                onDelete={() => deleteReference(item?.referenceId)}
                             />
                         )
                     })}

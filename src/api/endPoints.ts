@@ -18,6 +18,7 @@ export const ENDPOINTS = {
     personalDetails: '/api/v1/candidate/personal-details',
     workHistory: '/api/v1/candidate/work-history',
     educations: '/api/v1/candidate/educations',
+    educationDelete: '/api/v1/candidate/education/',
     professionalInformation: '/api/v1/candidate/professional-information',
     references: '/api/v1/candidate/references',
     resume: '/api/v1/candidate/resume',

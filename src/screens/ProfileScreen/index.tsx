@@ -39,9 +39,7 @@ const ProfileTabContent = () => {
     const route = useRoute();
     const dispatch = useAppDispatch();
 
-    const [index, setIndex] = useState(0);
-    const [expandedItem, setExpandedItem] = useState<string | null>(null);
-    const [modalVisible, setModalVisible] = useState(false);
+    const [index, setIndex] = useState(1);
     const [routes] = useState<Route[]>([
         { key: 'Overview', title: 'Overview', icon: 'chart-bar' },
         { key: 'PersonalDetails', title: 'Personal Details', icon: 'account-outline' },
